@@ -56,7 +56,6 @@ MainObject::MainObject(QObject *parent)
   // Command Socket
   //
   main_command_socket=new QUdpSocket(this);
-  printf("port: %u\n",main_config->controlPort());
   if(!main_command_socket->bind(main_config->controlPort())) {
     fprintf(stderr,"webhostd: cannot bind port %u\n",
 	    main_config->controlPort());
@@ -106,23 +105,23 @@ void MainObject::ProcessCommand(const QString &cmd)
   QString verb=cmds[0].toLower();
 
   if(verb=="ip") {
-    printf("IP!\n");
+    Ip(cmds);
   }
 
   if(verb=="ntp") {
-    printf("NTP!\n");
+    Ntp(cmds);
   }
 
   if(verb=="reboot") {
-    printf("REBOOT!\n");
+    Reboot(cmds);
   }
 
   if(verb=="restart") {
-    printf("RESTART!\n");
+    Restart(cmds);
   }
 
   if(verb=="upgrade") {
-    printf("UPGRADE!\n");
+    Upgrade(cmds);
   }
 }
 

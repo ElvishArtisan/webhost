@@ -2,3 +2,5 @@
 	* Initial package creation.
 2015-12-05 Fred Gleason <fredg@paravelsystems.com>
 	* Stubbed out webhostd(8).
+2015-12-05 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the REBOOT command in webhostd(8).

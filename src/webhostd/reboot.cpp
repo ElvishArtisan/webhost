@@ -18,9 +18,19 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QProcess>
+#include <QStringList>
+
 #include "webhostd.h"
 
 void MainObject::Reboot(const QStringList &cmds)
 {
-  printf("REBOOT!\n");
+  QProcess *proc=NULL;
+  QStringList args;
+
+  args.push_back("-r");
+  args.push_back("now");
+  proc=new QProcess(this);
+  proc->start("/sbin/shutdown",args);
+  proc->waitForFinished();
 }
