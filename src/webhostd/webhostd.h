@@ -33,6 +33,7 @@ class MainObject : public QObject
 {
  Q_OBJECT;
  public:
+  enum PackageField {Name=1,Version=2};
   MainObject(QObject *parent=0);
 
  public slots:

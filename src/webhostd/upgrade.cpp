@@ -18,9 +18,25 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <QProcess>
+#include <QStringList>
+
 #include "webhostd.h"
 
 void MainObject::Upgrade(const QStringList &cmds)
 {
-  printf("UPGRADE!\n");
+  QProcess *proc=NULL;
+  QStringList args;
+  QString action;
+
+  if(cmds.size()>1) {
+    args.push_back("--force");
+    args.push_back("-U");
+    for(int i=1;i<cmds.length();i++) {
+      args.push_back(cmds[i]);
+    }
+    proc=new QProcess(this);
+    proc->start("/bin/rpm",args);
+    proc->waitForFinished();
+  }
 }
