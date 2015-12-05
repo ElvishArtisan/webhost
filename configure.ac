@@ -69,6 +69,8 @@ else
 fi 
 
 AC_CONFIG_FILES([ \
+    conf/Makefile \
+    docs/Makefile \
     src/webhostd/Makefile \
     src/Makefile \
     webhost.spec \

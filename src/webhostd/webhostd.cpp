@@ -18,13 +18,112 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <QCoreApplication>
+#include <stdio.h>
+#include <stdlib.h>
 
+#include <QCoreApplication>
+#include <QHostAddress>
+
+#include "cmdswitch.h"
 #include "webhostd.h"
 
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
+  main_debug=false;
+
+  CmdSwitch *cmd=
+    new CmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
+  for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="-d") {
+      main_debug=true;
+      cmd->setProcessed(i,true);
+    }
+    if(!cmd->processed(i)) {
+      fprintf(stderr,"webhostd: unknown option \"%s\"\n",
+	      (const char *)cmd->key(i).toUtf8());
+      exit(256);
+    }
+  }
+
+  //
+  // Configuration
+  //
+  main_config=new Config();
+  main_config->load();
+
+  //
+  // Command Socket
+  //
+  main_command_socket=new QUdpSocket(this);
+  printf("port: %u\n",main_config->controlPort());
+  if(!main_command_socket->bind(main_config->controlPort())) {
+    fprintf(stderr,"webhostd: cannot bind port %u\n",
+	    main_config->controlPort());
+    exit(256);
+  }
+  connect(main_command_socket,SIGNAL(readyRead()),this,SLOT(readyReadData()));
+}
+
+
+
+void MainObject::readyReadData()
+{
+  char data[1500];
+  int n=0;
+  QHostAddress addr;
+  QString accum;
+
+  while((n=main_command_socket->readDatagram(data,1500,&addr))>0) {
+    //
+    // Only accept commands from localhost
+    //
+    if((addr.toIPv4Address()&0xFF000000)==0x7F000000) {
+      for(int i=0;i<n;i++) {
+	switch(data[i]) {
+	case 10:
+	case 13:
+	  break;
+
+	case '!':
+	  ProcessCommand(accum);
+	  accum="";
+	  break;
+
+	default:
+	  accum+=data[i];
+	  break;
+	}
+      }
+    }
+  }
+}
+
+
+void MainObject::ProcessCommand(const QString &cmd)
+{
+  QStringList cmds=cmd.split(" ");
+  QString verb=cmds[0].toLower();
+
+  if(verb=="ip") {
+    printf("IP!\n");
+  }
+
+  if(verb=="ntp") {
+    printf("NTP!\n");
+  }
+
+  if(verb=="reboot") {
+    printf("REBOOT!\n");
+  }
+
+  if(verb=="restart") {
+    printf("RESTART!\n");
+  }
+
+  if(verb=="upgrade") {
+    printf("UPGRADE!\n");
+  }
 }
 
 

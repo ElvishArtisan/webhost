@@ -20,7 +20,9 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-SUBDIRS = src
+SUBDIRS = conf\
+          docs\
+          src
 
 install-exec-local:	
 	mkdir -p $(DESTDIR)/etc/init.d

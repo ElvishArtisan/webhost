@@ -1,6 +1,6 @@
-// webhostd.h
+// config.cpp
 //
-// webhostd(8) routing daemon
+// webhostd(8) configuration
 //
 //   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,37 +18,28 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WEBHOST_H
-#define WEBHOST_H
-
-#include <QObject>
-#include <QStringList>
-#include <QUdpSocket>
-
 #include "config.h"
+#include "profile.h"
 
-#define WEBHOSTD_USAGE "-d\n"
-
-class MainObject : public QObject
+Config::Config()
 {
- Q_OBJECT;
- public:
-  MainObject(QObject *parent=0);
-
- public slots:
-  void readyReadData();
-
- private:
-  void Ip(const QStringList &cmds);
-  void Ntp(const QStringList &cmds);
-  void Reboot(const QStringList &cmds);
-  void Restart(const QStringList &cmds);
-  void Upgrade(const QStringList &cmds);
-  void ProcessCommand(const QString &cmd);
-  QUdpSocket *main_command_socket;
-  Config *main_config;
-  bool main_debug;
-};
+  config_control_port=WEBHOST_DEFAULT_CONTROL_PORT;
+}
 
 
-#endif  // WEBHOSTD_H
+uint16_t Config::controlPort() const
+{
+  return config_control_port;
+}
+
+
+void Config::load()
+{
+  Profile *p=new Profile();
+
+  p->setSource(WEBHOST_CONF_FILE);
+  config_control_port=p->
+    intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
+
+  delete p;
+}

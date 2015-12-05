@@ -1,6 +1,6 @@
 ## automake.am
 ##
-## Makefile for the webhostd(8) daemon
+## conf/ automake.am for webhost
 ##
 ## (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 ##
@@ -17,39 +17,13 @@
 ##   License along with this program; if not, write to the Free Software
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
+##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@
-MOC = @QT4_MOC@
+EXTRA_DIST = webhost-sample.conf
 
-# The dependency for qt's Meta Object Compiler (moc)
-moc_%.cpp:	%.h
-	@MOC@ $< -o $@
-
-
-sbin_PROGRAMS = webhostd
-
-dist_webhostd_SOURCES = cmdswitch.cpp cmdswitch.h\
-                        config.cpp config.h\
-                        ip.cpp\
-                        ntp.cpp\
-                        reboot.cpp\
-                        restart.cpp\
-                        upgrade.cpp\
-                        profile.cpp profileh\
-                        webhostd.cpp webhostd.h
-
-nodist_webhostd_SOURCES = moc_webhostd.cpp
-
-webhostd_LDADD = @QT4_LIBS@
-webhostd_LDFLAGS = 
-
-CLEANFILES = *~\
-             moc_*\
-             *.obj\
-             *.idb\
-             *.pdb\
-             *ilk
-
+CLEANFILES = *~
 MAINTAINERCLEANFILES = *~\
+                       aclocal.m4\
+                       configure\
                        Makefile.in

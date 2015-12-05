@@ -1,6 +1,6 @@
-// webhostd.h
+// ntp.cpp
 //
-// webhostd(8) routing daemon
+//   NTP command implementation for webhostd(8)
 //
 //   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,37 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WEBHOST_H
-#define WEBHOST_H
+#include "webhostd.h"
 
-#include <QObject>
-#include <QStringList>
-#include <QUdpSocket>
-
-#include "config.h"
-
-#define WEBHOSTD_USAGE "-d\n"
-
-class MainObject : public QObject
+void MainObject::Ntp(const QStringList &cmds)
 {
- Q_OBJECT;
- public:
-  MainObject(QObject *parent=0);
-
- public slots:
-  void readyReadData();
-
- private:
-  void Ip(const QStringList &cmds);
-  void Ntp(const QStringList &cmds);
-  void Reboot(const QStringList &cmds);
-  void Restart(const QStringList &cmds);
-  void Upgrade(const QStringList &cmds);
-  void ProcessCommand(const QString &cmd);
-  QUdpSocket *main_command_socket;
-  Config *main_config;
-  bool main_debug;
-};
-
-
-#endif  // WEBHOSTD_H
+  printf("NTP!\n");
+}
