@@ -23,7 +23,11 @@
 
 #include <stdint.h>
 
+#include <QString>
+
 #define WEBHOST_DEFAULT_CONTROL_PORT 6352
+#define WEBHOST_DEFAULT_NTP_CONF_FILE "/etc/ntp.conf"
+#define WEBHOST_DEFAULT_NTP_SERVICE_NAME "ntpd"
 #define WEBHOST_CONF_FILE "/etc/webhost.conf"
 
 class Config
@@ -31,10 +35,14 @@ class Config
  public:
   Config();
   uint16_t controlPort() const;
+  QString ntpConfigurationFile() const;
+  QString ntpServiceName() const;
   void load();
 
  private:
   uint16_t config_control_port;
+  QString config_ntp_configuration_file;
+  QString config_ntp_service_name;
 };
 
 

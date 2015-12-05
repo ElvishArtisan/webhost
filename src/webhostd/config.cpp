@@ -24,12 +24,25 @@
 Config::Config()
 {
   config_control_port=WEBHOST_DEFAULT_CONTROL_PORT;
+  config_ntp_configuration_file=WEBHOST_DEFAULT_NTP_CONF_FILE;
 }
 
 
 uint16_t Config::controlPort() const
 {
   return config_control_port;
+}
+
+
+QString Config::ntpConfigurationFile() const
+{
+  return config_ntp_configuration_file;
+}
+
+
+QString Config::ntpServiceName() const
+{
+  return config_ntp_service_name;
 }
 
 
@@ -40,6 +53,11 @@ void Config::load()
   p->setSource(WEBHOST_CONF_FILE);
   config_control_port=p->
     intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
+  config_ntp_configuration_file=
+    p->stringValue("Webhost","NtpConfigurationFile",
+		   WEBHOST_DEFAULT_NTP_CONF_FILE);
+  config_ntp_service_name=
+    p->stringValue("Webhost","NtpServiceName",WEBHOST_DEFAULT_NTP_SERVICE_NAME);
 
   delete p;
 }

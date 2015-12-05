@@ -18,9 +18,50 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <QHostAddress>
+#include <QProcess>
+#include <QStringList>
+
 #include "webhostd.h"
 
 void MainObject::Ntp(const QStringList &cmds)
 {
-  printf("NTP!\n");
+  FILE *f=NULL;
+  QProcess *proc;
+  QStringList args;
+
+  //
+  // Check that arguments are valid
+  //
+  for(int i=1;i<cmds.size();i++) {
+    if(QHostAddress(cmds[i]).isNull()) {
+      return;
+    }
+  }
+
+  //
+  // Write new configuration file
+  //
+  if((f=fopen((main_config->ntpConfigurationFile()+".back").toUtf8(),"w"))!=
+     NULL) {
+    for(int i=1;i<cmds.size();i++) {
+      fprintf(f,"server %s iburst\n",(const char *)cmds[i].toUtf8());
+    }
+    fclose(f);
+    rename((main_config->ntpConfigurationFile()+".back").toUtf8(),
+	   main_config->ntpConfigurationFile().toUtf8());    
+  }
+
+  //
+  // Restart NTP server
+  //
+  args.push_back(main_config->ntpServiceName());
+  args.push_back("restart");
+  proc=new QProcess(this);
+  proc->start("service",args);
+  proc->waitForFinished();
+  delete proc;
 }
