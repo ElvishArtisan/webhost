@@ -1,0 +1,5 @@
+This is the README file for the webhost package.
+
+Webhost is a priviledge-escation wrapper for embedded processes.  It
+enables local processes to do things like change IP host assignments,
+upgrade packages and reboot the system by means of a simple UDP interface.
