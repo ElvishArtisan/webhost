@@ -28,6 +28,8 @@
 #define WEBHOST_DEFAULT_CONTROL_PORT 6352
 #define WEBHOST_DEFAULT_NTP_CONF_FILE "/etc/ntp.conf"
 #define WEBHOST_DEFAULT_NTP_SERVICE_NAME "ntpd"
+#define WEBHOST_DEFAULT_SERVICE_RESPAWN_DELAY 100
+#define WEBHOST_PROCESS_KILL_INTERVAL 5000
 #define WEBHOST_CONF_FILE "/etc/webhost.conf"
 
 class Config
@@ -37,12 +39,16 @@ class Config
   uint16_t controlPort() const;
   QString ntpConfigurationFile() const;
   QString ntpServiceName() const;
+  QString serviceCommand() const;
+  int serviceRespawnDelay() const;
   void load();
 
  private:
   uint16_t config_control_port;
   QString config_ntp_configuration_file;
   QString config_ntp_service_name;
+  QString config_service_command;
+  int config_service_respawn_delay;
 };
 
 

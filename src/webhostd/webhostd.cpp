@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <syslog.h>
 
 #include <QCoreApplication>
 #include <QHostAddress>
@@ -31,6 +32,7 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   main_debug=false;
+  main_service_process=NULL;
 
   CmdSwitch *cmd=
     new CmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
@@ -45,6 +47,11 @@ MainObject::MainObject(QObject *parent)
       exit(256);
     }
   }
+
+  //
+  // Initialize Syslog
+  //
+  openlog("webhostd",LOG_PERROR,LOG_DAEMON);
 
   //
   // Configuration
@@ -62,6 +69,19 @@ MainObject::MainObject(QObject *parent)
     exit(256);
   }
   connect(main_command_socket,SIGNAL(readyRead()),this,SLOT(readyReadData()));
+
+  //
+  // Timers
+  //
+  main_garbage_timer=new QTimer(this);
+  main_garbage_timer->setSingleShot(true);
+  connect(main_garbage_timer,SIGNAL(timeout()),this,SLOT(garbageTimerData()));
+
+  main_kill_timer=new QTimer(this);
+  main_kill_timer->setSingleShot(true);
+  connect(main_kill_timer,SIGNAL(timeout()),this,SLOT(killTimerData()));
+
+  main_garbage_timer->start(0);
 }
 
 
@@ -95,6 +115,93 @@ void MainObject::readyReadData()
 	}
       }
     }
+  }
+}
+
+
+void MainObject::serviceErrorData(QProcess::ProcessError err)
+{
+  QString msg=tr("unknown error")+QString().sprintf(" [%u]",err);
+
+  switch(err) {
+  case QProcess::FailedToStart:
+    msg=tr("failed to start");
+    break;
+
+  case QProcess::Crashed:
+    msg=tr("crashed");
+    break;
+
+  case QProcess::Timedout:
+    msg=tr("timed out");
+    break;
+
+  case QProcess::WriteError:
+    msg=tr("write error");
+    break;
+
+  case QProcess::ReadError:
+    msg=tr("read error");
+    break;
+
+  case QProcess::UnknownError:
+    msg=tr("unknown error");
+    break;
+  }
+  syslog(LOG_WARNING,"service process error: %s",(const char *)msg.toUtf8());
+}
+
+
+void MainObject::serviceFinishedData(int exit_code,QProcess::ExitStatus status)
+{
+  main_kill_timer->stop();
+
+  if(status==QProcess::CrashExit) {
+    syslog(LOG_WARNING,"service process crashed");
+  }
+  else {
+    if(exit_code!=0) {
+      syslog(LOG_WARNING,"service process exited with non-zero exit code: %d\n",
+	     exit_code);
+    }
+  }
+  main_garbage_timer->start(main_config->serviceRespawnDelay());
+}
+
+
+void MainObject::garbageTimerData()
+{
+  //
+  // Clean up old process
+  //
+  if(main_service_process!=NULL) {
+    delete main_service_process;
+    main_service_process=NULL;
+  }
+
+  //
+  // Start new process
+  //
+  if(!main_config->serviceCommand().isEmpty()) {
+    QStringList args;
+    QStringList f0=main_config->serviceCommand().split(" ");
+    for(int i=1;i<f0.size();i++) {
+      args.push_back(f0[i]);
+    }
+    main_service_process=new QProcess(this);
+    connect(main_service_process,SIGNAL(error(QProcess::ProcessError)),
+	    this,SLOT(serviceErrorData(QProcess::ProcessError)));
+    connect(main_service_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	    this,SLOT(serviceFinishedData(int,QProcess::ExitStatus)));
+    main_service_process->start(f0[0],args);
+  }
+}
+
+
+void MainObject::killTimerData()
+{
+  if(main_service_process!=NULL) {
+    main_service_process->kill();
   }
 }
 

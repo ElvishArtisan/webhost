@@ -25,6 +25,8 @@ Config::Config()
 {
   config_control_port=WEBHOST_DEFAULT_CONTROL_PORT;
   config_ntp_configuration_file=WEBHOST_DEFAULT_NTP_CONF_FILE;
+  config_service_command="";
+  config_service_respawn_delay=WEBHOST_DEFAULT_SERVICE_RESPAWN_DELAY;
 }
 
 
@@ -46,6 +48,18 @@ QString Config::ntpServiceName() const
 }
 
 
+QString Config::serviceCommand() const
+{
+  return config_service_command;
+}
+
+
+int Config::serviceRespawnDelay() const
+{
+  return config_service_respawn_delay;
+}
+
+
 void Config::load()
 {
   Profile *p=new Profile();
@@ -58,6 +72,10 @@ void Config::load()
 		   WEBHOST_DEFAULT_NTP_CONF_FILE);
   config_ntp_service_name=
     p->stringValue("Webhost","NtpServiceName",WEBHOST_DEFAULT_NTP_SERVICE_NAME);
+  config_service_command=p->stringValue("Webhost","ServiceCommand");
+  config_service_respawn_delay=
+    p->intValue("Webhost","ServiceRespawnDelay",
+		WEBHOST_DEFAULT_SERVICE_RESPAWN_DELAY);
 
   delete p;
 }

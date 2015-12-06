@@ -22,7 +22,9 @@
 #define WEBHOST_H
 
 #include <QObject>
+#include <QProcess>
 #include <QStringList>
+#include <QTimer>
 #include <QUdpSocket>
 
 #include "config.h"
@@ -38,6 +40,10 @@ class MainObject : public QObject
 
  public slots:
   void readyReadData();
+  void serviceErrorData(QProcess::ProcessError err);
+  void serviceFinishedData(int exit_code,QProcess::ExitStatus status);
+  void garbageTimerData();
+  void killTimerData();
 
  private:
   void Ip(const QStringList &cmds);
@@ -47,6 +53,9 @@ class MainObject : public QObject
   void Upgrade(const QStringList &cmds);
   void ProcessCommand(const QString &cmd);
   QUdpSocket *main_command_socket;
+  QProcess *main_service_process;
+  QTimer *main_garbage_timer;
+  QTimer *main_kill_timer;
   Config *main_config;
   bool main_debug;
 };

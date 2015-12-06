@@ -22,5 +22,8 @@
 
 void MainObject::Restart(const QStringList &cmds)
 {
-  printf("RESTART!\n");
+  if(main_service_process!=NULL) {
+    main_service_process->terminate();
+    main_kill_timer->start(WEBHOST_PROCESS_KILL_INTERVAL);
+  }
 }

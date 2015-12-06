@@ -10,3 +10,5 @@
 	* Implemented the NTP command in webhostd(8).
 2015-12-05 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented the IP command in webhostd(8).
+2015-12-05 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the RESTART command in webhostd(8).
