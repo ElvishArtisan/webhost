@@ -1,4 +1,4 @@
-// cmdswitch.h
+// whcmdswitch.h
 //
 // Process Command-Line Switches
 //
@@ -18,16 +18,16 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef CMDSWITCH_H
-#define CMDSWITCH_H
+#ifndef WHCMDSWITCH_H
+#define WHCMDSWITCH_H
 
 #include <vector>
 #include <QString>
 
-class CmdSwitch
+class WHCmdSwitch
 {
  public:
-  CmdSwitch(int argc,char *argv[],const char *modname,const char *usage);
+  WHCmdSwitch(int argc,char *argv[],const char *modname,const char *usage);
   unsigned keys() const;
   QString key(unsigned n) const;
   QString value(unsigned n) const;
@@ -42,4 +42,4 @@ class CmdSwitch
 };
 
 
-#endif  // CMDSWITCH_H
+#endif  // WHCMDSWITCH_H

@@ -1,4 +1,4 @@
-// profile.cpp
+// whprofile.cpp
 //
 // A container class for profile lines.
 //
@@ -22,64 +22,64 @@
 #include <QTextStream>
 #include <QStringList>
 
-#include "profile.h"
+#include "whprofile.h"
 
-ProfileLine::ProfileLine()
+WHProfileLine::WHProfileLine()
 {
   clear();
 }
 
 
-QString ProfileLine::tag() const
+QString WHProfileLine::tag() const
 {
   return line_tag;
 }
 
 
-void ProfileLine::setTag(QString tag)
+void WHProfileLine::setTag(QString tag)
 {
   line_tag=tag;
 }
 
 
-QString ProfileLine::value() const
+QString WHProfileLine::value() const
 {
   return line_value;
 }
 
 
-void ProfileLine::setValue(QString value)
+void WHProfileLine::setValue(QString value)
 {
   line_value=value;
 }
 
 
-void ProfileLine::clear()
+void WHProfileLine::clear()
 {
   line_tag="";
   line_value="";
 }
 
 
-ProfileSection::ProfileSection()
+WHProfileSection::WHProfileSection()
 {
   clear();
 }
 
 
-QString ProfileSection::name() const
+QString WHProfileSection::name() const
 {
   return section_name;
 }
 
 
-void ProfileSection::setName(QString name)
+void WHProfileSection::setName(QString name)
 {
   section_name=name;
 }
 
 
-bool ProfileSection::getValue(QString tag,QString *value) const
+bool WHProfileSection::getValue(QString tag,QString *value) const
 {
   for(unsigned i=0;i<section_line.size();i++) {
     if(section_line[i].tag()==tag) {
@@ -91,40 +91,40 @@ bool ProfileSection::getValue(QString tag,QString *value) const
 }
 
 
-void ProfileSection::addValue(QString tag,QString value)
+void WHProfileSection::addValue(QString tag,QString value)
 {
-  section_line.push_back(ProfileLine());
+  section_line.push_back(WHProfileLine());
   section_line.back().setTag(tag);
   section_line.back().setValue(value);
 }
 
 
-void ProfileSection::clear()
+void WHProfileSection::clear()
 {
   section_name="";
   section_line.resize(0);
 }
 
 
-Profile::Profile()
+WHProfile::WHProfile()
 {
 }
 
 
-QString Profile::source() const
+QString WHProfile::source() const
 {
   return profile_source;
 }
 
 
-bool Profile::setSource(const QString &filename)
+bool WHProfile::setSource(const QString &filename)
 {
   QString section;
   int offset;
 
   profile_source=filename;
   profile_section.resize(0);
-  profile_section.push_back(ProfileSection());
+  profile_section.push_back(WHProfileSection());
   profile_section.back().setName("");
   QFile *file=new QFile(filename);
   if(!file->open(QIODevice::ReadOnly)) {
@@ -137,7 +137,7 @@ bool Profile::setSource(const QString &filename)
     if((line.left(1)!=";")&&(line.left(1)!="#")) {
       if((line.left(1)=="[")&&(line.right(1)=="]")) {
 	section=line.mid(1,line.length()-2);
-	profile_section.push_back(ProfileSection());
+	profile_section.push_back(WHProfileSection());
 	profile_section.back().setName(section);
       }
       else if(((offset=line.indexOf('='))!=-1)) {
@@ -155,19 +155,19 @@ bool Profile::setSource(const QString &filename)
 }
 
 
-bool Profile::setSource(std::vector<QString> *values)
+bool WHProfile::setSource(std::vector<QString> *values)
 {
   QString section;
   int offset;
 
   profile_section.resize(0);
-  profile_section.push_back(ProfileSection());
+  profile_section.push_back(WHProfileSection());
   profile_section.back().setName("");
   for(unsigned i=0;i<values->size();i++) {
     if((values->at(i).left(1)!=";")&&(values->at(i).left(1)!="#")) {
       if((values->at(i).left(1)=="[")&&(values->at(i).right(1)=="]")) {
 	section=values->at(i).mid(1,values->at(i).length()-2);
-	profile_section.push_back(ProfileSection());
+	profile_section.push_back(WHProfileSection());
 	profile_section.back().setName(section);
       }
       else if(((offset=values->at(i).indexOf('='))!=-1)) {
@@ -182,7 +182,7 @@ bool Profile::setSource(std::vector<QString> *values)
 }
 
 
-QString Profile::stringValue(const QString &section,const QString &tag,
+QString WHProfile::stringValue(const QString &section,const QString &tag,
 			      const QString &default_str,bool *ok) const
 {
   QString result;
@@ -208,7 +208,7 @@ QString Profile::stringValue(const QString &section,const QString &tag,
 }
 
 
-int Profile::intValue(const QString &section,const QString &tag,
+int WHProfile::intValue(const QString &section,const QString &tag,
 		       int default_value,bool *ok) const
 {
   bool valid;
@@ -227,7 +227,7 @@ int Profile::intValue(const QString &section,const QString &tag,
 }
 
 
-int Profile::hexValue(const QString &section,const QString &tag,
+int WHProfile::hexValue(const QString &section,const QString &tag,
 		       int default_value,bool *ok) const
 {
   bool valid;
@@ -246,7 +246,7 @@ int Profile::hexValue(const QString &section,const QString &tag,
 }
 
 
-float Profile::floatValue(const QString &section,const QString &tag,
+float WHProfile::floatValue(const QString &section,const QString &tag,
 			   float default_value,bool *ok) const
 {
   bool valid;
@@ -265,7 +265,7 @@ float Profile::floatValue(const QString &section,const QString &tag,
 }
 
 
-double Profile::doubleValue(const QString &section,const QString &tag,
+double WHProfile::doubleValue(const QString &section,const QString &tag,
 			    double default_value,bool *ok) const
 {
   bool valid;
@@ -284,7 +284,7 @@ double Profile::doubleValue(const QString &section,const QString &tag,
 }
 
 
-bool Profile::boolValue(const QString &section,const QString &tag,
+bool WHProfile::boolValue(const QString &section,const QString &tag,
 			 bool default_value,bool *ok) const
 {
   bool valid;
@@ -315,7 +315,7 @@ bool Profile::boolValue(const QString &section,const QString &tag,
 }
 
 
-QTime Profile::timeValue(const QString &section,const QString &tag,
+QTime WHProfile::timeValue(const QString &section,const QString &tag,
 			   const QTime &default_value,bool *ok)
 {
   QStringList fields;
@@ -337,21 +337,21 @@ QTime Profile::timeValue(const QString &section,const QString &tag,
 }
 
 
-QHostAddress Profile::addressValue(const QString &section,const QString &tag,
+QHostAddress WHProfile::addressValue(const QString &section,const QString &tag,
 				     const QHostAddress &default_value,bool *ok)
 {
   return QHostAddress(stringValue(section,tag,default_value.toString(),ok));
 }
 
 
-QHostAddress Profile::addressValue(const QString &section,const QString &tag,
+QHostAddress WHProfile::addressValue(const QString &section,const QString &tag,
 				     const QString &default_value,bool *ok)
 {
   return addressValue(section,tag,QHostAddress(default_value),ok);
 }
 
 
-void Profile::clear()
+void WHProfile::clear()
 {
   profile_source="";
   profile_section.resize(0);

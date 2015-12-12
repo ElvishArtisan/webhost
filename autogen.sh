@@ -25,6 +25,15 @@ aclocal $ACLOCAL_FLAGS || {
     exit 1
 }
 
+libtoolize=libtoolize
+if which glibtoolize > /dev/null 2>&1; then
+      libtoolize=glibtoolize
+fi
+$libtoolize --force 2>&1 | sed '/^You should/d' || {
+    echo "libtool failed, exiting..."
+    exit 1
+}
+
 automake --add-missing -Wno-portability || {
     echo "automake --add-missing failed, exiting..."
     exit 1

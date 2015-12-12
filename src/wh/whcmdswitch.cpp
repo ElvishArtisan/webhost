@@ -1,4 +1,4 @@
-// cmdswitch.cpp
+// whcmdswitch.cpp
 //
 // Process Command-Line Switches
 //
@@ -21,9 +21,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "cmdswitch.h"
+#include "whcmdswitch.h"
 
-CmdSwitch::CmdSwitch(int argc,char *argv[],const char *modname,
+WHCmdSwitch::WHCmdSwitch(int argc,char *argv[],const char *modname,
 			 const char *usage)
 {
   unsigned l=0;
@@ -64,37 +64,37 @@ CmdSwitch::CmdSwitch(int argc,char *argv[],const char *modname,
 }
 
 
-unsigned CmdSwitch::keys() const
+unsigned WHCmdSwitch::keys() const
 {
   return switch_keys.size();
 }
 
 
-QString CmdSwitch::key(unsigned n) const
+QString WHCmdSwitch::key(unsigned n) const
 {
   return switch_keys[n];
 }
 
 
-QString CmdSwitch::value(unsigned n) const
+QString WHCmdSwitch::value(unsigned n) const
 {
   return switch_values[n];
 }
 
 
-bool CmdSwitch::processed(unsigned n) const
+bool WHCmdSwitch::processed(unsigned n) const
 {
   return switch_processed[n];
 }
 
 
-void CmdSwitch::setProcessed(unsigned n,bool state)
+void WHCmdSwitch::setProcessed(unsigned n,bool state)
 {
   switch_processed[n]=state;
 }
 
 
-bool CmdSwitch::allProcessed() const
+bool WHCmdSwitch::allProcessed() const
 {
   for(unsigned i=0;i<switch_processed.size();i++) {
     if(!switch_processed[i]) {

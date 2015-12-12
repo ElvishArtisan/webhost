@@ -1,4 +1,4 @@
-// profile.h
+// whprofile.h
 //
 // Class for reading INI configuration files.
 //
@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef PROFILE_H
-#define PROFILE_H
+#ifndef WHPROFILE_H
+#define WHPROFILE_H
 
 #include <vector>
 
@@ -27,10 +27,10 @@
 #include <QTime>
 #include <QHostAddress>
 
-class ProfileLine
+class WHProfileLine
 {
  public:
-  ProfileLine();
+  WHProfileLine();
   QString tag() const;
   void setTag(QString tag);
   QString value() const;
@@ -43,10 +43,10 @@ class ProfileLine
 };
 
 
-class ProfileSection
+class WHProfileSection
 {
  public:
-  ProfileSection();
+  WHProfileSection();
   QString name() const;
   void setName(QString name);
   bool getValue(QString tag,QString *value) const;
@@ -55,14 +55,14 @@ class ProfileSection
 
  private:
   QString section_name;
-  std::vector<ProfileLine> section_line;
+  std::vector<WHProfileLine> section_line;
 };
 
 
-class Profile
+class WHProfile
 {
  public:
-  Profile();
+  WHProfile();
   QString source() const;
   bool setSource(const QString &filename);
   bool setSource(std::vector<QString> *values);
@@ -89,8 +89,8 @@ class Profile
 
  private:
   QString profile_source;
-  std::vector<ProfileSection> profile_section;
+  std::vector<WHProfileSection> profile_section;
 };
 
 
-#endif  // PROFILE_H
+#endif  // WHPROFILE_H

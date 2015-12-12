@@ -18,8 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <wh/whprofile.h>
+
 #include "config.h"
-#include "profile.h"
 
 Config::Config()
 {
@@ -62,7 +63,7 @@ int Config::serviceRespawnDelay() const
 
 void Config::load()
 {
-  Profile *p=new Profile();
+  WHProfile *p=new WHProfile();
 
   p->setSource(WEBHOST_CONF_FILE);
   config_control_port=p->

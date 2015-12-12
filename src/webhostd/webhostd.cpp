@@ -25,7 +25,8 @@
 #include <QCoreApplication>
 #include <QHostAddress>
 
-#include "cmdswitch.h"
+#include <wh/whcmdswitch.h>
+
 #include "webhostd.h"
 
 MainObject::MainObject(QObject *parent)
@@ -34,8 +35,8 @@ MainObject::MainObject(QObject *parent)
   main_debug=false;
   main_service_process=NULL;
 
-  CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
+  WHCmdSwitch *cmd=
+    new WHCmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="-d") {
       main_debug=true;
