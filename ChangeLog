@@ -14,3 +14,11 @@
 	* Implemented the RESTART command in webhostd(8).
 2015-12-12 Fred Gleason <fredg@paravelsystems.com>
 	* Stubbed out a 'libwebhost' library in 'src/wh/'.
+2015-12-12 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHCgiPost' class in 'src/wh/whcgipost.cpp' and
+	'src/wh/whcgipost.h'.
+	* Added a 'WHCgiApplication' class in 'src/wh/whcgiapplication.cpp'
+	and 'src/wh/whcgiapplication.h'.
+	* Added a 'WHCgiPage' class in 'src/wh/whcgipage.cpp' and
+	'src/wh/whcgipage.h'.
+	* Added a 'cgitest' application in 'src/tests/'.

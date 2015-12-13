@@ -106,6 +106,7 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     docs/Makefile \
     src/wh/Makefile \
+    src/tests/Makefile \
     src/webhostd/Makefile \
     src/Makefile \
     webhost.spec \

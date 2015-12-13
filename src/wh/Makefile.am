@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir) @QT4_CFLAGS@
+AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src @QT4_CFLAGS@
 MOC = @MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -31,14 +31,18 @@ clean-local:
 	rm -rf debug release
 
 lib_LTLIBRARIES = libwebhost.la
-dist_libwebhost_la_SOURCES = whcmdswitch.cpp whcmdswitch.h\
+dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
+                             whcmdswitch.cpp whcmdswitch.h\
+                             whcgipage.cpp whcgipage.h\
+                             whcgipost.cpp whcgipost.h\
                              whprofile.cpp whprofile.h
 
-#nodist_libwebhost_la_SOURCES = 
+nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp
 
 includedir = $(prefix)/include/wh
 
-include_HEADERS = whcmdswitch.h\
+include_HEADERS = whcgiapplication.h\
+                  whcmdswitch.h\
                   whprofile.h
 
 libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)

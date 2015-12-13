@@ -26,10 +26,10 @@ SUBDIRS = conf\
 
 install-exec-local:	
 	mkdir -p $(DESTDIR)/etc/init.d
-	cp rc.webhostd $(DESTDIR)/etc/init.d/webhostd
+	cp rc.webhost $(DESTDIR)/etc/init.d/webhost
 
 uninstall-local:	
-	rm -f $(DESTDIR)/etc/init.d/webhostd
+	rm -f $(DESTDIR)/etc/init.d/webhost
 
 rpm:	dist
 	cp webhost-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -44,7 +44,7 @@ EXTRA_DIST = webhost.spec.in\
              get_distro.sh\
              get_target.sh\
              PACKAGE_VERSION\
-             rc.webhostd.in
+             rc.webhost.in
 
 CLEANFILES = *~\
              *.deb\
