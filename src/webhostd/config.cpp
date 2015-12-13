@@ -25,9 +25,9 @@
 Config::Config()
 {
   config_control_port=WEBHOST_DEFAULT_CONTROL_PORT;
-  config_ntp_configuration_file=WEBHOST_DEFAULT_NTP_CONF_FILE;
+  config_ntp_configuration_file=WEBHOSTD_DEFAULT_NTP_CONF_FILE;
   config_service_command="";
-  config_service_respawn_delay=WEBHOST_DEFAULT_SERVICE_RESPAWN_DELAY;
+  config_service_respawn_delay=WEBHOSTD_DEFAULT_SERVICE_RESPAWN_DELAY;
 }
 
 
@@ -70,13 +70,13 @@ void Config::load()
     intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
   config_ntp_configuration_file=
     p->stringValue("Webhost","NtpConfigurationFile",
-		   WEBHOST_DEFAULT_NTP_CONF_FILE);
+		   WEBHOSTD_DEFAULT_NTP_CONF_FILE);
   config_ntp_service_name=
-    p->stringValue("Webhost","NtpServiceName",WEBHOST_DEFAULT_NTP_SERVICE_NAME);
+    p->stringValue("Webhost","NtpServiceName",WEBHOSTD_DEFAULT_NTP_SERVICE_NAME);
   config_service_command=p->stringValue("Webhost","ServiceCommand");
   config_service_respawn_delay=
     p->intValue("Webhost","ServiceRespawnDelay",
-		WEBHOST_DEFAULT_SERVICE_RESPAWN_DELAY);
+		WEBHOSTD_DEFAULT_SERVICE_RESPAWN_DELAY);
 
   delete p;
 }

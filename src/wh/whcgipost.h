@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include <QUdpSocket>
 
 #include <wh/whsettings.h>
 
@@ -47,11 +48,19 @@ class WHCgiPost
   bool isFile(const QString &name);
   QString tempDir() const;
   WHSettings *settings();
+  void sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
+		     const QHostAddress &gw,const QHostAddress &dns1,
+		     const QHostAddress &dns2) const;
+  void sendNtpCommand(const QHostAddress &ntp1,const QHostAddress &ntp2) const;
+  void sendRebootCommand() const;
+  void sendRestartCommand(const QString &sysname) const;
+  void sendUpgradeCommand(const QString &filename) const;
   QString dump();
   static QString errorString(Error err);
   static QString dumpEnvironment();
 
  private:
+  void SendCommand(const QString &cmd) const;
   void LoadUrlEncoding(char first);
   void LoadMultipartEncoding(char first);
   QString UrlDecode(const QString &str) const;
@@ -63,6 +72,7 @@ class WHCgiPost
   bool post_auto_delete;
   unsigned post_content_length;
   WHSettings *post_settings;
+  QUdpSocket *post_socket;
 };
 
 

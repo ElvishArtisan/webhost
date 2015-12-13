@@ -23,6 +23,9 @@
 
 #include <QString>
 
+#define WEBHOST_DEFAULT_CONTROL_PORT 6352
+#define WEBHOST_CONF_FILE "/etc/webhost.conf"
+
 class WHSettings
 {
  public:

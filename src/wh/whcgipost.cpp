@@ -40,6 +40,11 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   post_settings=new WHSettings();
 
   //
+  // Command Socket
+  //
+  post_socket=new QUdpSocket();
+
+  //
   // Verify Transfer Type
   //
   if(getenv("REQUEST_METHOD")==NULL) {
@@ -120,6 +125,7 @@ WHCgiPost::~WHCgiPost()
       rmdir(post_tempdir.toAscii());
     }
   }
+  delete post_socket;
   delete post_settings;
 }
 
@@ -226,6 +232,40 @@ WHSettings *WHCgiPost::settings()
 }
 
 
+void WHCgiPost::sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
+			      const QHostAddress &gw,const QHostAddress &dns1,
+			      const QHostAddress &dns2) const
+{
+  SendCommand("IP "+addr.toString()+" "+mask.toString()+" "+
+	      gw.toString()+" "+dns1.toString()+" "+dns2.toString()+"!");
+}
+
+
+void WHCgiPost::sendNtpCommand(const QHostAddress &ntp1,
+			       const QHostAddress &ntp2) const
+{
+  SendCommand("NTP "+ntp1.toString()+" "+ntp2.toString()+"!");
+}
+
+
+void WHCgiPost::sendRebootCommand() const
+{
+  SendCommand("REBOOT!");
+}
+
+
+void WHCgiPost::sendRestartCommand(const QString &sysname) const
+{
+  SendCommand("RESTART "+sysname+"!");
+}
+
+
+void WHCgiPost::sendUpgradeCommand(const QString &filename) const
+{
+  SendCommand("UPGRADE "+filename+"!");
+}
+
+
 QString WHCgiPost::dump()
 {
   QString ret;
@@ -313,6 +353,14 @@ QString WHCgiPost::dumpEnvironment()
     i++;
   }
   return ret;
+}
+
+
+void WHCgiPost::SendCommand(const QString &cmd) const
+{
+  post_socket->writeDatagram(cmd.toUtf8(),cmd.length(),
+			     QHostAddress("127.0.0.1"),
+			     WEBHOST_DEFAULT_CONTROL_PORT);
 }
 
 

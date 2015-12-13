@@ -33,5 +33,5 @@ BasePage::~BasePage()
 
 void BasePage::render()
 {
-  printf("This is the BasePage!\n");
+  post()->sendRebootCommand();
 }

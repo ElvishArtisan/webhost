@@ -23,5 +23,10 @@
 	'src/wh/whcgipage.h'.
 	* Added a 'cgitest' application in 'src/tests/'.
 2015-12-13 Fred Gleason <fredg@paravelsystems.com>
-	* Add a 'WHSettings' class in 'src/wh/whsettings.cpp' and
+	* Added a 'WHSettings' class in 'src/wh/whsettings.cpp' and
 	'src/wh/whsettings.h'.
+2015-12-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'WHCgiPost::sendIpCommand()', 'WHCgiPost::sendNtpCommand()',
+	'WHCgiPost::sendRebootCommand()', 'WHCgiPost::sendRestartCommand()' and
+	'WHCgiPost::sendUpgradeCommand()' methods in 'src/wh/whcgipost.cpp'
+	and 'src'wh/whcgipost.h'.
