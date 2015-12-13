@@ -32,7 +32,6 @@ MainObject::MainObject(QObject *parent)
   : WHCgiApplication(parent)
 {
   addPage(0,new BasePage(post()));
-  addPage(0,new BasePage(post()));
 }
 
 

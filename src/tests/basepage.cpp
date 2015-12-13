@@ -33,7 +33,5 @@ BasePage::~BasePage()
 
 void BasePage::render()
 {
-  printf("Content-type: text/html\n\n");
   printf("This is the BasePage!\n");
-  exit(200);
 }

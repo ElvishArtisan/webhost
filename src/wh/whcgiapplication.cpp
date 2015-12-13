@@ -68,7 +68,10 @@ void WHCgiApplication::renderData()
   if(app_pages[id]==NULL) {
     WHCgiPage::exit(500,QString().sprintf("Unknown page ID %d received",id));
   }
+  app_pages[id]->renderHead();
+  app_pages[id]->renderBodyStart();
   app_pages[id]->render();
+  app_pages[id]->renderBodyEnd();
   WHCgiPage::exit(200);
 }
 

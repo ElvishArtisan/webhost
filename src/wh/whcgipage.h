@@ -28,14 +28,29 @@ class WHCgiPage
  public:
   WHCgiPage(WHCgiPost *post);
   ~WHCgiPage();
+  QString menuText() const;
+  void setMenuText(const QString &str);
+  QString titleText() const;
+  void setTitleText(const QString &str);
+  QString mimeType() const;
+  void setMimeType(const QString &str);
+  virtual void renderHead();
+  virtual void renderBodyStart();
   virtual void render()=0;
+  virtual void renderBodyEnd();
   static void exit(int resp_code,const QString &msg="");
 
  protected:
+  WHSettings *settings();
   WHCgiPost *post();
 
  private:
+  QString page_menu_text;
+  QString page_title_text;
+  QString page_mime_type;
+  QString page_language;
   WHCgiPost *page_post;
+  WHSettings *page_settings;
 };
 
 

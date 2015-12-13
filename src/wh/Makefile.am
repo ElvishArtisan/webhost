@@ -35,7 +35,8 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whcmdswitch.cpp whcmdswitch.h\
                              whcgipage.cpp whcgipage.h\
                              whcgipost.cpp whcgipost.h\
-                             whprofile.cpp whprofile.h
+                             whprofile.cpp whprofile.h\
+                             whsettings.cpp whsettings.h
 
 nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp
 

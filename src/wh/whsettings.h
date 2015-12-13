@@ -1,6 +1,6 @@
-// whcgipost.h
+// whsettings.h
 //
-// Base class for CGI Applications
+// WebHost settings
 //
 //   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,40 +18,21 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WHCGIAPPLICATION_H
-#define WHCGIAPPLICATION_H
+#ifndef WHSETTINGS_H
+#define WHSETTINGS_H
 
-#include <map>
-
-#include <QHostAddress>
-#include <QObject>
 #include <QString>
-#include <QStringList>
-#include <QTimer>
 
-#include <wh/whcgipage.h>
-#include <wh/whcgipost.h>
-#include <wh/whsettings.h>
-
-class WHCgiApplication : public QObject
+class WHSettings
 {
-  Q_OBJECT;
  public:
-  WHCgiApplication(QObject *parent=0,unsigned maxsize=0,bool auto_delete=true);
-  ~WHCgiApplication();
-  void addPage(int cmd_id,WHCgiPage *page);
-
- private slots:
-  void renderData();
-
- protected:
-  WHCgiPost *post() const;
+  WHSettings();
+  QString language() const;
+  void setLanguage(const QString &str);
 
  private:
-  std::map<int,WHCgiPage *> app_pages;
-  WHCgiPost *app_post;
-  QTimer *app_render_timer;
+  QString set_language;
 };
 
 
-#endif  // WHCGIAPPLICATION_H
+#endif  // WHSETTINGS_H

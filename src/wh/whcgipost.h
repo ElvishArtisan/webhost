@@ -26,6 +26,8 @@
 #include <QString>
 #include <QStringList>
 
+#include <wh/whsettings.h>
+
 class WHCgiPost
 {
  public:
@@ -44,6 +46,7 @@ class WHCgiPost
   bool getValue(const QString &name,bool *n);
   bool isFile(const QString &name);
   QString tempDir() const;
+  WHSettings *settings();
   QString dump();
   static QString errorString(Error err);
   static QString dumpEnvironment();
@@ -59,6 +62,7 @@ class WHCgiPost
   QString post_tempdir;
   bool post_auto_delete;
   unsigned post_content_length;
+  WHSettings *post_settings;
 };
 
 

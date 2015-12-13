@@ -37,6 +37,7 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   post_encoding=WHCgiPost::AutoEncoded;
   post_error=WHCgiPost::ErrorNotInitialized;
   post_auto_delete=auto_delete;
+  post_settings=new WHSettings();
 
   //
   // Verify Transfer Type
@@ -119,6 +120,7 @@ WHCgiPost::~WHCgiPost()
       rmdir(post_tempdir.toAscii());
     }
   }
+  delete post_settings;
 }
 
 
@@ -215,6 +217,12 @@ bool WHCgiPost::isFile(const QString &name)
 QString WHCgiPost::tempDir() const
 {
   return post_tempdir;
+}
+
+
+WHSettings *WHCgiPost::settings()
+{
+  return post_settings;
 }
 
 
