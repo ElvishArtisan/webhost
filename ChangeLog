@@ -30,3 +30,12 @@
 	'WHCgiPost::sendRebootCommand()', 'WHCgiPost::sendRestartCommand()' and
 	'WHCgiPost::sendUpgradeCommand()' methods in 'src/wh/whcgipost.cpp'
 	and 'src'wh/whcgipost.h'.
+2015-12-13 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'whcgipage.h', 'whcgipost.h' and 'whsettings.h' to the
+	'include_HEADERS' list in 'src/wh/Makefile.am'.
+	* Added a 'WHCgiPage::addScript()' method in 'src/wh/whcgipage.cpp'
+	and 'src/wh/whcgipage.h'.
+	* Added 'WHCgiPost::ipAddress()', 'WHCgiPost::ipNetmask()',
+	'WHCgiPost::ipGateway()', 'WHCgiPost::dnsAddress()' and
+	'WHCgiPost::ntpAddress()' methods in 'src/wh/whcgipost.cpp' and
+	'src/wh/whcgipost.h'.

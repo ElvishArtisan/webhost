@@ -25,6 +25,8 @@
 
 #define WEBHOST_DEFAULT_CONTROL_PORT 6352
 #define WEBHOST_CONF_FILE "/etc/webhost.conf"
+#define WEBHOST_MAX_NTP_SERVERS 2
+#define WEBHOST_MAX_DNS_SERVERS 2
 
 class WHSettings
 {
@@ -32,9 +34,21 @@ class WHSettings
   WHSettings();
   QString language() const;
   void setLanguage(const QString &str);
+  QString activeLinkColor() const;
+  void setActiveLinkColor(const QString &color);
+  QString linkColor() const;
+  void setLinkColor(const QString &color);
+  QString visitedLinkColor() const;
+  void setVisitedLinkColor(const QString &color);
+  QString backgroundColor() const;
+  void setBackgroundColor(const QString &color);
 
  private:
   QString set_language;
+  QString set_active_link_color;
+  QString set_link_color;
+  QString set_visited_link_color;
+  QString set_background_color;
 };
 
 

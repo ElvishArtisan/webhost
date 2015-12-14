@@ -74,6 +74,12 @@ void WHCgiPage::setMimeType(const QString &str)
 }
 
 
+void WHCgiPage::addScript(const QString &scriptname)
+{
+  page_scripts.push_back(scriptname);
+}
+
+
 void WHCgiPage::exit(int resp_code,const QString &msg)
 {
   if(!msg.isEmpty()) {
@@ -100,13 +106,22 @@ void WHCgiPage::renderHead()
   printf("<html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" lang=\"%s\">\n",(const char *)page_settings->language().toUtf8());
   printf("<head>\n");
   printf("<title>%s</title>\n",(const char *)page_title_text.toUtf8());
+  printf("<meta content=\"text/html; charset=windows-1252\" http-equiv=Content-Type>\n");
+  for(int i=0;i<page_scripts.size();i++) {
+    printf("<script type=\"text/javascript\" src=\"%s\"></script>\n",
+	   (const char *)page_scripts[i].toUtf8());
+  }
   printf("</head>\n");
 }
 
 
 void WHCgiPage::renderBodyStart()
 {
-  printf("<body>\n");
+  printf("<body bgColor=\"%s\" alink=\"%s\" link=\"%s\" vlink=\"%s\">\n",
+	 (const char *)page_settings->backgroundColor().toUtf8(),
+	 (const char *)page_settings->activeLinkColor().toUtf8(),
+	 (const char *)page_settings->linkColor().toUtf8(),
+	 (const char *)page_settings->visitedLinkColor().toUtf8());
 }
 
 

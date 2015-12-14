@@ -21,6 +21,8 @@
 #ifndef WHCGIPAGE_H
 #define WHCGIPAGE_H
 
+#include <QStringList>
+
 #include <wh/whcgipost.h>
 
 class WHCgiPage
@@ -34,6 +36,7 @@ class WHCgiPage
   void setTitleText(const QString &str);
   QString mimeType() const;
   void setMimeType(const QString &str);
+  void addScript(const QString &scriptname);
   virtual void renderHead();
   virtual void renderBodyStart();
   virtual void render()=0;
@@ -51,6 +54,7 @@ class WHCgiPage
   QString page_language;
   WHCgiPost *page_post;
   WHSettings *page_settings;
+  QStringList page_scripts;
 };
 
 

@@ -109,8 +109,9 @@ AC_CONFIG_FILES([ \
     src/tests/Makefile \
     src/webhostd/Makefile \
     src/Makefile \
-    webhost.spec \
     rc.webhost \
+    webhost.pc\
+    webhost.spec \
     Makefile ])
 AC_OUTPUT()
 chmod 755 rc.webhostd

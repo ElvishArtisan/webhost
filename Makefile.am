@@ -39,12 +39,16 @@ rpm:	dist
 	rm $(HOME)/rpmbuild/SOURCES/webhost-$(VERSION).tar.gz
 	rm -rf $(HOME)/rpmbuild/BUILD/webhost-$(VERSION)
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = webhost.pc
+
 EXTRA_DIST = webhost.spec.in\
              autogen.sh\
              get_distro.sh\
              get_target.sh\
              PACKAGE_VERSION\
-             rc.webhost.in
+             rc.webhost.in\
+             webhost.pc.in
 
 CLEANFILES = *~\
              *.deb\
@@ -57,7 +61,8 @@ CLEANFILES = *~\
 DISTCLEANFILES = webhost.spec\
                  config.guess\
                  config.sub\
-                 ltmain.sh
+                 ltmain.sh\
+                 webhost.pc
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\

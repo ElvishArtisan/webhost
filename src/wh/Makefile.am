@@ -43,8 +43,11 @@ nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp
 includedir = $(prefix)/include/wh
 
 include_HEADERS = whcgiapplication.h\
+                  whcgipage.h\
+                  whcgipost.h\
                   whcmdswitch.h\
-                  whprofile.h
+                  whprofile.h\
+                  whsettings.h
 
 libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
 

@@ -48,6 +48,13 @@ class WHCgiPost
   bool isFile(const QString &name);
   QString tempDir() const;
   WHSettings *settings();
+  QHostAddress ipAddress() const;
+  QHostAddress ipNetmask() const;
+  QHostAddress ipGateway() const;
+  QHostAddress dnsAddress(int n) const;
+  QHostAddress ntpAddress(int n) const;
+  QStringList timezoneList() const;
+  QString currentTimezone() const;
   void sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
 		     const QHostAddress &dns2) const;
@@ -60,6 +67,7 @@ class WHCgiPost
   static QString dumpEnvironment();
 
  private:
+  void ReadIpConfig();
   void SendCommand(const QString &cmd) const;
   void LoadUrlEncoding(char first);
   void LoadMultipartEncoding(char first);
@@ -73,6 +81,11 @@ class WHCgiPost
   unsigned post_content_length;
   WHSettings *post_settings;
   QUdpSocket *post_socket;
+  QHostAddress post_ip_address;
+  QHostAddress post_netmask_address;
+  QHostAddress post_gateway_address;
+  QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
+  QHostAddress post_ntp_addresses[WEBHOST_MAX_NTP_SERVERS];
 };
 
 

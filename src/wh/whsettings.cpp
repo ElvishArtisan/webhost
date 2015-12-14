@@ -23,6 +23,10 @@
 WHSettings::WHSettings()
 {
   set_language="en";
+  set_active_link_color="#FFFFFF";
+  set_link_color="#FFFFFF";
+  set_visited_link_color="#FFFFFF";
+  set_background_color="#D6D3CE";
 }
 
 
@@ -35,4 +39,52 @@ QString WHSettings::language() const
 void WHSettings::setLanguage(const QString &str)
 {
   set_language=str;
+}
+
+
+QString WHSettings::activeLinkColor() const
+{
+  return set_active_link_color;
+}
+
+
+void WHSettings::setActiveLinkColor(const QString &color)
+{
+  set_active_link_color=color;
+}
+
+
+QString WHSettings::linkColor() const
+{
+  return set_link_color;
+}
+
+
+void WHSettings::setLinkColor(const QString &color)
+{
+  set_link_color=color;
+}
+
+
+QString WHSettings::visitedLinkColor() const
+{
+  return set_visited_link_color;
+}
+
+
+void WHSettings::setVisitedLinkColor(const QString &color)
+{
+  set_visited_link_color=color;
+}
+
+
+QString WHSettings::backgroundColor() const
+{
+  return set_background_color;
+}
+
+
+void WHSettings::setBackgroundColor(const QString &color)
+{
+  set_background_color=color;
 }

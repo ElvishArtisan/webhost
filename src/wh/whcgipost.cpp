@@ -25,6 +25,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <QDir>
+#include <QFileInfoList>
 #include <QVariant>
 
 #include "whcgipost.h"
@@ -38,6 +40,8 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   post_error=WHCgiPost::ErrorNotInitialized;
   post_auto_delete=auto_delete;
   post_settings=new WHSettings();
+
+  ReadIpConfig();
 
   //
   // Command Socket
@@ -232,6 +236,81 @@ WHSettings *WHCgiPost::settings()
 }
 
 
+QHostAddress WHCgiPost::ipAddress() const
+{
+  return post_ip_address;
+}
+
+
+QHostAddress WHCgiPost::ipNetmask() const
+{
+  return post_netmask_address;
+}
+
+
+QHostAddress WHCgiPost::ipGateway() const
+{
+  return post_gateway_address;
+}
+
+
+QHostAddress WHCgiPost::dnsAddress(int n) const
+{
+  return post_dns_addresses[n];
+}
+
+
+QHostAddress WHCgiPost::ntpAddress(int n) const
+{
+  return post_ntp_addresses[n];
+}
+
+
+QStringList WHCgiPost::timezoneList() const
+{
+  QStringList ret;
+  QDir dir("/usr/share/zoneinfo");
+  QFileInfoList files=
+    dir.entryInfoList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files,
+		      QDir::Name|QDir::IgnoreCase);
+
+  for(int i=0;i<files.size();i++) {
+    if(files[i].isFile()) {
+      ret.push_back(files[i].baseName());
+    }
+    //
+    // WARNING: This breaks if the zone data is nested beyond one level!
+    //
+    if(files[i].isDir()) {
+      QDir subdir(dir.canonicalPath()+"/"+files[i].baseName());
+      QStringList subfiles=subdir.entryList(QDir::NoDotAndDotDot|QDir::Files,
+					    QDir::Name|QDir::IgnoreCase);
+      for(int j=0;j<subfiles.size();j++) {
+	ret.push_back(files[i].baseName()+"/"+subfiles[j]);
+      }
+    }
+  }
+
+  return ret;
+}
+
+
+QString WHCgiPost::currentTimezone() const
+{
+  char line[1024];
+  FILE *f=NULL;
+  QString ret="Etc/UTC";
+
+  if((f=fopen("/etc/timezone","r"))!=NULL) {
+    if(fgets(line,1024,f)!=NULL) {
+      ret=QString(line).left(strlen(line)-1);
+    }
+    fclose(f);
+  }
+  return ret;
+}
+
+
 void WHCgiPost::sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 			      const QHostAddress &gw,const QHostAddress &dns1,
 			      const QHostAddress &dns2) const
@@ -355,6 +434,37 @@ QString WHCgiPost::dumpEnvironment()
   return ret;
 }
 
+
+void WHCgiPost::ReadIpConfig()
+{
+  FILE *f=NULL;
+  char line[1024];
+  QStringList params;
+
+  if((f=fopen("/etc/sysconfig/network-scripts/ifcfg-eth0","r"))
+     !=NULL) {
+    while(fgets(line,1024,f)!=NULL) {
+      QStringList f0=QString(line).trimmed().split("=");
+      if(f0.size()==2) {
+	if(f0[0]=="IPADDR") {
+	  post_ip_address.setAddress(f0[1]);
+	}
+	if(f0[0]=="GATEWAY") {
+	  post_gateway_address.setAddress(f0[1]);
+	}
+	if(f0[0]=="NETMASK") {
+	  post_netmask_address.setAddress(f0[1]);
+	}
+	if(f0[0]=="DNS1") {
+	  post_dns_addresses[0].setAddress(f0[1]);
+	}
+	if(f0[0]=="DNS2") {
+	  post_dns_addresses[1].setAddress(f0[1]);
+	}
+      }
+    }
+  }
+}
 
 void WHCgiPost::SendCommand(const QString &cmd) const
 {
