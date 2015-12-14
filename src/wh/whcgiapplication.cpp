@@ -62,7 +62,7 @@ void WHCgiApplication::addPage(int cmd_id,WHCgiPage *page)
 
 void WHCgiApplication::renderData()
 {
-  int id=0;
+  int id;
 
   post()->getValue("COMMAND",&id);
   if(app_pages[id]==NULL) {
@@ -70,6 +70,9 @@ void WHCgiApplication::renderData()
   }
   app_pages[id]->renderHead();
   app_pages[id]->renderBodyStart();
+  if(id!=0) {
+    RenderMenu(id);
+  }
   app_pages[id]->render();
   app_pages[id]->renderBodyEnd();
   WHCgiPage::exit(200);
@@ -79,4 +82,27 @@ void WHCgiApplication::renderData()
 WHCgiPost *WHCgiApplication::post() const
 {
   return app_post;
+}
+
+
+void WHCgiApplication::RenderMenu(int id)
+{
+  printf("<table border=0 cellpadding=1 cellspacing=0><tr class=\"tab-head\">\n");
+  for(std::map<int,WHCgiPage *>::const_iterator it=app_pages.begin();
+      it!=app_pages.end();it++) {
+    if(!it->second->menuRef().isEmpty()) {
+      printf("<td nowrap>&#160;");
+      if(it->first==id) {
+	printf("%s",(const char *)it->second->menuText().toUtf8());
+      }
+      else {
+	printf("<a href=\"%s\" class=\"tab-head\">%s</a>",
+	       (const char *)it->second->menuRef().toUtf8(),
+	       (const char *)it->second->menuText().toUtf8());
+
+      }
+      printf("&#160;</td><td>|</td>\n");
+    }
+  }
+  printf("</tr></table><br><br>\n");
 }

@@ -36,6 +36,8 @@ class WHCgiPage
   void setTitleText(const QString &str);
   QString mimeType() const;
   void setMimeType(const QString &str);
+  QString menuRef() const;
+  void setMenuRef(const QString &str);
   void addScript(const QString &scriptname);
   virtual void renderHead();
   virtual void renderBodyStart();
@@ -55,6 +57,7 @@ class WHCgiPage
   WHCgiPost *page_post;
   WHSettings *page_settings;
   QStringList page_scripts;
+  QString page_menu_ref;
 };
 
 

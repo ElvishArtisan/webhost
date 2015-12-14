@@ -27,6 +27,7 @@ WHCgiPage::WHCgiPage(WHCgiPost *post)
   page_menu_text=QObject::tr("CGI Page");
   page_title_text=QObject::tr("CGI Page");
   page_mime_type="text/html";
+  page_menu_ref="";
   page_post=post;
   page_settings=new WHSettings(*post->settings());
 }
@@ -74,6 +75,18 @@ void WHCgiPage::setMimeType(const QString &str)
 }
 
 
+QString WHCgiPage::menuRef() const
+{
+  return page_menu_ref;
+}
+
+
+void WHCgiPage::setMenuRef(const QString &str)
+{
+  page_menu_ref=str;
+}
+
+
 void WHCgiPage::addScript(const QString &scriptname)
 {
   page_scripts.push_back(scriptname);
@@ -111,6 +124,9 @@ void WHCgiPage::renderHead()
     printf("<script type=\"text/javascript\" src=\"%s\"></script>\n",
 	   (const char *)page_scripts[i].toUtf8());
   }
+  printf("<style>\n");
+  printf(".tab-head { background:#6383b7; color:white; text-align: center; }\n");
+  printf("</style>\n");
   printf("</head>\n");
 }
 

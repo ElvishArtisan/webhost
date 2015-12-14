@@ -48,6 +48,7 @@ class WHCgiApplication : public QObject
   WHCgiPost *post() const;
 
  private:
+  void RenderMenu(int id);
   std::map<int,WHCgiPage *> app_pages;
   WHCgiPost *app_post;
   QTimer *app_render_timer;

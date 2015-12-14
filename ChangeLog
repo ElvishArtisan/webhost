@@ -39,3 +39,5 @@
 	'WHCgiPost::ipGateway()', 'WHCgiPost::dnsAddress()' and
 	'WHCgiPost::ntpAddress()' methods in 'src/wh/whcgipost.cpp' and
 	'src/wh/whcgipost.h'.
+2015-12-13 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented menu navigation.
