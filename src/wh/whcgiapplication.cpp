@@ -66,7 +66,10 @@ void WHCgiApplication::renderData()
 
   post()->getValue("COMMAND",&id);
   if(app_pages[id]==NULL) {
-    WHCgiPage::exit(500,QString().sprintf("Unknown page ID %d received",id));
+    if(app_pages[0]==NULL) {
+      WHCgiPage::exit(500,QString().sprintf("Unknown page ID %d received",id));
+    }
+    id=0;
   }
   app_pages[id]->renderHead();
   app_pages[id]->renderBodyStart();
