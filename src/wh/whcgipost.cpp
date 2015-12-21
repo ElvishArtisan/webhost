@@ -27,6 +27,7 @@
 
 #include <QDir>
 #include <QFileInfoList>
+#include <QProcess>
 #include <QVariant>
 
 #include "whcgipost.h"
@@ -274,27 +275,17 @@ QHostAddress WHCgiPost::ntpAddress(int n) const
 QStringList WHCgiPost::timezoneList() const
 {
   QStringList ret;
-  QDir dir("/usr/share/zoneinfo");
-  QFileInfoList files=
-    dir.entryInfoList(QDir::NoDotAndDotDot|QDir::Dirs|QDir::Files,
-		      QDir::Name|QDir::IgnoreCase);
+  QStringList args;
 
-  for(int i=0;i<files.size();i++) {
-    if(files[i].isFile()) {
-      ret.push_back(files[i].baseName());
-    }
-    //
-    // WARNING: This breaks if the zone data is nested beyond one level!
-    //
-    if(files[i].isDir()) {
-      QDir subdir(dir.canonicalPath()+"/"+files[i].baseName());
-      QStringList subfiles=subdir.entryList(QDir::NoDotAndDotDot|QDir::Files,
-					    QDir::Name|QDir::IgnoreCase);
-      for(int j=0;j<subfiles.size();j++) {
-	ret.push_back(files[i].baseName()+"/"+subfiles[j]);
-      }
-    }
-  }
+  args.push_back("--no-pager");
+  args.push_back("--no-ask-password");
+  args.push_back("list-timezones");
+
+  QProcess *proc=new QProcess();
+  proc->start("timedatectl",args);
+  proc->waitForFinished();
+  ret=QString(proc->readAllStandardOutput()).split("\n");
+  delete proc;
 
   return ret;
 }
@@ -302,17 +293,30 @@ QStringList WHCgiPost::timezoneList() const
 
 QString WHCgiPost::currentTimezone() const
 {
-  char line[1024];
-  FILE *f=NULL;
-  QString ret="Etc/UTC";
+  QStringList lines;
+  QStringList args;
 
-  if((f=fopen("/etc/timezone","r"))!=NULL) {
-    if(fgets(line,1024,f)!=NULL) {
-      ret=QString(line).left(strlen(line)-1);
+  args.push_back("--no-pager");
+  args.push_back("--no-ask-password");
+  args.push_back("status");
+
+  QProcess *proc=new QProcess();
+  proc->start("timedatectl",args);
+  proc->waitForFinished();
+  lines=QString(proc->readAllStandardOutput()).split("\n");
+  delete proc;
+
+  for(int i=0;i<lines.size();i++) {
+    QStringList f0=lines[i].split(":");
+    if(f0.size()>=2) {
+      if(f0[0].toLower().trimmed()=="time zone") {
+	QStringList f1=f0[1].split(" ",QString::SkipEmptyParts);
+	return f1[0].trimmed();
+      }
     }
-    fclose(f);
   }
-  return ret;
+
+  return QString();
 }
 
 

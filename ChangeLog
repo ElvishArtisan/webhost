@@ -51,3 +51,6 @@
 2015-12-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fix a bug in 'wh/whcgipost.cpp' that broke reading of IP parameters
 	on RHEL 7.
+2015-12-20 Fred Gleason <fredg@paravelsystems.com>
+	* Modified 'WHCgiPost::timezoneList()' and 'WHcurrentTimezone()'
+	methods to work correctly under RHEL 7 in 'wh/whcgipost.cpp'.
