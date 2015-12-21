@@ -24,6 +24,7 @@
 #include <QString>
 
 #define WEBHOST_DEFAULT_CONTROL_PORT 6352
+#define WEBHOST_DEFAULT_NETWORK_DEVICE "eth0"
 #define WEBHOST_CONF_FILE "/etc/webhost.conf"
 #define WEBHOST_MAX_NTP_SERVERS 2
 #define WEBHOST_MAX_DNS_SERVERS 2

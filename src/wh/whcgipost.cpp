@@ -30,6 +30,7 @@
 #include <QVariant>
 
 #include "whcgipost.h"
+#include "whsettings.h"
 
 WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
 {
@@ -40,6 +41,9 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   post_error=WHCgiPost::ErrorNotInitialized;
   post_auto_delete=auto_delete;
   post_settings=new WHSettings();
+
+  post_profile=new WHProfile();
+  post_profile->setSource(WEBHOST_CONF_FILE );
 
   ReadIpConfig();
 
@@ -131,6 +135,7 @@ WHCgiPost::~WHCgiPost()
   }
   delete post_socket;
   delete post_settings;
+  delete post_profile;
 }
 
 
@@ -311,6 +316,12 @@ QString WHCgiPost::currentTimezone() const
 }
 
 
+void WHCgiPost::sendUdpPacket(const QByteArray &data,uint16_t port)
+{
+  post_socket->writeDatagram(data,QHostAddress("127.0.0.1"),port);
+}
+
+
 void WHCgiPost::sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 			      const QHostAddress &gw,const QHostAddress &dns1,
 			      const QHostAddress &dns2) const
@@ -440,12 +451,15 @@ void WHCgiPost::ReadIpConfig()
   FILE *f=NULL;
   char line[1024];
   QStringList params;
+  QString netdev=post_profile->stringValue("Webhost","NetworkInterface",
+					   WEBHOST_DEFAULT_NETWORK_DEVICE);
 
-  if((f=fopen("/etc/sysconfig/network-scripts/ifcfg-eth0","r"))
+  if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+netdev).toUtf8(),"r"))
      !=NULL) {
     while(fgets(line,1024,f)!=NULL) {
       QStringList f0=QString(line).trimmed().split("=");
       if(f0.size()==2) {
+	f0[1]=f0[1].replace("\"","");
 	if(f0[0]=="IPADDR") {
 	  post_ip_address.setAddress(f0[1]);
 	}

@@ -21,12 +21,15 @@
 #ifndef WHCGIPOST_H
 #define WHCGIPOST_H
 
+#include <stdint.h>
+
 #include <QHostAddress>
 #include <QObject>
 #include <QString>
 #include <QStringList>
 #include <QUdpSocket>
 
+#include <wh/whprofile.h>
 #include <wh/whsettings.h>
 
 class WHCgiPost
@@ -55,6 +58,7 @@ class WHCgiPost
   QHostAddress ntpAddress(int n) const;
   QStringList timezoneList() const;
   QString currentTimezone() const;
+  void sendUdpPacket(const QByteArray &data,uint16_t port);
   void sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
 		     const QHostAddress &dns2) const;
@@ -86,6 +90,7 @@ class WHCgiPost
   QHostAddress post_gateway_address;
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
   QHostAddress post_ntp_addresses[WEBHOST_MAX_NTP_SERVERS];
+  WHProfile *post_profile;
 };
 
 

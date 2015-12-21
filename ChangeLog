@@ -45,3 +45,9 @@
 	* Modified the 'WHCgiApplication::renderData()' method so that
 	posts with an unknown command ID are handled by the default
 	page handler (id=0) in 'src/wh/whcgiapplication.cpp'.
+2015-12-20 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHCgiPost::sendUdpPacket()' method in 'wh/whcgipost.cpp'
+	and 'wh/whcgipost.h'.
+2015-12-20 Fred Gleason <fredg@paravelsystems.com>
+	* Fix a bug in 'wh/whcgipost.cpp' that broke reading of IP parameters
+	on RHEL 7.
