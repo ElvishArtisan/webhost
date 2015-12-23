@@ -4,7 +4,7 @@ Sent via UDP to port 6352 on the localhost.
 
 IP <iface> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr>!
 
-NTP <ntp1-addr> <ntp2-addr>!
+NTP <timezone> <ntp1-addr> <ntp2-addr>!
 
 REBOOT!
 

@@ -54,3 +54,5 @@
 2015-12-20 Fred Gleason <fredg@paravelsystems.com>
 	* Modified 'WHCgiPost::timezoneList()' and 'WHcurrentTimezone()'
 	methods to work correctly under RHEL 7 in 'wh/whcgipost.cpp'.
+2015-12-22 Fred Gleason <fredg@paravelsystems.com>
+	* Added a timezone argument to the 'NTP' command.

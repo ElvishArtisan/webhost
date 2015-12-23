@@ -36,18 +36,31 @@ void MainObject::Ntp(const QStringList &cmds)
   //
   // Check that arguments are valid
   //
-  for(int i=1;i<cmds.size();i++) {
+  printf("zone: %s\n",(const char *)cmds[1].toUtf8());
+  for(int i=2;i<cmds.size();i++) {
+    printf("ntp[%d]: %s\n",i,(const char *)cmds[i].toUtf8());
     if(QHostAddress(cmds[i]).isNull()) {
       return;
     }
   }
 
   //
+  // Set the Timezone
+  //
+  args.clear();
+  args.push_back("set-timezone");
+  args.push_back(cmds[1]);
+  proc=new QProcess(this);
+  proc->start("timedatectl",args);
+  proc->waitForFinished();
+  delete proc;
+
+  //
   // Write new configuration file
   //
   if((f=fopen((main_config->ntpConfigurationFile()+".back").toUtf8(),"w"))!=
      NULL) {
-    for(int i=1;i<cmds.size();i++) {
+    for(int i=2;i<cmds.size();i++) {
       fprintf(f,"server %s iburst\n",(const char *)cmds[i].toUtf8());
     }
     fclose(f);
@@ -58,10 +71,11 @@ void MainObject::Ntp(const QStringList &cmds)
   //
   // Restart NTP server
   //
-  args.push_back(main_config->ntpServiceName());
+  args.clear();
   args.push_back("restart");
+  args.push_back(main_config->ntpServiceName());
   proc=new QProcess(this);
-  proc->start("service",args);
+  proc->start("systemctl",args);
   proc->waitForFinished();
   delete proc;
 }
