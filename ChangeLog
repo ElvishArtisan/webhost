@@ -56,3 +56,9 @@
 	methods to work correctly under RHEL 7 in 'wh/whcgipost.cpp'.
 2015-12-22 Fred Gleason <fredg@paravelsystems.com>
 	* Added a timezone argument to the 'NTP' command.
+2015-12-22 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'timezone' parameter to the 'WHCgiPost::sendNtpCommand()'
+	method in 'src/wh/whcgipost.cpp' and 'src/wh/whcgipost.h'.
+2015-12-22 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented the 'WHCgiPost:: ntpAddress()' method in
+	'wh/whcgipost.cpp'.

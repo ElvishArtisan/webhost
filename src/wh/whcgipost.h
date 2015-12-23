@@ -62,7 +62,8 @@ class WHCgiPost
   void sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
 		     const QHostAddress &dns2) const;
-  void sendNtpCommand(const QHostAddress &ntp1,const QHostAddress &ntp2) const;
+  void sendNtpCommand(const QString &timezone,
+		      const QHostAddress &ntp1,const QHostAddress &ntp2) const;
   void sendRebootCommand() const;
   void sendRestartCommand(const QString &sysname) const;
   void sendUpgradeCommand(const QString &filename) const;

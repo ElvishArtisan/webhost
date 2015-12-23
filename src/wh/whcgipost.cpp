@@ -335,10 +335,10 @@ void WHCgiPost::sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
 }
 
 
-void WHCgiPost::sendNtpCommand(const QHostAddress &ntp1,
+void WHCgiPost::sendNtpCommand(const QString &timezone,const QHostAddress &ntp1,
 			       const QHostAddress &ntp2) const
 {
-  SendCommand("NTP "+ntp1.toString()+" "+ntp2.toString()+"!");
+  SendCommand("NTP "+timezone+" "+ntp1.toString()+" "+ntp2.toString()+"!");
 }
 
 
@@ -455,13 +455,14 @@ void WHCgiPost::ReadIpConfig()
   FILE *f=NULL;
   char line[1024];
   QStringList params;
+  QStringList f0;
   QString netdev=post_profile->stringValue("Webhost","NetworkInterface",
 					   WEBHOST_DEFAULT_NETWORK_DEVICE);
 
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+netdev).toUtf8(),"r"))
      !=NULL) {
     while(fgets(line,1024,f)!=NULL) {
-      QStringList f0=QString(line).trimmed().split("=");
+      f0=QString(line).trimmed().split("=");
       if(f0.size()==2) {
 	f0[1]=f0[1].replace("\"","");
 	if(f0[0]=="IPADDR") {
@@ -481,6 +482,20 @@ void WHCgiPost::ReadIpConfig()
 	}
       }
     }
+  }
+
+  int count=0;
+  if((f=fopen("/etc/ntp.conf","r"))!=NULL) {
+    while((fgets(line,1024,f)!=NULL)&&(count<WEBHOST_MAX_NTP_SERVERS)) {
+      f0=QString(line).split(" ");
+      if((f0[0]=="server")&&(f0.size()>=2)) {
+	post_ntp_addresses[count].setAddress(f0[1]);
+	if(!post_ntp_addresses[count].isNull()) {
+	  count++;
+	}
+      }
+    }
+    fclose(f);
   }
 }
 
