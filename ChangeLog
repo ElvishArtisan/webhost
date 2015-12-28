@@ -71,3 +71,5 @@
 2015-12-28 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored 'WHCgiApplication' class to allow for proper ordering
 	of menu items.
+2015-12-28 Fred Gleason <fredg@paravelsystems.com>
+	* Tweaked menu layout in 'src/wh/whcgiapplication.cpp'.

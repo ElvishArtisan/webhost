@@ -85,6 +85,7 @@ WHCgiPost *WHCgiApplication::post() const
 void WHCgiApplication::RenderMenu(int id)
 {
   printf("<table border=0 cellpadding=1 cellspacing=0><tr class=\"tab-head\">\n");
+  printf("<td>|</td>\n");
   for(unsigned i=0;i<app_pages.size();i++) {
     if(!app_pages[i]->menuRef().isEmpty()) {
       printf("<td nowrap>&#160;");
@@ -100,7 +101,8 @@ void WHCgiApplication::RenderMenu(int id)
       printf("&#160;</td><td>|</td>\n");
     }
   }
-  printf("</tr></table><br><br>\n");
+  printf("</tr></table>\n");
+  printf("<br>\n");
 }
 
 
