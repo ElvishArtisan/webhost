@@ -68,3 +68,6 @@
 2015-12-28 Fred Gleason <fredg@paravelsystems.com>
 	* Modified the 'NTP' webroot command to allow hostnames to be
 	used as arguments.
+2015-12-28 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored 'WHCgiApplication' class to allow for proper ordering
+	of menu items.

@@ -24,6 +24,7 @@
 
 WHCgiPage::WHCgiPage(WHCgiPost *post)
 {
+  page_id=-1;
   page_menu_text=QObject::tr("CGI Page");
   page_title_text=QObject::tr("CGI Page");
   page_mime_type="text/html";
@@ -36,6 +37,18 @@ WHCgiPage::WHCgiPage(WHCgiPost *post)
 WHCgiPage::~WHCgiPage()
 {
   delete page_settings;
+}
+
+
+int WHCgiPage::id() const
+{
+  return page_id;
+}
+
+
+void WHCgiPage::setId(int id)
+{
+  page_id=id;
 }
 
 

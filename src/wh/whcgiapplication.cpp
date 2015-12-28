@@ -49,35 +49,29 @@ WHCgiApplication::~WHCgiApplication()
 
 void WHCgiApplication::addPage(int cmd_id,WHCgiPage *page)
 {
-  if(app_pages[cmd_id]==NULL) {
-    app_pages[cmd_id]=page;
-  }
-  else {
-    WHCgiPage::exit(400,
-	QString().sprintf("attempted to add page with duplicate ID \"%d\"",
-			  cmd_id));
-  }
+  app_pages.push_back(page);
+  app_pages.back()->setId(cmd_id);
 }
 
 
 void WHCgiApplication::renderData()
 {
   int id;
+  WHCgiPage *page=NULL;
 
   post()->getValue("COMMAND",&id);
-  if(app_pages[id]==NULL) {
-    if(app_pages[0]==NULL) {
+  if((page=GetPage(id))==NULL) {
+    if((page=GetPage(0))==NULL) {
       WHCgiPage::exit(500,QString().sprintf("Unknown page ID %d received",id));
     }
-    id=0;
   }
-  app_pages[id]->renderHead();
-  app_pages[id]->renderBodyStart();
+  page->renderHead();
+  page->renderBodyStart();
   if(id!=0) {
     RenderMenu(id);
   }
-  app_pages[id]->render();
-  app_pages[id]->renderBodyEnd();
+  page->render();
+  page->renderBodyEnd();
   WHCgiPage::exit(200);
 }
 
@@ -91,21 +85,32 @@ WHCgiPost *WHCgiApplication::post() const
 void WHCgiApplication::RenderMenu(int id)
 {
   printf("<table border=0 cellpadding=1 cellspacing=0><tr class=\"tab-head\">\n");
-  for(std::map<int,WHCgiPage *>::const_iterator it=app_pages.begin();
-      it!=app_pages.end();it++) {
-    if(!it->second->menuRef().isEmpty()) {
+  for(unsigned i=0;i<app_pages.size();i++) {
+    if(!app_pages[i]->menuRef().isEmpty()) {
       printf("<td nowrap>&#160;");
-      if(it->first==id) {
-	printf("%s",(const char *)it->second->menuText().toUtf8());
+      if(app_pages[i]->id()==id) {
+	printf("%s",(const char *)app_pages[i]->menuText().toUtf8());
       }
       else {
 	printf("<a href=\"%s\" class=\"tab-head\">%s</a>",
-	       (const char *)it->second->menuRef().toUtf8(),
-	       (const char *)it->second->menuText().toUtf8());
+	       (const char *)app_pages[i]->menuRef().toUtf8(),
+	       (const char *)app_pages[i]->menuText().toUtf8());
 
       }
       printf("&#160;</td><td>|</td>\n");
     }
   }
   printf("</tr></table><br><br>\n");
+}
+
+
+WHCgiPage *WHCgiApplication::GetPage(int id)
+{
+  for(unsigned i=0;i<app_pages.size();i++) {
+    if(app_pages[i]->id()==id) {
+      return app_pages[i];
+    }
+  }
+
+  return NULL;
 }

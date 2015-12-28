@@ -21,7 +21,7 @@
 #ifndef WHCGIAPPLICATION_H
 #define WHCGIAPPLICATION_H
 
-#include <map>
+#include <vector>
 
 #include <QHostAddress>
 #include <QObject>
@@ -49,7 +49,8 @@ class WHCgiApplication : public QObject
 
  private:
   void RenderMenu(int id);
-  std::map<int,WHCgiPage *> app_pages;
+  WHCgiPage *GetPage(int id);
+  std::vector<WHCgiPage *> app_pages;
   WHCgiPost *app_post;
   QTimer *app_render_timer;
 };

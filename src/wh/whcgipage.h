@@ -30,6 +30,8 @@ class WHCgiPage
  public:
   WHCgiPage(WHCgiPost *post);
   ~WHCgiPage();
+  int id() const;
+  void setId(int id);
   QString menuText() const;
   void setMenuText(const QString &str);
   QString titleText() const;
@@ -50,6 +52,7 @@ class WHCgiPage
   WHCgiPost *post();
 
  private:
+  int page_id;
   QString page_menu_text;
   QString page_title_text;
   QString page_mime_type;
