@@ -28,6 +28,7 @@
 #include <wh/whsettings.h>
 
 #define WEBHOSTD_DEFAULT_NTP_CONF_FILE "/etc/ntp.conf"
+#define WEBHOSTD_DEFAULT_NETWORK_INTERFACE "eth0"
 #define WEBHOSTD_DEFAULT_NTP_SERVICE_NAME "ntpd"
 #define WEBHOSTD_DEFAULT_SERVICE_RESPAWN_DELAY 100
 #define WEBHOSTD_PROCESS_KILL_INTERVAL 5000
@@ -37,6 +38,7 @@ class Config
  public:
   Config();
   uint16_t controlPort() const;
+  QString networkInterface(unsigned n) const;
   QString ntpConfigurationFile() const;
   QString ntpServiceName() const;
   QString serviceCommand() const;
@@ -45,6 +47,7 @@ class Config
 
  private:
   uint16_t config_control_port;
+  std::vector<QString> config_network_interfaces;
   QString config_ntp_configuration_file;
   QString config_ntp_service_name;
   QString config_service_command;

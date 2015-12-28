@@ -23,6 +23,8 @@
 
 #include <stdint.h>
 
+#include <vector>
+
 #include <QHostAddress>
 #include <QObject>
 #include <QString>
@@ -51,15 +53,16 @@ class WHCgiPost
   bool isFile(const QString &name);
   QString tempDir() const;
   WHSettings *settings();
-  QHostAddress ipAddress() const;
-  QHostAddress ipNetmask() const;
+  QHostAddress ipAddress(unsigned iface) const;
+  QHostAddress ipNetmask(unsigned iface) const;
   QHostAddress ipGateway() const;
-  QHostAddress dnsAddress(int n) const;
-  QHostAddress ntpAddress(int n) const;
+  QHostAddress dnsAddress(unsigned n) const;
+  QHostAddress ntpAddress(unsigned n) const;
   QStringList timezoneList() const;
   QString currentTimezone() const;
   void sendUdpPacket(const QByteArray &data,uint16_t port);
-  void sendIpCommand(const QHostAddress &addr,const QHostAddress &mask,
+  void sendIpCommand(unsigned iface_num,const QHostAddress &addr,
+		     const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
 		     const QHostAddress &dns2) const;
   void sendNtpCommand(const QString &timezone,
@@ -86,8 +89,8 @@ class WHCgiPost
   unsigned post_content_length;
   WHSettings *post_settings;
   QUdpSocket *post_socket;
-  QHostAddress post_ip_address;
-  QHostAddress post_netmask_address;
+  std::vector<QHostAddress> post_ip_addresses;
+  std::vector<QHostAddress> post_netmask_addresses;
   QHostAddress post_gateway_address;
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
   QHostAddress post_ntp_addresses[WEBHOST_MAX_NTP_SERVERS];

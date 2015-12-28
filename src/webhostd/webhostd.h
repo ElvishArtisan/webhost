@@ -47,6 +47,10 @@ class MainObject : public QObject
 
  private:
   void Ip(const QStringList &cmds);
+  void IpSeedEntry(const QString &param,QStringList &params,
+		   QStringList &values) const;
+  void IpPruneEntry(const QString &param,QStringList &params,
+		   QStringList &values) const;
   void Ntp(const QStringList &cmds);
   void Reboot(const QStringList &cmds);
   void Restart(const QStringList &cmds);

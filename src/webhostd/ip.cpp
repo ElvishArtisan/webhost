@@ -32,7 +32,8 @@ void MainObject::Ip(const QStringList &cmds)
   QStringList values;
   FILE *f=NULL;
   char line[1024];
-  QString ifcfg_file="/etc/sysconfig/network-scripts/ifcfg-"+cmds[1];
+  QString ifcfg_file="/etc/sysconfig/network-scripts/ifcfg-"+
+    main_config->networkInterface(cmds[1].toUInt()-1);
   QProcess *proc=NULL;
   QStringList args;
 
@@ -50,6 +51,11 @@ void MainObject::Ip(const QStringList &cmds)
 	}
       }
       fclose(f);
+      IpSeedEntry("IPADDR",params,values);
+      IpSeedEntry("NETMASK",params,values);
+      IpSeedEntry("GATEWAY",params,values);
+      IpSeedEntry("DNS1",params,values);
+      IpSeedEntry("DNS2",params,values);
 
       for(int i=0;i<params.size();i++) {
 	if(params[i]=="IPADDR") {
@@ -72,6 +78,8 @@ void MainObject::Ip(const QStringList &cmds)
 	  }
 	}
       }
+      IpPruneEntry("DNS1",params,values);
+      IpPruneEntry("DNS2",params,values);
     }
 
     //
@@ -99,6 +107,34 @@ void MainObject::Ip(const QStringList &cmds)
     else {
       fprintf(stderr,"unable to open interface configuration [%s]\n",
 	      strerror(errno));
+    }
+  }
+}
+
+
+void MainObject::IpSeedEntry(const QString &param,QStringList &params,
+			     QStringList &values) const
+{
+  for(int i=0;i<params.size();i++) {
+    if(params[i]==param) {
+      return;
+    }
+  }
+  params.push_back(param);
+  values.push_back("0.0.0.0");
+}
+
+
+void MainObject::IpPruneEntry(const QString &param,QStringList &params,
+			      QStringList &values) const
+{
+  for(int i=0;i<params.size();i++) {
+    if(params[i]==param) {
+      if(values[i]=="0.0.0.0") {
+	params.erase(params.begin()+i);
+	values.erase(values.begin()+i);
+	return;
+      }
     }
   }
 }

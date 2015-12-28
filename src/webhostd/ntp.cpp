@@ -36,9 +36,7 @@ void MainObject::Ntp(const QStringList &cmds)
   //
   // Check that arguments are valid
   //
-  printf("zone: %s\n",(const char *)cmds[1].toUtf8());
   for(int i=2;i<cmds.size();i++) {
-    printf("ntp[%d]: %s\n",i,(const char *)cmds[i].toUtf8());
     if(QHostAddress(cmds[i]).isNull()) {
       return;
     }

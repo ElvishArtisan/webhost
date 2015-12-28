@@ -37,6 +37,15 @@ uint16_t Config::controlPort() const
 }
 
 
+QString Config::networkInterface(unsigned n) const
+{
+  if(n>=config_network_interfaces.size()) {
+    return QString();
+  }
+  return config_network_interfaces[n];
+}
+
+
 QString Config::ntpConfigurationFile() const
 {
   return config_ntp_configuration_file;
@@ -63,6 +72,7 @@ int Config::serviceRespawnDelay() const
 
 void Config::load()
 {
+  bool ok=false;
   WHProfile *p=new WHProfile();
 
   p->setSource(WEBHOST_CONF_FILE);
@@ -77,6 +87,17 @@ void Config::load()
   config_service_respawn_delay=
     p->intValue("Webhost","ServiceRespawnDelay",
 		WEBHOSTD_DEFAULT_SERVICE_RESPAWN_DELAY);
+  int iface_count=0;
+  QString iface;
+
+  iface=p->stringValue("Webhost",QString().sprintf("NetworkInterface%d",
+						   iface_count+1),"",&ok);
+  while(ok) {
+    config_network_interfaces.push_back(iface);
+    iface_count++;
+    iface=p->stringValue("Webhost",QString().sprintf("NetworkInterface%d",
+						     iface_count+1),"",&ok);
+  }
 
   delete p;
 }
