@@ -34,15 +34,6 @@ void MainObject::Ntp(const QStringList &cmds)
   QStringList args;
 
   //
-  // Check that arguments are valid
-  //
-  for(int i=2;i<cmds.size();i++) {
-    if(QHostAddress(cmds[i]).isNull()) {
-      return;
-    }
-  }
-
-  //
   // Set the Timezone
   //
   args.clear();
@@ -59,7 +50,9 @@ void MainObject::Ntp(const QStringList &cmds)
   if((f=fopen((main_config->ntpConfigurationFile()+".back").toUtf8(),"w"))!=
      NULL) {
     for(int i=2;i<cmds.size();i++) {
-      fprintf(f,"server %s iburst\n",(const char *)cmds[i].toUtf8());
+      if(cmds[i]!="0.0.0.0") {
+	fprintf(f,"server %s iburst\n",(const char *)cmds[i].toUtf8());
+      }
     }
     fclose(f);
     rename((main_config->ntpConfigurationFile()+".back").toUtf8(),

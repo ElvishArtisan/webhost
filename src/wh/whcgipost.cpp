@@ -266,9 +266,9 @@ QHostAddress WHCgiPost::dnsAddress(unsigned n) const
 }
 
 
-QHostAddress WHCgiPost::ntpAddress(unsigned n) const
+QString WHCgiPost::ntpHostname(unsigned n) const
 {
-  return post_ntp_addresses[n];
+  return post_ntp_hostnames[n];
 }
 
 
@@ -337,10 +337,16 @@ void WHCgiPost::sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 }
 
 
-void WHCgiPost::sendNtpCommand(const QString &timezone,const QHostAddress &ntp1,
-			       const QHostAddress &ntp2) const
+void WHCgiPost::sendNtpCommand(const QString &timezone,QString ntp1,
+			       QString ntp2) const
 {
-  SendCommand("NTP "+timezone+" "+ntp1.toString()+" "+ntp2.toString()+"!");
+  if(ntp1.isEmpty()) {
+    ntp1="0.0.0.0";
+  }
+  if(ntp2.isEmpty()) {
+    ntp2="0.0.0.0";
+  }
+  SendCommand("NTP "+timezone+" "+ntp1+" "+ntp2+"!");
 }
 
 
@@ -496,10 +502,8 @@ void WHCgiPost::ReadIpConfig()
     while((fgets(line,1024,f)!=NULL)&&(count<WEBHOST_MAX_NTP_SERVERS)) {
       f0=QString(line).split(" ");
       if((f0[0]=="server")&&(f0.size()>=2)) {
-	post_ntp_addresses[count].setAddress(f0[1]);
-	if(!post_ntp_addresses[count].isNull()) {
-	  count++;
-	}
+	post_ntp_hostnames[count]=f0[1];
+	count++;
       }
     }
     fclose(f);

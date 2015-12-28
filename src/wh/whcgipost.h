@@ -57,7 +57,7 @@ class WHCgiPost
   QHostAddress ipNetmask(unsigned iface) const;
   QHostAddress ipGateway() const;
   QHostAddress dnsAddress(unsigned n) const;
-  QHostAddress ntpAddress(unsigned n) const;
+  QString ntpHostname(unsigned n) const;
   QStringList timezoneList() const;
   QString currentTimezone() const;
   void sendUdpPacket(const QByteArray &data,uint16_t port);
@@ -65,8 +65,7 @@ class WHCgiPost
 		     const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
 		     const QHostAddress &dns2) const;
-  void sendNtpCommand(const QString &timezone,
-		      const QHostAddress &ntp1,const QHostAddress &ntp2) const;
+  void sendNtpCommand(const QString &timezone,QString ntp1,QString ntp2) const;
   void sendRebootCommand() const;
   void sendRestartCommand(const QString &sysname) const;
   void sendUpgradeCommand(const QString &filename) const;
@@ -93,7 +92,7 @@ class WHCgiPost
   std::vector<QHostAddress> post_netmask_addresses;
   QHostAddress post_gateway_address;
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
-  QHostAddress post_ntp_addresses[WEBHOST_MAX_NTP_SERVERS];
+  QString post_ntp_hostnames[WEBHOST_MAX_NTP_SERVERS];
   WHProfile *post_profile;
 };
 

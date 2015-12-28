@@ -65,3 +65,6 @@
 2015-12-28 Fred Gleason <fredg@paravelsystems.com>
 	* Modified the 'IP' webroot command to specify interface by number
 	rather than by name.
+2015-12-28 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the 'NTP' webroot command to allow hostnames to be
+	used as arguments.
