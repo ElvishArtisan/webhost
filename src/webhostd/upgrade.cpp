@@ -51,4 +51,9 @@ void MainObject::Upgrade(const QStringList &cmds)
     f0.erase(f0.begin()+f0.size()-1);
     rmdir(f0.join("/").toUtf8());
   }
+
+  if(main_service_process!=NULL) {
+    main_service_process->kill();
+  }
+  exit(0);
 }

@@ -78,3 +78,6 @@
 	'WHCgiApplication'.
 	* Created a 'cgiapp' global variable in 'src/wh/whcgiapplication.cpp'
 	and 'src/wh/whcgiapplication.h'.
+2015-12-29 Fred Gleason <fredg@paravelsystems.com>
+	* Added code in 'src/webhostd/upgrade.cpp' to kill the service
+	command process after applying the upgrade.
