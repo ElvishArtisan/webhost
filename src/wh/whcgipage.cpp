@@ -106,18 +106,6 @@ void WHCgiPage::addScript(const QString &scriptname)
 }
 
 
-void WHCgiPage::exit(int resp_code,const QString &msg)
-{
-  if(!msg.isEmpty()) {
-    printf("Content-type: text/html\n");
-    printf("Status: %d\n",resp_code);
-    printf("\n");
-    printf("%s\n",(const char *)msg.toUtf8());
-  }
-  ::exit(0);
-}
-
-
 WHSettings *WHCgiPage::settings()
 {
   return page_settings;

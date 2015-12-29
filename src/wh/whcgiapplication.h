@@ -40,6 +40,7 @@ class WHCgiApplication : public QObject
   WHCgiApplication(QObject *parent=0,unsigned maxsize=0,bool auto_delete=true);
   ~WHCgiApplication();
   void addPage(int cmd_id,WHCgiPage *page);
+  void exit(int resp_code,const QString &msg="",bool no_cleanup=false);
 
  private slots:
   void renderData();
@@ -55,5 +56,6 @@ class WHCgiApplication : public QObject
   QTimer *app_render_timer;
 };
 
+extern WHCgiApplication *cgiapp;
 
 #endif  // WHCGIAPPLICATION_H

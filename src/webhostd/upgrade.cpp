@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <unistd.h>
+
 #include <QProcess>
 #include <QStringList>
 
@@ -38,5 +40,15 @@ void MainObject::Upgrade(const QStringList &cmds)
     proc=new QProcess(this);
     proc->start("/bin/rpm",args);
     proc->waitForFinished();
+  }
+
+  //
+  // Cleanup Packages
+  //
+  for(int i=1;i<cmds.length();i++) {
+    unlink(cmds[i].toUtf8());
+    QStringList f0=cmds[i].split("/");
+    f0.erase(f0.begin()+f0.size()-1);
+    rmdir(f0.join("/").toUtf8());
   }
 }

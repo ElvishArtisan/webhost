@@ -60,22 +60,26 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
     post_error=WHCgiPost::ErrorNotPost;
     return;
   }
+  /*
   if(QString(getenv("REQUEST_METHOD")).toLower()!="post") {
     post_error=WHCgiPost::ErrorNotPost;
     return;
   }
-
+  */
   //
   // Verify Size
   //
   if(getenv("CONTENT_LENGTH")==NULL) {
-    post_error=WHCgiPost::ErrorPostTooLarge;
-    return;
+    post_content_length=0;
+    //    post_error=WHCgiPost::ErrorPostTooLarge;
+    //return;
   }
-  post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
-  if((!ok)||((maxsize>0)&&(post_content_length>maxsize))) {
-    post_error=WHCgiPost::ErrorPostTooLarge;
-    return;
+  else {
+    post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
+    if((!ok)||((maxsize>0)&&(post_content_length>maxsize))) {
+      post_error=WHCgiPost::ErrorPostTooLarge;
+      return;
+    }
   }
 
   //
@@ -87,7 +91,7 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   else {
     strcpy(tempdir,"/tmp");
   }
-  strcat(tempdir,"/lwrouterXXXXXX");
+  strcat(tempdir,"/webhostXXXXXX");
   post_tempdir=mkdtemp(tempdir);
   if(post_tempdir.isNull()) {
     post_error=WHCgiPost::ErrorNoTempDir;
@@ -439,6 +443,10 @@ QString WHCgiPost::errorString(WHCgiPost::Error err)
   case WHCgiPost::ErrorNotInitialized:
     str="POST class not initialized";
     break;
+
+  case WHCgiPost::ErrorCannotSaveFile:
+    str="Cannot save temporary file";
+    break;
   }
   return str;
 }
@@ -606,7 +614,11 @@ void WHCgiPost::LoadMultipartEncoding(char first)
 		  filename=post_tempdir+"/"+pairs[1].simplified().
 		    right(pairs[1].simplified().length()-index-1);
 		  filename.replace("\"","");
-		  fd=open(filename.toAscii(),O_WRONLY|O_CREAT,S_IRUSR|S_IWUSR);
+		  if((fd=open(filename.
+			      toAscii(),O_WRONLY|O_CREAT,S_IRUSR|S_IWUSR))<0) {
+		    post_error=WHCgiPost::ErrorCannotSaveFile;
+		    return;
+		  }
 		}
 	      }
 	    }

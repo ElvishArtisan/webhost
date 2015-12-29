@@ -29,15 +29,26 @@
 
 #include "whcgiapplication.h"
 
+WHCgiApplication *cgiapp;
+
 WHCgiApplication::WHCgiApplication(QObject *parent,unsigned maxsize,bool auto_delete)
   : QObject(parent)
 {
-  app_post=new WHCgiPost();
+  app_post=new WHCgiPost(0,true);
+  if(app_post->error()!=WHCgiPost::ErrorOk) {
+    printf("Content-type: text/html\n");
+    printf("Status: 500\n");
+    printf("\n");
+    printf("Post Error: %s\n",(const char *)WHCgiPost::errorString(app_post->error()).toUtf8());
+    exit(0);
+  }
 
   app_render_timer=new QTimer(this);
   app_render_timer->setSingleShot(true);
   connect(app_render_timer,SIGNAL(timeout()),this,SLOT(renderData()));
   app_render_timer->start(0);
+
+  cgiapp=this;
 }
 
 
@@ -54,6 +65,21 @@ void WHCgiApplication::addPage(int cmd_id,WHCgiPage *page)
 }
 
 
+void WHCgiApplication::exit(int resp_code,const QString &msg,bool no_cleanup)
+{
+  if(!msg.isEmpty()) {
+    printf("Content-type: text/html\n");
+    printf("Status: %d\n",resp_code);
+    printf("\n");
+    printf("%s\n",(const char *)msg.toUtf8());
+  }
+  if(!no_cleanup) {
+    delete app_post;
+  }
+  ::exit(0);
+}
+
+
 void WHCgiApplication::renderData()
 {
   int id;
@@ -62,7 +88,7 @@ void WHCgiApplication::renderData()
   post()->getValue("COMMAND",&id);
   if((page=GetPage(id))==NULL) {
     if((page=GetPage(0))==NULL) {
-      WHCgiPage::exit(500,QString().sprintf("Unknown page ID %d received",id));
+      exit(500,QString().sprintf("Unknown page ID %d received",id));
     }
   }
   page->renderHead();
@@ -72,7 +98,7 @@ void WHCgiApplication::renderData()
   }
   page->render();
   page->renderBodyEnd();
-  WHCgiPage::exit(200);
+  exit(200);
 }
 
 

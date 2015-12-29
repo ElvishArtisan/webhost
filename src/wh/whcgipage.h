@@ -45,7 +45,6 @@ class WHCgiPage
   virtual void renderBodyStart();
   virtual void render()=0;
   virtual void renderBodyEnd();
-  static void exit(int resp_code,const QString &msg="");
 
  protected:
   WHSettings *settings();

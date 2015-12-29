@@ -30,3 +30,14 @@ done by cd'ing to the top of the source tree and typing './configure
 obtained the source via CVS will need to do './autogen.sh' first.  There
 are a number of options for the 'configure' script; do './configure --help'
 for a detailed list.
+
+SYSTEMD
+On some systems utilizing Systemd, the Apache httpd service is configured
+to use a chrooted filesystem for CGI processes, which will break certain
+WebHost features --e.g. the UPDATE command.  To defeat this, change the
+'PrivateTmp=' directive to 'false' in the httpd service definition
+(located in '/usr/lib/systemd/system/' on RHEL 7), and then run:
+
+	 systemctl daemon-reload
+
+

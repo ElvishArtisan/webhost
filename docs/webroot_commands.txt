@@ -11,4 +11,5 @@ REBOOT!
 RESTART <sys-name> [<sys-name>] [...]!
 
 UPGRADE <pkg-path> [<pkg-path> [...]!
+Will delete <pkg-path> after applying upgrade.
 

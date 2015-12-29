@@ -39,7 +39,8 @@ class WHCgiPost
  public:
   enum Encoding {UrlEncoded=0,MultipartEncoded=1,AutoEncoded=2};
   enum Error {ErrorOk=0,ErrorNotPost=1,ErrorNoTempDir=2,ErrorMalformedData=3,
-	      ErrorPostTooLarge=4,ErrorInternal=5,ErrorNotInitialized=6};
+	      ErrorPostTooLarge=4,ErrorInternal=5,ErrorNotInitialized=6,
+	      ErrorCannotSaveFile=7};
   WHCgiPost(unsigned maxsize=0,bool auto_delete=true);
   ~WHCgiPost();
   Error error() const;
