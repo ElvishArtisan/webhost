@@ -29,6 +29,7 @@
 #include <QStringList>
 #include <QTimer>
 
+#include <wh/whcgiobject.h>
 #include <wh/whcgipage.h>
 #include <wh/whcgipost.h>
 #include <wh/whsettings.h>
@@ -39,8 +40,9 @@ class WHCgiApplication : public QObject
  public:
   WHCgiApplication(QObject *parent=0,unsigned maxsize=0,bool auto_delete=true);
   ~WHCgiApplication();
-  void addPage(int cmd_id,WHCgiPage *page);
+  void addPage(int cmd_id,WHCgiObject *page);
   void exit(int resp_code,const QString &msg="",bool no_cleanup=false);
+  void redirect(const QString &url,bool no_cleanup=false);
 
  private slots:
   void renderData();
@@ -50,8 +52,8 @@ class WHCgiApplication : public QObject
 
  private:
   void RenderMenu(int id);
-  WHCgiPage *GetPage(int id);
-  std::vector<WHCgiPage *> app_pages;
+  WHCgiObject *GetPage(int id);
+  std::vector<WHCgiObject *> app_pages;
   WHCgiPost *app_post;
   QTimer *app_render_timer;
 };

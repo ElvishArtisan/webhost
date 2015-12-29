@@ -58,7 +58,7 @@ WHCgiApplication::~WHCgiApplication()
 }
 
 
-void WHCgiApplication::addPage(int cmd_id,WHCgiPage *page)
+void WHCgiApplication::addPage(int cmd_id,WHCgiObject *page)
 {
   app_pages.push_back(page);
   app_pages.back()->setId(cmd_id);
@@ -80,10 +80,20 @@ void WHCgiApplication::exit(int resp_code,const QString &msg,bool no_cleanup)
 }
 
 
+void WHCgiApplication::redirect(const QString &url,bool no_cleanup)
+{
+  printf("Location: %s\n\n",(const char *)url.toUtf8());
+  if(!no_cleanup) {
+    delete app_post;
+  }
+  ::exit(0);
+}
+
+
 void WHCgiApplication::renderData()
 {
   int id;
-  WHCgiPage *page=NULL;
+  WHCgiObject *page=NULL;
 
   post()->getValue("COMMAND",&id);
   if((page=GetPage(id))==NULL) {
@@ -93,7 +103,7 @@ void WHCgiApplication::renderData()
   }
   page->renderHead();
   page->renderBodyStart();
-  if(id!=0) {
+  if((id!=0)&&(!page->menuText().isEmpty())) {
     RenderMenu(id);
   }
   page->render();
@@ -132,7 +142,7 @@ void WHCgiApplication::RenderMenu(int id)
 }
 
 
-WHCgiPage *WHCgiApplication::GetPage(int id)
+WHCgiObject *WHCgiApplication::GetPage(int id)
 {
   for(unsigned i=0;i<app_pages.size();i++) {
     if(app_pages[i]->id()==id) {

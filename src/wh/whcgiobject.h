@@ -1,6 +1,6 @@
-// whcgipage.h
+// whcgiobject.h
 //
-// Base class for CGI web pages
+// Base class for CGI web objects
 //
 //   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,40 +18,42 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WHCGIPAGE_H
-#define WHCGIPAGE_H
+#ifndef WHCGIOBJECT_H
+#define WHCGIOBJECT_H
 
 #include <QStringList>
 
-#include <wh/whcgiobject.h>
 #include <wh/whcgipost.h>
 
-class WHCgiPage : public WHCgiObject
+class WHCgiObject
 {
  public:
-  WHCgiPage(WHCgiPost *post);
-  QString menuText() const;
-  void setMenuText(const QString &str);
-  QString titleText() const;
-  void setTitleText(const QString &str);
+  WHCgiObject(WHCgiPost *post);
+  ~WHCgiObject();
+  int id() const;
+  void setId(int id);
+  virtual QString menuText() const;
+  virtual QString titleText() const;
   QString mimeType() const;
   void setMimeType(const QString &str);
-  QString menuRef() const;
-  void setMenuRef(const QString &str);
-  void addScript(const QString &scriptname);
+  virtual QString menuRef() const;
   virtual void renderHead();
   virtual void renderBodyStart();
   virtual void render()=0;
   virtual void renderBodyEnd();
 
+ protected:
+  WHSettings *settings();
+  WHCgiPost *post();
+
  private:
-  QString page_menu_text;
-  QString page_title_text;
+  int page_id;
   QString page_mime_type;
   QString page_language;
-  QStringList page_scripts;
+  WHCgiPost *page_post;
+  WHSettings *page_settings;
   QString page_menu_ref;
 };
 
 
-#endif  // WHCGIPAGE_H
+#endif  // WHCGIOBJECT_H

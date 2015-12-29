@@ -32,9 +32,10 @@ clean-local:
 
 lib_LTLIBRARIES = libwebhost.la
 dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
-                             whcmdswitch.cpp whcmdswitch.h\
+                             whcgiobject.cpp whcgiobject.h\
                              whcgipage.cpp whcgipage.h\
                              whcgipost.cpp whcgipost.h\
+                             whcmdswitch.cpp whcmdswitch.h\
                              whprofile.cpp whprofile.h\
                              whsettings.cpp whsettings.h
 
@@ -43,6 +44,7 @@ nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp
 includedir = $(prefix)/include/wh
 
 include_HEADERS = whcgiapplication.h\
+                  whcgiobject.h\
                   whcgipage.h\
                   whcgipost.h\
                   whcmdswitch.h\

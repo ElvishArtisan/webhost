@@ -18,42 +18,25 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
 #include <QObject>
 
 #include "whcgipage.h"
 
 WHCgiPage::WHCgiPage(WHCgiPost *post)
+  : WHCgiObject(post)
 {
-  page_id=-1;
-  page_menu_text=QObject::tr("CGI Page");
-  page_title_text=QObject::tr("CGI Page");
+  page_menu_text="";
+  page_title_text="";
   page_mime_type="text/html";
   page_menu_ref="";
-  page_post=post;
-  page_settings=new WHSettings(*post->settings());
-}
-
-
-WHCgiPage::~WHCgiPage()
-{
-  delete page_settings;
-}
-
-
-int WHCgiPage::id() const
-{
-  return page_id;
-}
-
-
-void WHCgiPage::setId(int id)
-{
-  page_id=id;
 }
 
 
 QString WHCgiPage::menuText() const
 {
+  syslog(LOG_NOTICE,"WHCgiPage::menuText: %s",(const char *)page_menu_text.toUtf8());
   return page_menu_text;
 }
 
@@ -106,18 +89,12 @@ void WHCgiPage::addScript(const QString &scriptname)
 }
 
 
-WHSettings *WHCgiPage::settings()
-{
-  return page_settings;
-}
-
-
 void WHCgiPage::renderHead()
 {
   printf("Content-type: %s\n",(const char *)page_mime_type.toUtf8());
   printf("\n");
   printf("<!doctype html>\n");
-  printf("<html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" lang=\"%s\">\n",(const char *)page_settings->language().toUtf8());
+  printf("<html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" lang=\"%s\">\n",(const char *)settings()->language().toUtf8());
   printf("<head>\n");
   printf("<title>%s</title>\n",(const char *)page_title_text.toUtf8());
   printf("<meta content=\"text/html; charset=windows-1252\" http-equiv=Content-Type>\n");
@@ -135,20 +112,14 @@ void WHCgiPage::renderHead()
 void WHCgiPage::renderBodyStart()
 {
   printf("<body bgColor=\"%s\" alink=\"%s\" link=\"%s\" vlink=\"%s\">\n",
-	 (const char *)page_settings->backgroundColor().toUtf8(),
-	 (const char *)page_settings->activeLinkColor().toUtf8(),
-	 (const char *)page_settings->linkColor().toUtf8(),
-	 (const char *)page_settings->visitedLinkColor().toUtf8());
+	 (const char *)settings()->backgroundColor().toUtf8(),
+	 (const char *)settings()->activeLinkColor().toUtf8(),
+	 (const char *)settings()->linkColor().toUtf8(),
+	 (const char *)settings()->visitedLinkColor().toUtf8());
 }
 
 
 void WHCgiPage::renderBodyEnd()
 {
   printf("</body></html>\n");
-}
-
-
-WHCgiPost *WHCgiPage::post()
-{
-  return page_post;
 }
