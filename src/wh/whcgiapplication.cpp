@@ -103,7 +103,7 @@ void WHCgiApplication::renderData()
   }
   page->renderHead();
   page->renderBodyStart();
-  if((id!=0)&&(!page->menuText().isEmpty())) {
+  if((id>0)&&(!page->menuText().isEmpty())) {
     RenderMenu(id);
   }
   page->render();

@@ -188,6 +188,7 @@ bool WHCgiPost::getValue(const QString &name,QHostAddress *addr)
 
 bool WHCgiPost::getValue(const QString &name,QString *str)
 {
+  *str="";
   if(post_values.count(name)>0) {
     *str=post_values[name].toString();
     return true;
@@ -198,6 +199,7 @@ bool WHCgiPost::getValue(const QString &name,QString *str)
 
 bool WHCgiPost::getValue(const QString &name,int *n)
 {
+  *n=0;
   if(post_values.count(name)>0) {
     *n=post_values[name].toInt();
     return true;
@@ -208,6 +210,7 @@ bool WHCgiPost::getValue(const QString &name,int *n)
 
 bool WHCgiPost::getValue(const QString &name,long *n)
 {
+  *n=0;
   if(post_values.count(name)>0) {
     *n=post_values[name].toLongLong();
     return true;
@@ -219,6 +222,7 @@ bool WHCgiPost::getValue(const QString &name,long *n)
 
 bool WHCgiPost::getValue(const QString &name,bool *n)
 {
+  *n=false;
   if(post_values.count(name)>0) {
     *n=post_values[name].toBool();
     return true;
