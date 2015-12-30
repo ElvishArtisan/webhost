@@ -90,3 +90,5 @@
 2015-12-29 Fred Gleason <fredg@paravelsystems.com>
 	* Modified the 'getValue()' methods in 'WHCgiPost' to return default
 	values when the requested CGI variable was not found.
+2015-12-30 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.5.0.
