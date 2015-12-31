@@ -6,6 +6,7 @@
 *.o
 *.pc
 *.spec
+*.tar.gz
 aclocal.m4
 autom4te.cache/
 config.guess
@@ -23,3 +24,4 @@ missing
 moc_*
 rc.webhost
 src/webhostd/webhostd
+webhost.service

@@ -29,7 +29,7 @@
 
 #include "config.h"
 
-#define WEBHOSTD_USAGE "-d\n"
+#define WEBHOSTD_USAGE "\n"
 
 class MainObject : public QObject
 {

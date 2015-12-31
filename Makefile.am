@@ -25,11 +25,14 @@ SUBDIRS = conf\
           src
 
 install-exec-local:	
-	mkdir -p $(DESTDIR)/etc/init.d
-	cp rc.webhost $(DESTDIR)/etc/init.d/webhost
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system
+	cp webhost.service $(DESTDIR)/usr/lib/systemd/system/webhost.service
+#	mkdir -p $(DESTDIR)/etc/init.d
+#	cp rc.webhost $(DESTDIR)/etc/init.d/webhost
 
 uninstall-local:	
-	rm -f $(DESTDIR)/etc/init.d/webhost
+	rm -f $(DESTDIR)/usr/lib/systemd/system/webhost.service
+#	rm -f $(DESTDIR)/etc/init.d/webhost
 
 rpm:	dist
 	cp webhost-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -48,7 +51,8 @@ EXTRA_DIST = webhost.spec.in\
              get_target.sh\
              PACKAGE_VERSION\
              rc.webhost.in\
-             webhost.pc.in
+             webhost.pc.in\
+             webhost.service.in
 
 CLEANFILES = *~\
              *.deb\
@@ -62,7 +66,8 @@ DISTCLEANFILES = webhost.spec\
                  config.guess\
                  config.sub\
                  ltmain.sh\
-                 webhost.pc
+                 webhost.pc\
+                 webhost.service
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\

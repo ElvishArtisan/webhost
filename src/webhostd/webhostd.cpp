@@ -32,27 +32,17 @@
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
-  main_debug=false;
   main_service_process=NULL;
 
   WHCmdSwitch *cmd=
     new WHCmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
-    if(cmd->key(i)=="-d") {
-      main_debug=true;
-      cmd->setProcessed(i,true);
-    }
     if(!cmd->processed(i)) {
-      fprintf(stderr,"webhostd: unknown option \"%s\"\n",
-	      (const char *)cmd->key(i).toUtf8());
+      syslog(LOG_ERR,"webhostd: unknown option \"%s\"\n",
+	     (const char *)cmd->key(i).toUtf8());
       exit(256);
     }
   }
-
-  //
-  // Initialize Syslog
-  //
-  openlog("webhostd",LOG_PERROR,LOG_DAEMON);
 
   //
   // Configuration
@@ -65,8 +55,8 @@ MainObject::MainObject(QObject *parent)
   //
   main_command_socket=new QUdpSocket(this);
   if(!main_command_socket->bind(main_config->controlPort())) {
-    fprintf(stderr,"webhostd: cannot bind port %u\n",
-	    main_config->controlPort());
+    syslog(LOG_ERR,"webhostd: cannot bind port %u\n",
+	   main_config->controlPort());
     exit(256);
   }
   connect(main_command_socket,SIGNAL(readyRead()),this,SLOT(readyReadData()));
@@ -158,12 +148,14 @@ void MainObject::serviceFinishedData(int exit_code,QProcess::ExitStatus status)
   main_kill_timer->stop();
 
   if(status==QProcess::CrashExit) {
-    syslog(LOG_WARNING,"service process crashed");
+    fprintf(stderr,"service process crashed");
   }
   else {
     if(exit_code!=0) {
-      syslog(LOG_WARNING,"service process exited with non-zero exit code: %d\n",
-	     exit_code);
+      fprintf(stderr,
+	      "service process exited with non-zero exit code: %d [%s]\n",
+	      exit_code,
+	     (const char *)main_service_process->readAllStandardError().data());
     }
   }
   main_garbage_timer->start(main_config->serviceRespawnDelay());

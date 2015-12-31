@@ -111,6 +111,7 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     rc.webhost \
     webhost.pc\
+    webhost.service\
     webhost.spec \
     Makefile ])
 AC_OUTPUT()
