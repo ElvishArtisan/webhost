@@ -101,3 +101,5 @@
 2016-01-03 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/wh/whcgipost.cpp' that thew an error when
 	processing a CGI object with no POST fields.
+2016-01-04 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.5.2.
