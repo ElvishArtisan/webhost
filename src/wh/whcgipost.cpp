@@ -538,20 +538,17 @@ void WHCgiPost::LoadUrlEncoding(char first)
   QStringList line;
 
   data[0]=first;
-  if((n=read(0,data+1,post_content_length-1))<0) {
-    post_error=WHCgiPost::ErrorMalformedData;
-    return;
-  }
-  data[post_content_length]=0;
-  lines=QString(data).split("&");
-  for(int i=0;i<lines.size();i++) {
-    line=lines[i].split("=");
-    if(line.size()==2) {
-      post_values[line[0]]=UrlDecode(line[1]);
-      post_filenames[line[0]]=false;
+  if((n=read(0,data+1,post_content_length-1))>0) {
+    data[post_content_length]=0;
+    lines=QString(data).split("&");
+    for(int i=0;i<lines.size();i++) {
+      line=lines[i].split("=");
+      if(line.size()==2) {
+	post_values[line[0]]=UrlDecode(line[1]);
+	post_filenames[line[0]]=false;
+      }
     }
   }
-
   post_error=WHCgiPost::ErrorOk;
   delete data;
 }
@@ -576,6 +573,8 @@ void WHCgiPost::LoadMultipartEncoding(char first)
     return;
   }
   if((n=getline(&data,(size_t *)&n,f))<=0) {
+    printf("Content-type: text/html\n\n");
+    printf("LoadMultipartEncoding()\n");
     post_error=WHCgiPost::ErrorMalformedData;
     return;
   }
