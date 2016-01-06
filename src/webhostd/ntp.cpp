@@ -50,6 +50,10 @@ void MainObject::Ntp(const QStringList &cmds)
   //
   if((f=fopen((main_config->ntpConfigurationFile()+".back").toUtf8(),"w"))!=
      NULL) {
+    fprintf(f,"driftfile=/var/lib/ntp/drift\n");
+    fprintf(f,"restrict default nomodify notrap nopeer noquery\n");
+    fprintf(f,"restrict 127.0.0.1\n"); 
+    fprintf(f,"restrict ::1\n");
     for(int i=2;i<cmds.size();i++) {
       if(cmds[i]!="0.0.0.0") {
 	fprintf(f,"server %s iburst\n",(const char *)cmds[i].toUtf8());
