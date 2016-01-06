@@ -40,6 +40,7 @@ void MainObject::Upgrade(const QStringList &cmds)
     proc=new QProcess(this);
     proc->start("/bin/rpm",args);
     proc->waitForFinished();
+    sync();
   }
 
   //

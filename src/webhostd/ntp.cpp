@@ -2,7 +2,7 @@
 //
 //   NTP command implementation for webhostd(8)
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <QHostAddress>
 #include <QProcess>
@@ -57,6 +58,7 @@ void MainObject::Ntp(const QStringList &cmds)
     fclose(f);
     rename((main_config->ntpConfigurationFile()+".back").toUtf8(),
 	   main_config->ntpConfigurationFile().toUtf8());    
+    sync();
   }
 
   //

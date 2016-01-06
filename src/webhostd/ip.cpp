@@ -19,6 +19,7 @@
 //
 
 #include <errno.h>
+#include <unistd.h>
 
 #include <QHostAddress>
 #include <QProcess>
@@ -103,6 +104,7 @@ void MainObject::Ip(const QStringList &cmds)
       proc->start("service",args);
       proc->waitForFinished();
       delete proc;
+      sync();
     }
     else {
       fprintf(stderr,"unable to open interface configuration [%s]\n",
