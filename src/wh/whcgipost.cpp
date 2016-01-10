@@ -334,6 +334,26 @@ void WHCgiPost::sendUdpPacket(const QByteArray &data,uint16_t port)
 }
 
 
+void WHCgiPost::sendAddUserCommand(const QString &htpasswd_file,
+				   const QString &username,
+				   const QString &password) const
+{
+  SendCommand("ADDUSER "+
+	      htpasswd_file+" "+
+	      username+" "+
+	      password+"!");
+}
+
+
+void WHCgiPost::sendDeleteUserCommand(const QString &htpasswd_file,
+				      const QString &username)
+{
+  SendCommand("DELETEUSER "+
+	      htpasswd_file+" "+
+	      username+"!");
+}
+
+
 void WHCgiPost::sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 			      const QHostAddress &mask,
 			      const QHostAddress &gw,const QHostAddress &dns1,

@@ -36,6 +36,7 @@ dist_webhostd_SOURCES = config.cpp config.h\
                         reboot.cpp\
                         restart.cpp\
                         upgrade.cpp\
+                        users.cpp\
                         webhostd.cpp webhostd.h
 
 nodist_webhostd_SOURCES = moc_webhostd.cpp

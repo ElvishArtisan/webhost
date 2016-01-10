@@ -62,6 +62,10 @@ class WHCgiPost
   QStringList timezoneList() const;
   QString currentTimezone() const;
   void sendUdpPacket(const QByteArray &data,uint16_t port);
+  void sendAddUserCommand(const QString &htpasswd_file,const QString &username,
+			  const QString &password) const;
+  void sendDeleteUserCommand(const QString &htpasswd_file,
+			     const QString &username);
   void sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 		     const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,

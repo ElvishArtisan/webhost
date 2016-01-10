@@ -2,6 +2,10 @@
 
 Sent via UDP to port 6352 on the localhost.
 
+ADDUSER <passwd-file> <user> <password>
+
+DELETEUSER <passwd-file> <user>
+
 IP <iface-num> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr>!
 
 NTP <timezone> <ntp1-host> <ntp2-host>!

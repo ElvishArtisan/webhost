@@ -204,6 +204,14 @@ void MainObject::ProcessCommand(const QString &cmd)
   QStringList cmds=cmd.split(" ");
   QString verb=cmds[0].toLower();
 
+  if(verb=="adduser") {
+    AddUser(cmds);
+  }
+
+  if(verb=="deleteuser") {
+    DeleteUser(cmds);
+  }
+
   if(verb=="ip") {
     Ip(cmds);
   }
