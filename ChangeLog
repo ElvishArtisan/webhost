@@ -118,3 +118,5 @@
 	and 'sy/sycgipost.h'.
 	* Implemented 'ADDUSER' and 'DELETEUSER' commands in
 	'src/webhostd/users.cpp' and 'src/webhostd/webhostd.h'.
+2016-01-16 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.1.
