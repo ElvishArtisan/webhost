@@ -123,3 +123,5 @@
 2016-01-18 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'WHCgiPage::onLoadEvent()' and 'WHCgiPage::setOnLoadEvent()'
 	methods in 'wh/whcgipage.cpp' and 'wh/whcgipage.h'.
+2016-01-18 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.8.0.
