@@ -120,3 +120,6 @@
 	'src/webhostd/users.cpp' and 'src/webhostd/webhostd.h'.
 2016-01-16 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.1.
+2016-01-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'WHCgiPage::onLoadEvent()' and 'WHCgiPage::setOnLoadEvent()'
+	methods in 'wh/whcgipage.cpp' and 'wh/whcgipage.h'.

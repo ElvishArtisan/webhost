@@ -89,6 +89,18 @@ void WHCgiPage::addScript(const QString &scriptname)
 }
 
 
+QString WHCgiPage::onLoadEvent() const
+{
+  return page_on_load_event;
+}
+
+
+void WHCgiPage::setOnLoadEvent(const QString &str)
+{
+  page_on_load_event=str;
+}
+
+
 void WHCgiPage::renderHead()
 {
   printf("Content-type: %s\n",(const char *)page_mime_type.toUtf8());
@@ -111,7 +123,12 @@ void WHCgiPage::renderHead()
 
 void WHCgiPage::renderBodyStart()
 {
-  printf("<body bgColor=\"%s\" alink=\"%s\" link=\"%s\" vlink=\"%s\">\n",
+  QString on_load="";
+  if(!page_on_load_event.isEmpty()) {
+    on_load="onload=\""+page_on_load_event+"\"";
+  }
+  printf("<body %s bgColor=\"%s\" alink=\"%s\" link=\"%s\" vlink=\"%s\">\n",
+	 (const char *)on_load.toUtf8(),
 	 (const char *)settings()->backgroundColor().toUtf8(),
 	 (const char *)settings()->activeLinkColor().toUtf8(),
 	 (const char *)settings()->linkColor().toUtf8(),
