@@ -27,7 +27,8 @@
 class WHCmdSwitch
 {
  public:
-  WHCmdSwitch(int argc,char *argv[],const char *modname,const char *usage);
+  WHCmdSwitch(int argc,char *argv[],const char *modename,const char *version,
+	      const char *usage);
   unsigned keys() const;
   QString key(unsigned n) const;
   QString value(unsigned n) const;

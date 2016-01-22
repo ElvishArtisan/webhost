@@ -125,3 +125,6 @@
 	methods in 'wh/whcgipage.cpp' and 'wh/whcgipage.h'.
 2016-01-18 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.0.
+2016-01-22 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'version' argument to the constructor of the 'WHCmdSwitch'
+	class in 'wh/whcmdswitch.cpp' and 'wh/whcmdswitch.h'.

@@ -35,7 +35,7 @@ MainObject::MainObject(QObject *parent)
   main_service_process=NULL;
 
   WHCmdSwitch *cmd=
-    new WHCmdSwitch(qApp->argc(),qApp->argv(),"webhost",WEBHOSTD_USAGE);
+    new WHCmdSwitch(qApp->argc(),qApp->argv(),VERSION,"webhost",WEBHOSTD_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
       syslog(LOG_ERR,"webhostd: unknown option \"%s\"\n",

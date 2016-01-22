@@ -24,7 +24,7 @@
 #include "whcmdswitch.h"
 
 WHCmdSwitch::WHCmdSwitch(int argc,char *argv[],const char *modname,
-			 const char *usage)
+			 const char *version,const char *usage)
 {
   unsigned l=0;
   bool handled=false;
@@ -32,7 +32,7 @@ WHCmdSwitch::WHCmdSwitch(int argc,char *argv[],const char *modname,
   for(int i=1;i<argc;i++) {
 #ifndef WIN32
     if(!strcmp(argv[i],"--version")) {
-      printf("%s v%s\n",modname,VERSION);
+      printf("%s v%s\n",modname,version);
       exit(0);
     }
 #endif  // WIN32
