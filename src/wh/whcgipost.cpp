@@ -197,6 +197,17 @@ bool WHCgiPost::getValue(const QString &name,QString *str)
 }
 
 
+bool WHCgiPost::getValue(const QString &name,QUrl *url)
+{
+  if(post_values.count(name)>0) {
+    *url=QUrl(post_values[name].toString());
+    return true;
+  }
+  *url=QUrl();
+  return false;  
+}
+
+
 bool WHCgiPost::getValue(const QString &name,int *n)
 {
   *n=0;

@@ -30,7 +30,7 @@
 #include <QString>
 #include <QStringList>
 #include <QUdpSocket>
-
+#include <QUrl>
 #include <wh/whprofile.h>
 #include <wh/whsettings.h>
 
@@ -48,6 +48,7 @@ class WHCgiPost
   QVariant value(const QString &name,bool *ok=NULL);
   bool getValue(const QString &name,QHostAddress *addr);
   bool getValue(const QString &name,QString *str);
+  bool getValue(const QString &name,QUrl *url);
   bool getValue(const QString &name,int *n);
   bool getValue(const QString &name,long *n);
   bool getValue(const QString &name,bool *n);
