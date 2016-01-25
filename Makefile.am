@@ -27,11 +27,14 @@ SUBDIRS = conf\
 install-exec-local:	
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
 	cp webhost.service $(DESTDIR)/usr/lib/systemd/system/webhost.service
+	mkdir -p $(DESTDIR)@libdir@/pkgconfig
+	cp webhost.pc $(DESTDIR)/@libdir@/pkgconfig
 #	mkdir -p $(DESTDIR)/etc/init.d
 #	cp rc.webhost $(DESTDIR)/etc/init.d/webhost
 
 uninstall-local:	
 	rm -f $(DESTDIR)/usr/lib/systemd/system/webhost.service
+	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost.pc
 #	rm -f $(DESTDIR)/etc/init.d/webhost
 
 rpm:	dist
