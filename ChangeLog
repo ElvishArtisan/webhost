@@ -131,3 +131,5 @@
 2016-01-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'WHCgiPost::getValue()' method for QUrl in
 	'src/wh/whcgipost.cpp' and 'src/wh/whcgipost.h'.
+2016-01-25 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.8.1.
