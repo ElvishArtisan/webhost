@@ -140,3 +140,6 @@
 	* Incremented the package version to 0.8.2.
 2016-01-26 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'make rpm' target.
+2016-01-26 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the 'WHCgiPost::currentTime(); method in 'wh/whcgipost.cpp'
+	to handle variant output styles of the timedatectl(1) command.

@@ -328,7 +328,8 @@ QString WHCgiPost::currentTimezone() const
   for(int i=0;i<lines.size();i++) {
     QStringList f0=lines[i].split(":");
     if(f0.size()>=2) {
-      if(f0[0].toLower().trimmed()=="time zone") {
+      if((f0[0].toLower().trimmed()=="time zone")||
+	 (f0[0].toLower().trimmed()=="timezone")){
 	QStringList f1=f0[1].split(" ",QString::SkipEmptyParts);
 	return f1[0].trimmed();
       }
