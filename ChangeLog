@@ -138,3 +138,5 @@
 	control file was not installed as part of the 'make install' target.
 2016-01-25 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.2.
+2016-01-26 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'make rpm' target.
