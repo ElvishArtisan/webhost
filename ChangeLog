@@ -145,3 +145,6 @@
 	to handle variant output styles of the timedatectl(1) command.
 2016-01-26 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.3.
+2016-01-27 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/wh/whcgipost.cpp' that caused the list
+	of available timezones to have an empty entry at the end.

@@ -303,7 +303,8 @@ QStringList WHCgiPost::timezoneList() const
   QProcess *proc=new QProcess();
   proc->start("timedatectl",args);
   proc->waitForFinished();
-  ret=QString(proc->readAllStandardOutput()).split("\n");
+  ret=QString(proc->readAllStandardOutput()).
+    split("\n",QString::SkipEmptyParts);
   delete proc;
 
   return ret;
