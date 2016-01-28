@@ -156,3 +156,5 @@
 2016-01-28 Fred Gleason <fredg@paravelsystems.com>
 	* Modified the 'Upgrade' service to use '--oldpackage' instead of
 	'--force' when invoking rpm(8).
+2016-01-28 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.8.5.
