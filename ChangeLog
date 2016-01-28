@@ -153,3 +153,6 @@
 2016-01-28 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'WHInterfaceMacAddress()' and 'WHMacAddressText()' functions
 	in 'src/wh/whnetwork.cpp' and 'wrc/wh/whnetwork.h'.
+2016-01-28 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the 'Upgrade' service to use '--oldpackage' instead of
+	'--force' when invoking rpm(8).
