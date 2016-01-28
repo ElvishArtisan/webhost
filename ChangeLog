@@ -150,3 +150,6 @@
 	of available timezones to have an empty entry at the end.
 2016-01-27 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.4.
+2016-01-28 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'WHInterfaceMacAddress()' and 'WHMacAddressText()' functions
+	in 'src/wh/whnetwork.cpp' and 'wrc/wh/whnetwork.h'.
