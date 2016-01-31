@@ -29,8 +29,82 @@
 
 #include "whnetwork.h"
 
+void WHInterfaceInfo(uint64_t *mac,QHostAddress *addr,QHostAddress *mask,
+		     const QString &iface)
+{
+  struct ifreq ifr;
+  int index=0;
+  int sock;
+  
+  *mac=0;
+  *addr=QHostAddress();
+  *mask=QHostAddress();
+  if((sock=socket(PF_INET,SOCK_DGRAM,IPPROTO_IP))<0) {
+    return;
+  }
+  memset(&ifr,0,sizeof(ifr));
+  index=1;
+  ifr.ifr_ifindex=index;
+  while(ioctl(sock,SIOCGIFNAME,&ifr)==0) {
+    if(ioctl(sock,SIOCGIFHWADDR,&ifr)==0) {
+      if(iface==ifr.ifr_name) {
+	*mac=
+	  ((0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[0])<<40)+
+	  ((0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[1])<<32)+
+	  ((0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[2])<<24)+
+	  ((0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[3])<<16)+
+	  ((0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[4])<<8)+
+	  (0xff&(uint64_t)ifr.ifr_ifru.ifru_hwaddr.sa_data[5]);
+	if(ioctl(sock,SIOCGIFADDR,&ifr)==0) {
+	  addr->setAddress(ntohl(((struct sockaddr_in *)(&(ifr.ifr_addr)))->
+				 sin_addr.s_addr));
+	}
+	if(ioctl(sock,SIOCGIFNETMASK,&ifr)==0) {
+	  mask->setAddress(ntohl(((struct sockaddr_in *)(&(ifr.ifr_netmask)))->
+				 sin_addr.s_addr));
+	}
+	close(sock);
+	return;
+      }
+    }
+    ifr.ifr_ifindex=++index;
+  }
+  close(sock);
+}
+
+
+QHostAddress WHInterfaceIPv4Address(const QString &iface)
+{
+  uint64_t mac;
+  QHostAddress addr;
+  QHostAddress mask;
+
+  WHInterfaceInfo(&mac,&addr,&mask,iface);
+  return addr;
+}
+
+
+QHostAddress WHInterfaceIPv4Netmask(const QString &iface)
+{
+  uint64_t mac;
+  QHostAddress addr;
+  QHostAddress mask;
+
+  WHInterfaceInfo(&mac,&addr,&mask,iface);
+  return mask;
+}
+
+
 uint64_t WHInterfaceMacAddress(const QString &iface)
 {
+  uint64_t mac;
+  QHostAddress addr;
+  QHostAddress mask;
+
+  WHInterfaceInfo(&mac,&addr,&mask,iface);
+  return mac;
+
+  /*  
   struct ifreq ifr;
   int index=0;
   uint64_t mac;
@@ -61,6 +135,7 @@ uint64_t WHInterfaceMacAddress(const QString &iface)
   }
   close(sock);
   return 0;
+  */
 }
 
 

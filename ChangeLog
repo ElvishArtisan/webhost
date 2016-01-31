@@ -158,3 +158,9 @@
 	'--force' when invoking rpm(8).
 2016-01-28 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.5.
+2016-01-31 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'WHInterfaceInfo()', 'WHInterfaceIPv4Address()' and
+	'WHInterfaceIPv4Netmask()' functions in 'wh/whnetwork.cpp' and
+	'wh/whnetwork.h'.
+	* Added a 'WHConfig' class in 'src/wh/whconfig.cpp' and
+	'src/wh/whconfig.h'.

@@ -36,6 +36,7 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whcgipage.cpp whcgipage.h\
                              whcgipost.cpp whcgipost.h\
                              whcmdswitch.cpp whcmdswitch.h\
+                             whconfig.cpp whconfig.h\
                              whnetwork.cpp whnetwork.h\
                              whprofile.cpp whprofile.h\
                              whsettings.cpp whsettings.h
@@ -49,6 +50,7 @@ include_HEADERS = whcgiapplication.h\
                   whcgipage.h\
                   whcgipost.h\
                   whcmdswitch.h\
+                  whconfig.h\
                   whnetwork.h\
                   whprofile.h\
                   whsettings.h

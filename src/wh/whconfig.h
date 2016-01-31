@@ -1,6 +1,6 @@
-// whnetwork.h
+// whconfig.h
 //
-// Network information routines.
+// Class for reading webhost configuration.
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,21 +18,38 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WHNETWORK_H
-#define WHNETWORK_H
+#ifndef WHCONFIG_H
+#define WHCONFIG_H
 
 #include <stdint.h>
 
-#include <QHostAddress>
+#include <vector>
+
 #include <QString>
-#include <QStringList>
 
-void WHInterfaceInfo(uint64_t *mac,QHostAddress *addr,QHostAddress *mask,
-		     const QString &iface);
-QHostAddress WHInterfaceIPv4Address(const QString &iface);
-QHostAddress WHInterfaceIPv4Netmask(const QString &iface);
-uint64_t WHInterfaceMacAddress(const QString &iface);
-QString WHMacAddressText(uint64_t mac);
+#define WEBHOST_CONF_FILE "/etc/webhost.conf"
+
+class WHConfig
+{
+ public:
+  WHConfig();
+  uint16_t controlPort() const;
+  unsigned interfaceQuantity() const;
+  QString interfaceName(unsigned n) const;
+  QString ntpConfigurationFile() const;
+  QString ntpServiceName() const;
+  QString serviceCommand() const;
+  int serviceRespawnDelay() const;
+  bool load();
+
+ private:
+  uint16_t config_control_port;
+  std::vector<QString> config_interface_names;
+  QString config_ntp_configuration_file;
+  QString config_ntp_service_name;
+  QString config_service_command;
+  int config_service_respawn_delay;
+};
 
 
-#endif  // WHNETWORK_H
+#endif  // WHCONFIG_H
