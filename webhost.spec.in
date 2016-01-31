@@ -76,8 +76,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 /usr/lib/systemd/system/webhost.service
 %{_libdir}/libwebhost.so
-%{_libdir}/libwebhost.so.0
-%{_libdir}/libwebhost.so.0.0.0
+%{_libdir}/libwebhost.so.@INTERFACE_MAJOR@
+%{_libdir}/libwebhost.so.@INTERFACE_MAJOR@.@INTERFACE_MINOR@.@INTERFACE_POINT@
 %{_sbindir}/webhostd
 
 
