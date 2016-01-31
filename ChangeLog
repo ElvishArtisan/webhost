@@ -164,3 +164,6 @@
 	'wh/whnetwork.h'.
 	* Added a 'WHConfig' class in 'src/wh/whconfig.cpp' and
 	'src/wh/whconfig.h'.
+2016-01-31 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the API version to 1:0:1.
+	* Incremented the package version to 0.8.6.
