@@ -23,12 +23,22 @@ AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ -I$(top_srcdir)/src
 LIBS = -L$(top_srcdir)/src/wh
 MOC = @MOC@
 
-libexec_PROGRAMS = cgitest.cgi
+libexec_PROGRAMS = cgitest.cgi\
+                   filedrop.cgi
 
 dist_cgitest_cgi_SOURCES = basepage.cpp basepage.h\
                            cgitest.cpp cgitest.h
 
 cgitest_cgi_LDADD = @QT4_LIBS@ -lwebhost
+
+dist_filedrop_cgi_SOURCES = filedrop.cpp filedrop.h\
+                            filepage.cpp filepage.h
+
+filedrop_cgi_LDADD = @QT4_LIBS@ -lwebhost
+
+localstate_DATA = filedrop.html
+
+EXTRA_DIST = filedrop.html
 
 CLEANFILES = *~\
              *.idb\

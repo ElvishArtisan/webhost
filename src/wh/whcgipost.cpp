@@ -33,6 +33,8 @@
 #include "whcgipost.h"
 #include "whsettings.h"
 
+#define WHCGIPOST_UPGRADE_DONE_FILE "/done"
+
 WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
 {
   char tempdir[PATH_MAX];
@@ -405,7 +407,35 @@ void WHCgiPost::sendRestartCommand(const QString &sysname) const
 
 void WHCgiPost::sendUpgradeCommand(const QString &filename) const
 {
+  QStringList f0;
+  QString tempdir;
+  int count=0;
+
   SendCommand("UPGRADE "+filename+"!");
+
+  //
+  // Wait for webhostd to signal completion
+  // (because "wonderful" systemd deletes the package file after the CGI
+  // process exits).
+  //
+  f0=filename.split("/");
+  f0.erase(f0.begin()+f0.size()-1);
+  tempdir=f0.join("/");
+
+  int fd=-1;
+  f0=filename.split("/");
+  f0.erase(f0.begin()+f0.size()-1);
+  do {
+    sleep(1);
+    fd=open((f0.join("/")+WHCGIPOST_UPGRADE_DONE_FILE).toUtf8(),O_RDONLY);
+  } while((count++<30)&&(fd<0));
+  if(fd>0) {
+    close(fd);
+  }
+
+  unlink(filename.toUtf8());
+  unlink((tempdir+WHCGIPOST_UPGRADE_DONE_FILE).toUtf8());
+  rmdir(tempdir.toUtf8());
 }
 
 

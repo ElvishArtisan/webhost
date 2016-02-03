@@ -18,6 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <fcntl.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include <QProcess>
@@ -30,28 +34,49 @@ void MainObject::Upgrade(const QStringList &cmds)
   QProcess *proc=NULL;
   QStringList args;
   QString action;
+  QString tempdir;
 
-  if(cmds.size()>1) {
+  if(cmds.size()==2) {
+    //
+    // Get temporary directory
+    //
+    QStringList f0=cmds[1].split("/");
+    f0.erase(f0.begin()+f0.size()-1);
+    tempdir=f0.join("/");
+
+    //
+    // Apply Package
+    //
     args.push_back("--oldpackage");
     args.push_back("-U");
-    for(int i=1;i<cmds.length();i++) {
-      args.push_back(cmds[i]);
-    }
+    args.push_back(cmds[1]);
     proc=new QProcess(this);
     proc->start("/bin/rpm",args);
     proc->waitForFinished();
     sync();
+    
+    //
+    // Signal completion
+    //
+    int fd;
+    if((fd=open((tempdir+"/done").toUtf8(),O_CREAT|O_WRONLY,
+		S_IRWXU|S_IRWXG|S_IRWXO))>0) {
+      close(fd);
+    }
   }
 
+  /*
   //
-  // Cleanup Packages
+  // Cleanup temp directory
   //
-  for(int i=1;i<cmds.length();i++) {
-    unlink(cmds[i].toUtf8());
-    QStringList f0=cmds[i].split("/");
-    f0.erase(f0.begin()+f0.size()-1);
-    rmdir(f0.join("/").toUtf8());
-  }
+  unlink(cmds[1].toUtf8());
+  unlink((tempdir+"/done").toUtf8());
+  rmdir(tempdir.toUtf8());
+  */
+
+  //
+  // Kill service process
+  //
   if(main_service_process!=NULL) {
     main_service_process->kill();
   }

@@ -56,7 +56,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 rm -rf $RPM_BUILD_ROOT/usr/libexec
-
+rm -f $RPM_BUILD_ROOT/var/*.html
 
 %post
 ldconfig
