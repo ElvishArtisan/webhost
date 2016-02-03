@@ -176,3 +176,5 @@
 	* Modified the 'WHCgiPost::sendUpgradeCommand()' method to
 	wait until package upgrade is complete before returning.
 	* Added a 'filedrop.cgi' CGI test in 'src/tests/'.
+2016-02-03 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.8.8.
