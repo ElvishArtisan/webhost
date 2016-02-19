@@ -178,3 +178,8 @@
 	* Added a 'filedrop.cgi' CGI test in 'src/tests/'.
 2016-02-03 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.8.8.
+2016-02-19 Fred Gleason <fredg@paravelsystems.com>
+	* Add a 'WHHttpServer' class in 'src/wh/whhttpserver.cpp' and
+	'src/wh/whhttpserver.h'.
+	* Add a 'WHHttpRequest' class in 'src/wh/whhttprequest.cpp' and
+	'src/wh/whhttprequest.h'.

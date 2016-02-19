@@ -23,18 +23,34 @@ AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ -I$(top_srcdir)/src
 LIBS = -L$(top_srcdir)/src/wh
 MOC = @MOC@
 
+# The dependency for qt's Meta Object Compiler (moc)
+moc_%.cpp:	%.h
+	@MOC@ $< -o $@
+
 libexec_PROGRAMS = cgitest.cgi\
                    filedrop.cgi
+
+noinst_PROGRAMS = httpserver
+
 
 dist_cgitest_cgi_SOURCES = basepage.cpp basepage.h\
                            cgitest.cpp cgitest.h
 
 cgitest_cgi_LDADD = @QT4_LIBS@ -lwebhost
 
+
 dist_filedrop_cgi_SOURCES = filedrop.cpp filedrop.h\
                             filepage.cpp filepage.h
 
 filedrop_cgi_LDADD = @QT4_LIBS@ -lwebhost
+
+
+dist_httpserver_SOURCES = httpserver.cpp httpserver.h
+
+nodist_httpserver_SOURCES = moc_httpserver.cpp
+
+httpserver_LDADD = @QT4_LIBS@ -lwebhost
+
 
 localstate_DATA = filedrop.html
 

@@ -2,7 +2,7 @@
 ##
 ## Makefile webhost library
 ##
-## (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as
@@ -37,11 +37,14 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whcgipost.cpp whcgipost.h\
                              whcmdswitch.cpp whcmdswitch.h\
                              whconfig.cpp whconfig.h\
+                             whhttprequest.cpp whhttprequest.h\
+                             whhttpserver.cpp whhttpserver.h\
                              whnetwork.cpp whnetwork.h\
                              whprofile.cpp whprofile.h\
                              whsettings.cpp whsettings.h
 
-nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp
+nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp\
+                               moc_whhttpserver.cpp
 
 includedir = $(prefix)/include/wh
 
@@ -51,6 +54,7 @@ include_HEADERS = whcgiapplication.h\
                   whcgipost.h\
                   whcmdswitch.h\
                   whconfig.h\
+                  whhttpserver.h\
                   whnetwork.h\
                   whprofile.h\
                   whsettings.h
