@@ -31,6 +31,8 @@ WHHttpRequest::WHHttpRequest(Method meth,const QString &uri,
 {
   http_method=meth;
   http_uri=uri;
+  http_content_length=-1;
+  http_content_type="application/octet-stream";
   http_header_names=hdr_names;
   http_header_values=hdr_values;
   http_body=body;
@@ -133,6 +135,54 @@ bool WHHttpRequest::setHost(const QString &str)
 }
 
 
+int64_t WHHttpRequest::contentLength() const
+{
+  return http_content_length;
+}
+
+
+void WHHttpRequest::setContentLength(int64_t len)
+{
+  http_content_length=len;
+}
+
+
+QString WHHttpRequest::contentType() const
+{
+  return http_content_type;
+}
+
+
+void WHHttpRequest::setContentType(const QString &mimetype)
+{
+  http_content_type=mimetype;
+}
+
+
+QString WHHttpRequest::referrer() const
+{
+  return http_referrer;
+}
+
+
+void WHHttpRequest::setReferrer(const QString &str)
+{
+  http_referrer=str;
+}
+
+
+QString WHHttpRequest::userAgent() const
+{
+  return http_user_agent;
+}
+
+
+void WHHttpRequest::setUserAgent(const QString &str)
+{
+  http_user_agent=str;
+}
+
+
 QStringList WHHttpRequest::headerNames() const
 {
   return http_header_names;
@@ -197,6 +247,7 @@ QString WHHttpRequest::dump() const
 			 minorProtocolVersion());
   ret+="URI: "+uri()+"\n";
   ret+="Host: "+hostName()+":"+QString().sprintf("%u",hostPort())+"\n";
+  ret+="User-Agent: "+userAgent()+"\n";
 
   ret+="HEADERS\n";
   for(int i=0;i<http_header_names.size();i++) {

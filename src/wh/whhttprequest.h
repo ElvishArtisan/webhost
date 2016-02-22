@@ -46,6 +46,14 @@ class WHHttpRequest
   QString hostName() const;
   uint16_t hostPort() const;
   bool setHost(const QString &str);
+  int64_t contentLength() const;
+  void setContentLength(int64_t len);
+  QString contentType() const;
+  void setContentType(const QString &mimetype);
+  QString referrer() const;
+  void setReferrer(const QString &str);
+  QString userAgent() const;
+  void setUserAgent(const QString &str);
   QStringList headerNames() const;
   QStringList headerValues() const;
   QString headerValue(const QString &name) const;
@@ -64,6 +72,10 @@ class WHHttpRequest
   QString http_uri;
   QString http_host_name;
   uint16_t http_host_port;
+  int64_t http_content_length;
+  QString http_content_type;
+  QString http_referrer;
+  QString http_user_agent;
   QStringList http_header_names;
   QStringList http_header_values;
   QByteArray http_body;

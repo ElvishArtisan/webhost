@@ -33,22 +33,8 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include <wh/whhttpconnection.h>
 #include <wh/whhttprequest.h>
-
-class __WHHttpConnection
-{
- public:
-  __WHHttpConnection(QTcpSocket *sock);
-  ~__WHHttpConnection();
-  QTcpSocket *socket();
-  WHHttpRequest *request();
-  QString accum;
-
- private:
-  QTcpSocket *conn_socket;
-  WHHttpRequest *conn_request;
-};
-
 
 class WHHttpServer : public QObject
 {
@@ -60,6 +46,7 @@ class WHHttpServer : public QObject
   bool listen(const QHostAddress &iface,uint16_t port);
   void addStaticSource(const QString &uri,const QString &mimetype,
 		       const QString &filename);
+  void addCgiSource(const QString &uri,const QString &filename);
   void sendResponse(int id,int stat_code,
 		    const QStringList &hdr_names,const QStringList &hdr_values,
 		    const QByteArray &body=QByteArray(),
@@ -78,18 +65,21 @@ class WHHttpServer : public QObject
   void newConnectionData();
   void readyReadData(int id);
   void disconnectedData(int id);
+  void cgiFinishedData(int id);
   void garbageData();
 
  private:
   void SendStaticSource(int id,int n);
-  void SendHeader(int id,const QString &name="",const QString &value="") const;
   QStringList http_static_filenames;
   QStringList http_static_uris;
   QStringList http_static_mimetypes;
+  QStringList http_cgi_filenames;
+  QStringList http_cgi_uris;
   QTcpServer *http_server;
   QSignalMapper *http_read_mapper;
   QSignalMapper *http_disconnect_mapper;
-  std::vector<__WHHttpConnection *> http_connections;
+  QSignalMapper *http_cgi_finished_mapper;
+  std::vector<WHHttpConnection *> http_connections;
   QTimer *http_garbage_timer;
 };
 

@@ -26,35 +26,6 @@
 
 #include "whhttpserver.h"
 
-__WHHttpConnection::__WHHttpConnection(QTcpSocket *sock)
-{
-  conn_socket=sock;
-  conn_request=new WHHttpRequest();
-  accum="";
-}
-
-
-__WHHttpConnection::~__WHHttpConnection()
-{
-  delete conn_request;
-  delete conn_socket;
-}
-
-
-WHHttpRequest *__WHHttpConnection::request()
-{
-  return conn_request;
-}
-
-
-QTcpSocket *__WHHttpConnection::socket()
-{
-  return conn_socket;
-}
-
-
-
-
 WHHttpServer::WHHttpServer(QObject *parent)
   : QObject(parent)
 {
@@ -67,6 +38,10 @@ WHHttpServer::WHHttpServer(QObject *parent)
   http_disconnect_mapper=new QSignalMapper(this);
   connect(http_disconnect_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(disconnectedData(int)));
+
+  http_cgi_finished_mapper=new QSignalMapper(this);
+  connect(http_cgi_finished_mapper,SIGNAL(mapped(int)),
+	  this,SLOT(cgiFinishedData(int)));
 
   http_garbage_timer=new QTimer(this);
   http_garbage_timer->setSingleShot(true);
@@ -107,28 +82,21 @@ void WHHttpServer::addStaticSource(const QString &uri,const QString &mimetype,
 }
 
 
+void WHHttpServer::addCgiSource(const QString &uri,const QString &filename)
+{
+  http_cgi_uris.push_back(uri);
+  http_cgi_filenames.push_back(filename);
+}
+
+
 void WHHttpServer::sendResponse(int id,int stat_code,
 				const QStringList &hdr_names,
 				const QStringList &hdr_values,
 				const QByteArray &body,
 				const QString &mimetype)
 {
-  QString statline=QString().sprintf("HTTP/1.1 %d ",stat_code)+
-    WHHttpRequest::statusText(stat_code)+"\r\n";
-  http_connections[id]->socket()->write(statline.toUtf8());
-  SendHeader(id,"Date",WHHttpRequest::
-	 datetimeStamp(QDateTime(QDate::currentDate(),QTime::currentTime())));
-  SendHeader(id,"Server",QString("Webhost/")+VERSION);
-  SendHeader(id,"Connection","close");// FIXME: Implement persistent connections
-  if(body.length()>0) {
-    SendHeader(id,"Content-Length",QString().sprintf("%d",body.length()));
-    SendHeader(id,"Content-Type",mimetype);
-  }
-  for(int i=0;i<hdr_names.size();i++) {
-    SendHeader(id,hdr_names[i],hdr_values[i]);
-  }
-  SendHeader(id);
-  http_connections[id]->socket()->write(body);
+  http_connections[id]->
+    sendResponse(stat_code,hdr_names,hdr_values,body,mimetype);
 }
 
 
@@ -143,12 +111,7 @@ void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
 			     const QStringList &hdr_names,
 			     const QStringList &hdr_values)
 {
-  QString err_text=msg;
-  if(err_text.isEmpty()) {
-    err_text=
-      QString().sprintf("%d ",stat_code)+WHHttpRequest::statusText(stat_code);
-  }
-  sendResponse(id,stat_code,hdr_names,hdr_values,err_text.toUtf8());
+  http_connections[id]->sendError(stat_code,msg,hdr_names,hdr_values);
 }
 
 
@@ -159,14 +122,15 @@ void WHHttpServer::newConnectionData()
   for(unsigned i=0;i<http_connections.size();i++) {
     if(http_connections[i]==NULL) {
       http_connections[i]=
-	new __WHHttpConnection(http_server->nextPendingConnection());
+	new WHHttpConnection(http_server->nextPendingConnection(),this);
       id=i;
       break;
     }
   }
   if(id<0) {
     http_connections.
-      push_back(new __WHHttpConnection(http_server->nextPendingConnection()));
+      push_back(new WHHttpConnection(http_server->nextPendingConnection(),
+				       this));
     id=http_connections.size()-1;
   }
   connect(http_connections[id]->socket(),SIGNAL(readyRead()),
@@ -176,6 +140,10 @@ void WHHttpServer::newConnectionData()
   connect(http_connections[id]->socket(),SIGNAL(disconnected()),
 	  http_disconnect_mapper,SLOT(map()));
   http_disconnect_mapper->setMapping(http_connections[id]->socket(),id);
+
+  connect(http_connections[id],SIGNAL(cgiFinished()),
+	  http_cgi_finished_mapper,SLOT(map()));
+  http_cgi_finished_mapper->setMapping(http_connections[id]->socket(),id);
 }
 
 
@@ -184,8 +152,9 @@ void WHHttpServer::readyReadData(int id)
   QStringList hdr_names;
   QStringList hdr_values;
   QString line;
-  __WHHttpConnection *conn=http_connections[id];
+  WHHttpConnection *conn=http_connections[id];
   WHHttpRequest *req=conn->request();
+  bool ok=false;
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
@@ -233,11 +202,33 @@ void WHHttpServer::readyReadData(int id)
 	QString hdr=f0[0];
 	f0.erase(f0.begin());
 	QString value=f0.join(": ");
-	if(hdr=="Host") {
-	  if(!req->setHost(value)) {
-	    sendError(id,400,"400 Bad Request<br>Malformed Host: header");
+	if(hdr=="Content-Length") {
+	  int64_t len=value.toLongLong(&ok);
+	  if(!ok) {
+	    sendError(id,400,
+		      "400 Bad Request Malformed Content-Length: header");
 	    return;
 	  }
+	  req->setContentLength(len);
+	  processed=true;
+	}
+	if(hdr=="Content-Type") {
+	  req->setContentType(value);
+	  processed=true;
+	}
+	if(hdr=="Host") {
+	  if(!req->setHost(value)) {
+	    sendError(id,400,"400 Bad Request Malformed Host: header");
+	    return;
+	  }
+	  processed=true;
+	}
+	if(hdr=="Referer") {
+	  req->setReferrer(value);
+	  processed=true;
+	}
+	if(hdr=="User-Agent") {
+	  req->setUserAgent(value);
 	  processed=true;
 	}
 	if(!processed) {
@@ -256,6 +247,12 @@ void WHHttpServer::readyReadData(int id)
 	      return;
 	    }
 	  }
+	  for(int i=0;i<http_cgi_uris.size();i++) {
+	    if(req->uri()==http_cgi_uris[i]) {
+	      http_connections[id]->startCgiScript(http_cgi_filenames[i]);
+	      return;
+	    }
+	  }
 	  emit requestReceived(id,req);
 	}
       }
@@ -265,6 +262,12 @@ void WHHttpServer::readyReadData(int id)
 
 
 void WHHttpServer::disconnectedData(int id)
+{
+  http_garbage_timer->start(0);
+}
+
+
+void WHHttpServer::cgiFinishedData(int id)
 {
   http_garbage_timer->start(0);
 }
@@ -296,17 +299,4 @@ void WHHttpServer::SendStaticSource(int id,int n)
   QByteArray data=file.readAll();
   sendResponse(id,200,data,http_static_mimetypes[n]);
   file.close();
-}
-
-
-void WHHttpServer::SendHeader(int id,const QString &name,const QString &value)
-  const
-{
-  if(name.isEmpty()&&value.isEmpty()) {
-    http_connections[id]->socket()->write("\r\n");
-  }
-  else {
-    QString line=name+": "+value+"\r\n";
-    http_connections[id]->socket()->write(line.toUtf8());
-  }
 }

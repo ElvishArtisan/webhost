@@ -37,6 +37,7 @@ MainObject::MainObject(QObject *parent)
   }
   test_server->addStaticSource("/testfile.txt","text/plain",
 			       "/home/fredg/temp/voa-streams.txt");
+  test_server->addCgiSource("/hello.cgi","/home/fredg/temp/hello.cgi");
   printf("listening on port 8080\n");
 }
 

@@ -37,6 +37,7 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whcgipost.cpp whcgipost.h\
                              whcmdswitch.cpp whcmdswitch.h\
                              whconfig.cpp whconfig.h\
+                             whhttpconnection.cpp whhttpconnection.h\
                              whhttprequest.cpp whhttprequest.h\
                              whhttpserver.cpp whhttpserver.h\
                              whnetwork.cpp whnetwork.h\
@@ -44,6 +45,7 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whsettings.cpp whsettings.h
 
 nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp\
+                               moc_whhttpconnection.cpp\
                                moc_whhttpserver.cpp
 
 includedir = $(prefix)/include/wh
@@ -54,6 +56,7 @@ include_HEADERS = whcgiapplication.h\
                   whcgipost.h\
                   whcmdswitch.h\
                   whconfig.h\
+                  whhttpconnection.h\
                   whhttpserver.h\
                   whnetwork.h\
                   whprofile.h\
