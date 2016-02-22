@@ -31,10 +31,12 @@ MainObject::MainObject(QObject *parent)
   test_server=new WHHttpServer(this);
   connect(test_server,SIGNAL(requestReceived(int,WHHttpRequest *)),
 	  this,SLOT(requestReceivedData(int,WHHttpRequest *)));
-  if(!test_server->bind(8080)) {
+  if(!test_server->listen(8080)) {
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
   }
+  test_server->addStaticSource("/testfile.txt","text/plain",
+			       "/home/fredg/temp/voa-streams.txt");
   printf("listening on port 8080\n");
 }
 
@@ -43,8 +45,7 @@ void MainObject::requestReceivedData(int id,WHHttpRequest *req)
 {
   printf("Received Request:\n");
   printf("%s",(const char *)req->dump().toUtf8());
-  test_server->sendResponse(id,200,QStringList(),QStringList(),"Hello World!",
-			    "text/html");
+  test_server->sendResponse(id,200,"Hello World!","text/html");
 }
 
 

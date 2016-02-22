@@ -183,3 +183,6 @@
 	'src/wh/whhttpserver.h'.
 	* Add a 'WHHttpRequest' class in 'src/wh/whhttprequest.cpp' and
 	'src/wh/whhttprequest.h'.
+2016-02-22 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHHttpServer::addStaticSource()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.

@@ -22,6 +22,7 @@
 #include <time.h>
 
 #include <QDateTime>
+#include <QFile>
 
 #include "whhttpserver.h"
 
@@ -85,9 +86,24 @@ WHHttpServer::~WHHttpServer()
 }
 
 
-bool WHHttpServer::bind(uint16_t port)
+bool WHHttpServer::listen(uint16_t port)
 {
   return http_server->listen(QHostAddress::Any,port);
+}
+
+
+bool WHHttpServer::listen(const QHostAddress &iface,uint16_t port)
+{
+  return http_server->listen(iface,port);
+}
+
+
+void WHHttpServer::addStaticSource(const QString &uri,const QString &mimetype,
+				   const QString &filename)
+{
+  http_static_uris.push_back(uri);
+  http_static_mimetypes.push_back(mimetype);
+  http_static_filenames.push_back(filename);
 }
 
 
@@ -103,6 +119,7 @@ void WHHttpServer::sendResponse(int id,int stat_code,
   SendHeader(id,"Date",WHHttpRequest::
 	 datetimeStamp(QDateTime(QDate::currentDate(),QTime::currentTime())));
   SendHeader(id,"Server",QString("Webhost/")+VERSION);
+  SendHeader(id,"Connection","close");// FIXME: Implement persistent connections
   if(body.length()>0) {
     SendHeader(id,"Content-Length",QString().sprintf("%d",body.length()));
     SendHeader(id,"Content-Type",mimetype);
@@ -115,11 +132,23 @@ void WHHttpServer::sendResponse(int id,int stat_code,
 }
 
 
+void WHHttpServer::sendResponse(int id,int stat_code,
+				const QByteArray &body,const QString &mimetype)
+{
+  sendResponse(id,stat_code,QStringList(),QStringList(),body,mimetype);
+}
+
+
 void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
 			     const QStringList &hdr_names,
 			     const QStringList &hdr_values)
 {
-  sendResponse(id,stat_code,hdr_names,hdr_values,msg.toUtf8());
+  QString err_text=msg;
+  if(err_text.isEmpty()) {
+    err_text=
+      QString().sprintf("%d ",stat_code)+WHHttpRequest::statusText(stat_code);
+  }
+  sendResponse(id,stat_code,hdr_names,hdr_values,err_text.toUtf8());
 }
 
 
@@ -161,7 +190,7 @@ void WHHttpServer::readyReadData(int id)
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
     if(req->method()==WHHttpRequest::None) {  // Method Line
-      printf("LINE: %s\n",(const char *)line.toUtf8());
+      //printf("LINE: %s\n",(const char *)line.toUtf8());
       QStringList f0=line.split(" ");
       if(f0.size()!=3) {
 	sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
@@ -177,7 +206,7 @@ void WHHttpServer::readyReadData(int id)
       if(req->method()==WHHttpRequest::None) {
 	hdr_names.push_back("Allow");
 	hdr_values.push_back("GET");
-	sendError(id,405,"405 Method not allowed",hdr_names,hdr_values);
+	sendError(id,501,"501 Not implemented",hdr_names,hdr_values);
 	return;
       }
 
@@ -199,7 +228,6 @@ void WHHttpServer::readyReadData(int id)
     }
     else {
       bool processed=false;
-      printf("HDR: %s\n",(const char *)line.toUtf8());
       QStringList f0=line.split(": ",QString::KeepEmptyParts);
       if(f0.size()>=2) {
 	QString hdr=f0[0];
@@ -221,6 +249,12 @@ void WHHttpServer::readyReadData(int id)
 	  if((req->minorProtocolVersion()==1)&&(req->hostPort()==0)) {
 	    sendError(id,400,"400 Bad Request<br>Missing/malformed Host: header");
 	    return;
+	  }
+	  for(int i=0;i<http_static_uris.size();i++) {
+	    if(req->uri()==http_static_uris[i]) {
+	      SendStaticSource(id,i);
+	      return;
+	    }
 	  }
 	  emit requestReceived(id,req);
 	}
@@ -244,6 +278,24 @@ void WHHttpServer::garbageData()
       http_connections[i]=NULL;
     }
   }
+}
+
+
+void WHHttpServer::SendStaticSource(int id,int n)
+{
+  QFile file(http_static_filenames[n]);
+
+  if(!file.exists()) {
+    sendError(id,404);
+    return;
+  }
+  if(!file.open(QIODevice::ReadOnly)) {
+    sendError(id,500);
+    return;
+  }
+  QByteArray data=file.readAll();
+  sendResponse(id,200,data,http_static_mimetypes[n]);
+  file.close();
 }
 
 

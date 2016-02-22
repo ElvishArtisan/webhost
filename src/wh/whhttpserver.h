@@ -56,12 +56,18 @@ class WHHttpServer : public QObject
  public:
   WHHttpServer(QObject *parent=0);
   ~WHHttpServer();
-  bool bind(uint16_t port);
+  bool listen(uint16_t port);
+  bool listen(const QHostAddress &iface,uint16_t port);
+  void addStaticSource(const QString &uri,const QString &mimetype,
+		       const QString &filename);
   void sendResponse(int id,int stat_code,
 		    const QStringList &hdr_names,const QStringList &hdr_values,
 		    const QByteArray &body=QByteArray(),
 		    const QString &mimetype="");
-  void sendError(int id,int stat_code,const QString &msg,
+  void sendResponse(int id,int stat_code,
+		    const QByteArray &body=QByteArray(),
+		    const QString &mimetype="");
+  void sendError(int id,int stat_code,const QString &msg="",
 		 const QStringList &hdr_names=QStringList(),
 		 const QStringList &hdr_values=QStringList());
 
@@ -75,7 +81,11 @@ class WHHttpServer : public QObject
   void garbageData();
 
  private:
+  void SendStaticSource(int id,int n);
   void SendHeader(int id,const QString &name="",const QString &value="") const;
+  QStringList http_static_filenames;
+  QStringList http_static_uris;
+  QStringList http_static_mimetypes;
   QTcpServer *http_server;
   QSignalMapper *http_read_mapper;
   QSignalMapper *http_disconnect_mapper;
