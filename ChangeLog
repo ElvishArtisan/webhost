@@ -194,3 +194,8 @@
 2016-02-23 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that caused 'WHHttpServer' to segfault when collecting
 	garbage from stale connections.
+2016-02-23 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'WHHttpServer::requestReceived()' signal from
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added 'WHHttpServer::requestReceived()' virtual method to
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.

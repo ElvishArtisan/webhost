@@ -115,6 +115,13 @@ void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
 }
 
 
+void WHHttpServer::requestReceived(int id,WHHttpRequest *req)
+{
+  fprintf(stderr,"URI \"%s\" not found\n",(const char *)req->uri().toUtf8());
+  sendError(id,404,"404 Not found");
+}
+
+
 void WHHttpServer::newConnectionData()
 {
   int id=-1;
@@ -215,7 +222,7 @@ void WHHttpServer::ReadMethodLine(int id)
     if(f0[0].trimmed()=="GET") {
       req->setMethod(WHHttpRequest::Get);
     }
-    if((f0[0].trimmed()=="POST")&&IsCgiScript(f0[1].trimmed())) {
+    if(f0[0].trimmed()=="POST") {
       req->setMethod(WHHttpRequest::Post);
     }
     if(req->method()==WHHttpRequest::None) {
@@ -352,7 +359,7 @@ void WHHttpServer::ProcessRequest(int id)
       return;
     }
   }
-  emit requestReceived(id,req);
+  requestReceived(id,req);
 }
 
 

@@ -33,8 +33,6 @@ MainObject::MainObject(QObject *parent)
 
   cwd=getcwd(cwd,0);
   test_server=new WHHttpServer(this);
-  connect(test_server,SIGNAL(requestReceived(int,WHHttpRequest *)),
-	  this,SLOT(requestReceivedData(int,WHHttpRequest *)));
   if(!test_server->listen(8080)) {
     fprintf(stderr,"cgitest: unable to bind port 8080\n");
     exit(256);
@@ -43,17 +41,6 @@ MainObject::MainObject(QObject *parent)
   printf("Script at: %s\n",(const char *)cmd.toUtf8());
   test_server->addCgiSource("/cgitest.cgi",cmd);
   printf("listening on port 8080\n");
-}
-
-
-void MainObject::requestReceivedData(int id,WHHttpRequest *req)
-{
-  printf("Received Request:\n");
-  printf("%s",(const char *)req->dump().toUtf8());
-  /*
-  test_server->sendResponse(id,200,"Hello World!","text/html");
-  */
-  test_server->sendError(id,404,"404 Not found");
 }
 
 
