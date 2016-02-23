@@ -58,6 +58,7 @@ class WHHttpConnection : public QObject
   void cgiFinished();
 
  private slots:
+  void cgiStartedData();
   void cgiReadyReadData();
   void cgiFinishedData(int exit_code,QProcess::ExitStatus status);
   void cgiErrorData(QProcess::ProcessError err);

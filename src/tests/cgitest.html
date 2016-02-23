@@ -1,0 +1,36 @@
+<html>
+<head>
+<title>Webhost CGITest Harness</title>
+<body>
+
+<form action="http://localhost:8080/cgitest.cgi" method="post" enctype="multipart/form-data">
+
+<!--
+<form action="http://localhost:8080/cgitest.cgi" method="post">
+-->
+<table cellpadding="0" cellspacing="2" border="0">
+<tr>
+<td align="right">FIELD_1:</td>
+<td><input type="text" name="FIELD_1" size="20" maxlength="255"></td>
+</tr>
+<tr>
+<td align="right">FIELD_2:</td>
+<td><input type="text" name="FIELD_2" size="20" maxlength="255"></td>
+</tr>
+<tr>
+<td align="right">FIELD_3:</td>
+<td><input type="text" name="FIELD_3" size="20" maxlength="255"></td>
+</tr>
+<tr>
+<td align="right">FILE:</td>
+<td><input name="FILE" type="file"></td>
+<tr>
+<td colspan="2" align="right">&nbsp;</td>
+</tr>
+<tr>
+<td colspan="2" align="right"><input type="submit" value="OK"></td>
+</tr>
+</table>
+</form>
+</body>
+</html>

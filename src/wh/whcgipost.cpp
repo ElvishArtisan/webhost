@@ -62,19 +62,12 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
     post_error=WHCgiPost::ErrorNotPost;
     return;
   }
-  /*
-  if(QString(getenv("REQUEST_METHOD")).toLower()!="post") {
-    post_error=WHCgiPost::ErrorNotPost;
-    return;
-  }
-  */
+
   //
   // Verify Size
   //
   if(getenv("CONTENT_LENGTH")==NULL) {
     post_content_length=0;
-    //    post_error=WHCgiPost::ErrorPostTooLarge;
-    //return;
   }
   else {
     post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
@@ -101,28 +94,18 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   }
 
   //
-  // Autodetect the encoding type
+  // Get the encoding type
   //
-  char first[2];
-  read(0,first,1);
-  if(first[0]=='-') {
-    post_encoding=WHCgiPost::MultipartEncoded;
-  }
-  else {
-    post_encoding=WHCgiPost::UrlEncoded;
-  }
-
-  switch(post_encoding) {
-  case WHCgiPost::UrlEncoded:
-    LoadUrlEncoding(first[0]);
-    break;
-
-  case WHCgiPost::MultipartEncoded:
-    LoadMultipartEncoding(first[0]);
-    break;
-
-  case WHCgiPost::AutoEncoded:
-    break;
+  post_error=WHCgiPost::ErrorOk;
+  if(getenv("CONTENT_TYPE")!=NULL) {
+    if(QString(getenv("CONTENT_TYPE"))=="application/x-www-form-urlencoded") {
+      post_encoding=WHCgiPost::UrlEncoded;
+      LoadUrlEncoding();
+    }
+    if(QString(getenv("CONTENT_TYPE"))=="multipart/form-data") {
+      post_encoding=WHCgiPost::MultipartEncoded;
+      LoadMultipartEncoding();
+    }
   }
 }
 
@@ -593,15 +576,14 @@ void WHCgiPost::SendCommand(const QString &cmd) const
 }
 
 
-void WHCgiPost::LoadUrlEncoding(char first)
+void WHCgiPost::LoadUrlEncoding()
 {
   char *data=new char[post_content_length+1];
   int n;
   QStringList lines;
   QStringList line;
 
-  data[0]=first;
-  if((n=read(0,data+1,post_content_length-1))>0) {
+  if((n=read(0,data,post_content_length))>0) {
     data[post_content_length]=0;
     lines=QString(data).split("&");
     for(int i=0;i<lines.size();i++) {
@@ -617,13 +599,13 @@ void WHCgiPost::LoadUrlEncoding(char first)
 }
 
 
-void WHCgiPost::LoadMultipartEncoding(char first)
+void WHCgiPost::LoadMultipartEncoding()
 {
   std::map<QString,QString> headers;
   bool header=true;
   char *data=NULL;
-  FILE *f=NULL;
   ssize_t n=0;
+  unsigned total_bytes=0;
   QString sep;
   QString name;
   QString filename;
@@ -631,22 +613,21 @@ void WHCgiPost::LoadMultipartEncoding(char first)
   int fd=-1;
   int index;
 
-  if((f=fdopen(0,"r"))==NULL) {
-    post_error=WHCgiPost::ErrorInternal;
-    return;
-  }
-  if((n=getline(&data,(size_t *)&n,f))<=0) {
+  if((n=getline(&data,(size_t *)&n,stdin))<=0) {
     printf("Content-type: text/html\n\n");
     printf("LoadMultipartEncoding()\n");
     post_error=WHCgiPost::ErrorMalformedData;
     return;
   }
+  total_bytes+=n;
   sep=QString(data).simplified();
 
   //
   // Get message parts
   //
-  while((n=getline(&data,(size_t *)&n,f))>0) {
+  while(((n=getline(&data,(size_t *)&n,stdin))>0)&&
+	(total_bytes<post_content_length)) {
+    total_bytes+=n;
     if(QString(data).simplified().contains(sep)>0) {  // End of part
       if(fd>=0) {
 	ftruncate(fd,lseek(fd,0,SEEK_CUR)-2);  // Remove extraneous final CR/LF

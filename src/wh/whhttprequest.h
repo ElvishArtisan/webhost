@@ -31,7 +31,7 @@
 class WHHttpRequest
 {
  public:
-  enum Method {None=0,Get=1};
+  enum Method {None=0,Get=1,Post=2};
   WHHttpRequest(Method meth,const QString &uri,
 		const QStringList &hdr_names,const QStringList &hdr_values,
 		const QByteArray &body=QByteArray());

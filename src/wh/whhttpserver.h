@@ -69,7 +69,12 @@ class WHHttpServer : public QObject
   void garbageData();
 
  private:
+  void ReadMethodLine(int id);
+  void ReadHeaders(int id);
+  void ReadBody(int id);
+  void ProcessRequest(int id);
   void SendStaticSource(int id,int n);
+  bool IsCgiScript(const QString &uri) const;
   QStringList http_static_filenames;
   QStringList http_static_uris;
   QStringList http_static_mimetypes;
@@ -81,6 +86,7 @@ class WHHttpServer : public QObject
   QSignalMapper *http_cgi_finished_mapper;
   std::vector<WHHttpConnection *> http_connections;
   QTimer *http_garbage_timer;
+  int http_istate;
 };
 
 

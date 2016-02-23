@@ -1,8 +1,8 @@
-// basepage.cpp
+// cgitest_page.h
 //
-// Default page for cgitest
+// CGI page component for CGI test
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,20 +18,18 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include "basepage.h"
+#ifndef CGITEST_PAGE_H
+#define CGITEST_PAGE_H
 
-BasePage::BasePage(WHCgiPost *post)
-  : WHCgiPage(post)
+#include <wh/whcgipage.h>
+
+class CgiPage : public WHCgiPage
 {
-}
+ public:
+  CgiPage(WHCgiPost *post);
+  ~CgiPage();
+  void render();
+};
 
 
-BasePage::~BasePage()
-{
-}
-
-
-void BasePage::render()
-{
-  post()->sendRebootCommand();
-}
+#endif  // CGITEST_PAGE_H

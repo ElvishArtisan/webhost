@@ -1,8 +1,8 @@
-// basepage.h
+// cgitest_script.cpp
 //
-// Default page for cgitest
+// Player control page for GlassPlayerHost
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,18 +18,26 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef BASEPAGE_H
-#define BASEPAGE_H
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <QCoreApplication>
 
 #include <wh/whcgipage.h>
 
-class BasePage : public WHCgiPage
+#include "cgitest_page.h"
+#include "cgitest_script.h"
+
+MainObject::MainObject(QObject *parent)
+  : WHCgiApplication(parent)
 {
- public:
-  BasePage(WHCgiPost *post);
-  ~BasePage();
-  void render();
-};
+  addPage(0,new CgiPage(post()));
+}
 
 
-#endif  // BASEPAGE_H
+int main(int argc,char *argv[])
+{
+  QCoreApplication a(argc,argv);
+  new MainObject();
+  return a.exec();
+}

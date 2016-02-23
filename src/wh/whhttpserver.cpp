@@ -144,120 +144,25 @@ void WHHttpServer::newConnectionData()
   connect(http_connections[id],SIGNAL(cgiFinished()),
 	  http_cgi_finished_mapper,SLOT(map()));
   http_cgi_finished_mapper->setMapping(http_connections[id]->socket(),id);
+  http_istate=0;
 }
 
 
 void WHHttpServer::readyReadData(int id)
 {
-  QStringList hdr_names;
-  QStringList hdr_values;
-  QString line;
-  WHHttpConnection *conn=http_connections[id];
-  WHHttpRequest *req=conn->request();
-  bool ok=false;
+  switch(http_istate) {
+  case 0:
+    ReadMethodLine(id);
+    break;
 
-  while(conn->socket()->canReadLine()) {
-    line=QString(conn->socket()->readLine()).trimmed();
-    if(req->method()==WHHttpRequest::None) {  // Method Line
-      //printf("LINE: %s\n",(const char *)line.toUtf8());
-      QStringList f0=line.split(" ");
-      if(f0.size()!=3) {
-	sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
-	return;
-      }
+  case 1:
+    ReadHeaders(id);
+    break;
 
-      //
-      // The HTTP Method
-      //
-      if(f0[0].trimmed()=="GET") {
-	req->setMethod(WHHttpRequest::Get);
-      }
-      if(req->method()==WHHttpRequest::None) {
-	hdr_names.push_back("Allow");
-	hdr_values.push_back("GET");
-	sendError(id,501,"501 Not implemented",hdr_names,hdr_values);
-	return;
-      }
-
-      req->setUri(f0[1].trimmed());
-
-      QStringList f1=f0[2].trimmed().split("/");
-      if(f1.size()!=2) {
-	sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
-	return;
-      }
-      if(!req->setProtocolVersion(f1[1])) {
-	sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
-	return;
-      }
-      if((req->majorProtocolVersion()!=1)||(req->minorProtocolVersion()>1)) {
-	sendError(id,505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
-	return;
-      }
-    }
-    else {
-      bool processed=false;
-      QStringList f0=line.split(": ",QString::KeepEmptyParts);
-      if(f0.size()>=2) {
-	QString hdr=f0[0];
-	f0.erase(f0.begin());
-	QString value=f0.join(": ");
-	if(hdr=="Content-Length") {
-	  int64_t len=value.toLongLong(&ok);
-	  if(!ok) {
-	    sendError(id,400,
-		      "400 Bad Request Malformed Content-Length: header");
-	    return;
-	  }
-	  req->setContentLength(len);
-	  processed=true;
-	}
-	if(hdr=="Content-Type") {
-	  req->setContentType(value);
-	  processed=true;
-	}
-	if(hdr=="Host") {
-	  if(!req->setHost(value)) {
-	    sendError(id,400,"400 Bad Request Malformed Host: header");
-	    return;
-	  }
-	  processed=true;
-	}
-	if(hdr=="Referer") {
-	  req->setReferrer(value);
-	  processed=true;
-	}
-	if(hdr=="User-Agent") {
-	  req->setUserAgent(value);
-	  processed=true;
-	}
-	if(!processed) {
-	  req->addHeader(hdr,value);
-	}
-      }
-      else {
-	if(line.isEmpty()) {  // End of headers
-	  if((req->minorProtocolVersion()==1)&&(req->hostPort()==0)) {
-	    sendError(id,400,"400 Bad Request<br>Missing/malformed Host: header");
-	    return;
-	  }
-	  for(int i=0;i<http_static_uris.size();i++) {
-	    if(req->uri()==http_static_uris[i]) {
-	      SendStaticSource(id,i);
-	      return;
-	    }
-	  }
-	  for(int i=0;i<http_cgi_uris.size();i++) {
-	    if(req->uri()==http_cgi_uris[i]) {
-	      http_connections[id]->startCgiScript(http_cgi_filenames[i]);
-	      return;
-	    }
-	  }
-	  emit requestReceived(id,req);
-	}
-      }
-    }
-  } 
+  case 2:
+    ReadBody(id);
+    break;
+  }
 }
 
 
@@ -284,6 +189,170 @@ void WHHttpServer::garbageData()
 }
 
 
+void WHHttpServer::ReadMethodLine(int id)
+{
+  QStringList hdr_names;
+  QStringList hdr_values;
+  QString line;
+  WHHttpConnection *conn=http_connections[id];
+  WHHttpRequest *req=conn->request();
+
+  if(conn->socket()->canReadLine()) {
+    line=QString(conn->socket()->readLine()).trimmed();
+    //printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    QStringList f0=line.split(" ");
+    if(f0.size()!=3) {
+      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      return;
+    }
+
+    //
+    // The HTTP Method
+    //
+    if(f0[0].trimmed()=="GET") {
+      req->setMethod(WHHttpRequest::Get);
+    }
+    if((f0[0].trimmed()=="POST")&&IsCgiScript(f0[1].trimmed())) {
+      req->setMethod(WHHttpRequest::Post);
+    }
+    if(req->method()==WHHttpRequest::None) {
+      hdr_names.push_back("Allow");
+      hdr_values.push_back("GET");
+      if(IsCgiScript(f0[1].trimmed())) {
+	hdr_values.back()+=",POST";
+      }
+      sendError(id,501,"501 Not implemented",hdr_names,hdr_values);
+      return;
+    }
+
+    req->setUri(f0[1].trimmed());
+
+    QStringList f1=f0[2].trimmed().split("/");
+    if(f1.size()!=2) {
+      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      return;
+    }
+    if(!req->setProtocolVersion(f1[1])) {
+      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      return;
+    }
+    if((req->majorProtocolVersion()!=1)||(req->minorProtocolVersion()>1)) {
+      sendError(id,505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
+      return;
+    }
+    http_istate=1;
+    ReadHeaders(id);
+  }
+}
+
+
+void WHHttpServer::ReadHeaders(int id)
+{
+  QStringList hdr_names;
+  QStringList hdr_values;
+  QString line;
+  WHHttpConnection *conn=http_connections[id];
+  WHHttpRequest *req=conn->request();
+  bool ok=false;
+
+  while(conn->socket()->canReadLine()) {
+    line=QString(conn->socket()->readLine()).trimmed();
+    //printf("HEADER: %s\n",(const char *)line.toUtf8());
+    bool processed=false;
+    QStringList f0=line.split(": ",QString::KeepEmptyParts);
+    if(f0.size()>=2) {
+      QString hdr=f0[0];
+      f0.erase(f0.begin());
+      QString value=f0.join(": ");
+      if(hdr=="Content-Length") {
+	int64_t len=value.toLongLong(&ok);
+	if(!ok) {
+	  sendError(id,400,
+		    "400 Bad Request Malformed Content-Length: header");
+	  return;
+	}
+	req->setContentLength(len);
+	processed=true;
+      }
+      if(hdr=="Content-Type") {
+	QStringList f1=value.split(";");
+	req->setContentType(f1[0]);
+	processed=true;
+      }
+      if(hdr=="Host") {
+	if(!req->setHost(value)) {
+	  sendError(id,400,"400 Bad Request Malformed Host: header");
+	  return;
+	}
+	processed=true;
+      }
+      if(hdr=="Referer") {
+	req->setReferrer(value);
+	processed=true;
+      }
+      if(hdr=="User-Agent") {
+	req->setUserAgent(value);
+	processed=true;
+      }
+      if(!processed) {
+	req->addHeader(hdr,value);
+      }
+    }
+    else {
+      if(line.isEmpty()) {  // End of headers
+	if((req->minorProtocolVersion()==1)&&(req->hostPort()==0)) {
+	  sendError(id,400,
+		    "400 Bad Request -- Missing/malformed Host: header");
+	  return;
+	}
+	if(req->method()==WHHttpRequest::Get) {
+	  ProcessRequest(id);
+	}
+	else {
+	  http_istate=2;
+	  ReadBody(id);
+	}
+	return;
+      }
+    }
+  }
+}
+
+
+void WHHttpServer::ReadBody(int id)
+{
+  WHHttpConnection *conn=http_connections[id];
+  WHHttpRequest *req=conn->request();
+
+  req->
+    appendBody(conn->socket()->read(req->contentLength()-req->body().length()));
+  if(req->body().length()==req->contentLength()) {
+    ProcessRequest(id);
+  }
+}
+
+
+void WHHttpServer::ProcessRequest(int id)
+{
+  WHHttpConnection *conn=http_connections[id];
+  WHHttpRequest *req=conn->request();
+
+  for(int i=0;i<http_static_uris.size();i++) {
+    if(req->uri()==http_static_uris[i]) {
+      SendStaticSource(id,i);
+      return;
+    }
+  }
+  for(int i=0;i<http_cgi_uris.size();i++) {
+    if(req->uri()==http_cgi_uris[i]) {
+      conn->startCgiScript(http_cgi_filenames[i]);
+      return;
+    }
+  }
+  emit requestReceived(id,req);
+}
+
+
 void WHHttpServer::SendStaticSource(int id,int n)
 {
   QFile file(http_static_filenames[n]);
@@ -299,4 +368,15 @@ void WHHttpServer::SendStaticSource(int id,int n)
   QByteArray data=file.readAll();
   sendResponse(id,200,data,http_static_mimetypes[n]);
   file.close();
+}
+
+
+bool WHHttpServer::IsCgiScript(const QString &uri) const
+{
+  for(int i=0;i<http_cgi_uris.size();i++) {
+    if(http_cgi_uris[i]==uri) {
+      return true;
+    }
+  }
+  return false;
 }

@@ -1,6 +1,6 @@
-// httpserver.cpp
+// cgitest_server.cpp
 //
-// Test harness for the WHHttp classes
+// Test HTTP server for CGI test
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -20,25 +20,29 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <QCoreApplication>
 
-#include "httpserver.h"
+#include "cgitest_server.h"
 
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
+  char *cwd=NULL;
+
+  cwd=getcwd(cwd,0);
   test_server=new WHHttpServer(this);
   connect(test_server,SIGNAL(requestReceived(int,WHHttpRequest *)),
 	  this,SLOT(requestReceivedData(int,WHHttpRequest *)));
-  if(!test_server->listen(80)) {
-    fprintf(stderr,"httpserver: unable to bind port 8080\n");
+  if(!test_server->listen(8080)) {
+    fprintf(stderr,"cgitest: unable to bind port 8080\n");
     exit(256);
   }
-  test_server->addCgiSource("/","/var/www/cgi-bin/glassplayerhost.cgi");
-  test_server->addCgiSource("/cgi-bin/glassplayerhost.cgi",
-			    "/var/www/cgi-bin/glassplayerhost.cgi");
-  printf("listening on port 80\n");
+  QString cmd=QString(cwd)+"/src/tests/cgitest_script";
+  printf("Script at: %s\n",(const char *)cmd.toUtf8());
+  test_server->addCgiSource("/cgitest.cgi",cmd);
+  printf("listening on port 8080\n");
 }
 
 

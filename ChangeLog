@@ -189,3 +189,5 @@
 2016-02-22 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'WHHttpServer::addCgiSource()' method in
 	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+2016-02-23 Fred Gleason <fredg@paravelsystems.com>
+	* Extended CGI support to include POST method calls.

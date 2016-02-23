@@ -27,16 +27,19 @@ MOC = @MOC@
 moc_%.cpp:	%.h
 	@MOC@ $< -o $@
 
-libexec_PROGRAMS = cgitest.cgi\
-                   filedrop.cgi
+libexec_PROGRAMS = filedrop.cgi
 
-noinst_PROGRAMS = httpserver
+noinst_PROGRAMS = cgitest_script\
+                  cgitest_server\
+                  httpserver
 
+dist_cgitest_script_SOURCES = cgitest_page.cpp cgitest_page.h\
+                              cgitest_script.cpp cgitest_script.h
+cgitest_script_LDADD = @QT4_LIBS@ -lwebhost
 
-dist_cgitest_cgi_SOURCES = basepage.cpp basepage.h\
-                           cgitest.cpp cgitest.h
-
-cgitest_cgi_LDADD = @QT4_LIBS@ -lwebhost
+dist_cgitest_server_SOURCES = cgitest_server.cpp cgitest_server.h
+nodist_cgitest_server_SOURCES = moc_cgitest_server.cpp
+cgitest_server_LDADD = @QT4_LIBS@ -lwebhost
 
 
 dist_filedrop_cgi_SOURCES = filedrop.cpp filedrop.h\
@@ -52,9 +55,11 @@ nodist_httpserver_SOURCES = moc_httpserver.cpp
 httpserver_LDADD = @QT4_LIBS@ -lwebhost
 
 
-localstate_DATA = filedrop.html
+localstate_DATA = cgitest.html\
+                  filedrop.html
 
-EXTRA_DIST = filedrop.html
+EXTRA_DIST = cgitest.html\
+             filedrop.html
 
 CLEANFILES = *~\
              *.idb\

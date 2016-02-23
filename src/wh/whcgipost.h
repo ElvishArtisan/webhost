@@ -82,8 +82,8 @@ class WHCgiPost
  private:
   void ReadIpConfig();
   void SendCommand(const QString &cmd) const;
-  void LoadUrlEncoding(char first);
-  void LoadMultipartEncoding(char first);
+  void LoadUrlEncoding();
+  void LoadMultipartEncoding();
   QString UrlDecode(const QString &str) const;
   Encoding post_encoding;
   Error post_error;

@@ -1,8 +1,8 @@
-// cgitest.cpp
+// cgitest_script.h
 //
-// CGI test for webhost
+// CGI script component for CGI test
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,26 +18,16 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef CGITEST_SCRIPT_H
+#define CGITEST_SCRIPT_H
 
-#include <QCoreApplication>
+#include <wh/whcgiapplication.h>
 
-#include <wh/whcgipage.h>
-
-#include "basepage.h"
-#include "cgitest.h"
-
-MainObject::MainObject(QObject *parent)
-  : WHCgiApplication(parent)
+class MainObject : public WHCgiApplication
 {
-  addPage(0,new BasePage(post()));
-}
+ public:
+  MainObject(QObject *parent=0);
+};
 
 
-int main(int argc,char *argv[])
-{
-  QCoreApplication a(argc,argv);
-  new MainObject();
-  return a.exec();
-}
+#endif  // CGITEST_SCRIPT_H

@@ -1,8 +1,8 @@
-// cgitest.h
+// cgitest_server.h
 //
-// CGI test for webhost
+// Test HTTP server for CGI test
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,16 +18,25 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef CGITEST_H
-#define CGITEST_H
+#ifndef CGITEST_SERVER_H
+#define CGITEST_SERVER_H
 
-#include <wh/whcgiapplication.h>
+#include <QObject>
 
-class MainObject : public WHCgiApplication
+#include <wh/whhttpserver.h>
+
+class MainObject : public QObject
 {
+  Q_OBJECT;
  public:
   MainObject(QObject *parent=0);
+
+ private slots:
+  void requestReceivedData(int id,WHHttpRequest *req);
+
+ private:
+  WHHttpServer *test_server;
 };
 
 
-#endif  // CGITEST_H
+#endif  // CGITEST_SERVER_H

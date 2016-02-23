@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <QDateTime>
 #include <QProcessEnvironment>
@@ -55,6 +56,7 @@ WHHttpRequest *WHHttpConnection::request()
 void WHHttpConnection::startCgiScript(const QString &filename)
 {
   conn_cgi_process=new QProcess(this);
+  connect(conn_cgi_process,SIGNAL(started()),this,SLOT(cgiStartedData()));
   connect(conn_cgi_process,SIGNAL(readyReadStandardOutput()),
 	  this,SLOT(cgiReadyReadData()));
   connect(conn_cgi_process,SIGNAL(finished(int,QProcess::ExitStatus)),
@@ -78,7 +80,12 @@ void WHHttpConnection::startCgiScript(const QString &filename)
   env.insert("REMOTE_ADDR",socket()->peerAddress().toString());
   env.insert("REMOTE_HOST",socket()->peerAddress().toString());
   env.insert("REMOTE_PORT",QString().sprintf("%u",0xFFFF&socket()->peerPort()));
-  env.insert("REQUEST_METHOD","GET");
+  if(request()->method()==WHHttpRequest::Post) {
+    env.insert("REQUEST_METHOD","POST");
+  }
+  else {
+    env.insert("REQUEST_METHOD","GET");
+  }
   env.insert("REQUEST_URI",request()->uri());
   env.insert("SCRIPT_FILENAME",filename);
   env.insert("SCRIPT_NAME",filename);
@@ -150,6 +157,15 @@ QTcpSocket *WHHttpConnection::socket()
 }
 
 
+void WHHttpConnection::cgiStartedData()
+{
+  if(request()->method()==WHHttpRequest::Post) {
+    conn_cgi_process->write(request()->body());
+    conn_cgi_process->write("\r\n");
+  }
+}
+
+
 void WHHttpConnection::cgiReadyReadData()
 {
   QByteArray data;
@@ -163,6 +179,10 @@ void WHHttpConnection::cgiReadyReadData()
       }
       socket()->write("\r\n",2);
       conn_cgi_headers_active=false;
+      while(conn_cgi_process->bytesAvailable()>0) {
+	data=conn_cgi_process->read(1024);
+	socket()->write(data);
+      }
     }
     else {
       conn_cgi_headers.push_back(data);
@@ -199,7 +219,35 @@ void WHHttpConnection::cgiFinishedData(int exit_code,
 
 void WHHttpConnection::cgiErrorData(QProcess::ProcessError err)
 {
-  sendError(500,"CGI process error");
+  QString err_text=QString().sprintf("unknown process error %d",err);
+  switch(err) {
+  case QProcess::FailedToStart:
+    err_text="failed to start";
+    break;
+
+  case QProcess::Crashed:
+    err_text="crashed";
+    break;
+
+  case QProcess::Timedout:
+    err_text="Timed out";
+    break;
+
+  case QProcess::WriteError:
+    err_text="write error";
+    break;
+
+  case QProcess::ReadError:
+    err_text="read error";
+    break;
+
+  case QProcess::UnknownError:
+    err_text="unknown error";
+    break;
+  }
+  sendError(500,"500 CGI process error ["+err_text+"]");
+  socket()->close();
+  emit cgiFinished();
 }
 
 
