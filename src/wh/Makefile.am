@@ -60,6 +60,7 @@ include_HEADERS = whcgiapplication.h\
                   whhttpserver.h\
                   whnetwork.h\
                   whprofile.h\
+                  whhttprequest.h\
                   whsettings.h
 
 libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)

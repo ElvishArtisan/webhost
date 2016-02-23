@@ -181,9 +181,12 @@ void WHHttpServer::cgiFinishedData(int id)
 void WHHttpServer::garbageData()
 {
   for(unsigned i=0;i<http_connections.size();i++) {
-    if(http_connections[i]->socket()->state()!=QAbstractSocket::ConnectedState) {
-      delete http_connections[i];
-      http_connections[i]=NULL;
+    if(http_connections[i]!=NULL) {
+      if(http_connections[i]->socket()->state()!=
+	 QAbstractSocket::ConnectedState) {
+	delete http_connections[i];
+	http_connections[i]=NULL;
+      }
     }
   }
 }

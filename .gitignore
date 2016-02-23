@@ -24,6 +24,8 @@ Makefile.in
 missing
 moc_*
 rc.webhost
+src/tests/cgitest_script
+src/tests/cgitest_server
 src/tests/httpserver
 src/webhostd/webhostd
 webhost.service

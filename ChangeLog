@@ -191,3 +191,6 @@
 	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
 2016-02-23 Fred Gleason <fredg@paravelsystems.com>
 	* Extended CGI support to include POST method calls.
+2016-02-23 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused 'WHHttpServer' to segfault when collecting
+	garbage from stale connections.
