@@ -70,7 +70,7 @@ void WHHttpConnection::startCgiScript(const QString &filename)
     env.insert("CONTENT_TYPE",request()->contentType());
   }
   env.insert("GATEWAY_INTERFACE","1.1");
-  env.insert("HTTP_HOST",filename);
+  env.insert("HTTP_HOST",socket()->localAddress().toString());
   if(!request()->referrer().isEmpty()) {
     env.insert("HTTP_REFERER",request()->referrer());
   }

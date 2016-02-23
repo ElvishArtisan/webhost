@@ -203,3 +203,7 @@
 	* Removed the 'maxsize' parameter from the constructor of the
 	'WHCgiApplication' class in 'src/wh/whcgiapplication.cpp' and
 	'src/wh/whcgiapplication.h'.
+2016-02-23 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/wh/whhttpconnection.cpp' that was causing
+	incorrect values to be passed in the 'HTTP_HOST' parameter to CGI
+	processes.
