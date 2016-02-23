@@ -71,10 +71,6 @@ WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
   }
   else {
     post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
-    if((!ok)||((maxsize>0)&&(post_content_length>maxsize))) {
-      post_error=WHCgiPost::ErrorPostTooLarge;
-      return;
-    }
   }
 
   //

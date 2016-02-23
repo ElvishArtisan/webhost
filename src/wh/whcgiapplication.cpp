@@ -31,7 +31,7 @@
 
 WHCgiApplication *cgiapp;
 
-WHCgiApplication::WHCgiApplication(QObject *parent,unsigned maxsize,bool auto_delete)
+WHCgiApplication::WHCgiApplication(QObject *parent,bool auto_delete)
   : QObject(parent)
 {
   app_post=new WHCgiPost(0,true);
@@ -92,7 +92,7 @@ void WHCgiApplication::redirect(const QString &url,bool no_cleanup)
 
 void WHCgiApplication::renderData()
 {
-  int id;
+  int id=0;
   WHCgiObject *page=NULL;
 
   post()->getValue("COMMAND",&id);

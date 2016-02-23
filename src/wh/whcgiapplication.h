@@ -38,7 +38,7 @@ class WHCgiApplication : public QObject
 {
   Q_OBJECT;
  public:
-  WHCgiApplication(QObject *parent=0,unsigned maxsize=0,bool auto_delete=true);
+  WHCgiApplication(QObject *parent=0,bool auto_delete=true);
   ~WHCgiApplication();
   void addPage(int cmd_id,WHCgiObject *page);
   void exit(int resp_code,const QString &msg="",bool no_cleanup=false);
