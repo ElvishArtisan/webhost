@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdio.h>
 #include <time.h>
 
 #include <QStringList>
@@ -36,6 +37,7 @@ WHHttpRequest::WHHttpRequest(Method meth,const QString &uri,
   http_header_names=hdr_names;
   http_header_values=hdr_values;
   http_body=body;
+  http_auth_type=WHHttpRequest::AuthNone;
 }
 
 
@@ -132,6 +134,44 @@ bool WHHttpRequest::setHost(const QString &str)
     http_host_port=80;
   }
   return true;
+}
+
+
+WHHttpRequest::AuthType WHHttpRequest::authType() const
+{
+  return http_auth_type;
+}
+
+
+QString WHHttpRequest::authName() const
+{
+  return http_auth_name;
+}
+
+
+QString WHHttpRequest::authPassword() const
+{
+  return http_auth_password;
+}
+
+
+bool WHHttpRequest::setAuthorization(const QString &str)
+{
+  bool ret=false;
+
+  QStringList f0=str.trimmed().split(" ");
+  if((f0[0].toLower()=="basic")&&(f0.size()==2)) {
+    QStringList f1=QString(QByteArray::fromBase64(f0[1].toAscii())).
+      split(":",QString::KeepEmptyParts);
+    if(f1.size()>=2) {
+      http_auth_name=f1[0];
+      f1.erase(f1.begin());
+      http_auth_password=f1.join(":");
+      ret=true;
+    }
+  }
+
+  return ret;
 }
 
 

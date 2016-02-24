@@ -211,3 +211,10 @@
 	* Changed the 'WHHttpServer::requestReceived(int,WHHttpRequest *)'
 	method to 'WHHttpServer::requestReceived(WHHttpConnection *)' in
 	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+2016-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHHttpUser' class in 'src/wh/whhttpuser.cpp' and
+	'src/wh/whhttpuser.h'.
+	* Added 'WHHttpServer::userRealms()', 'WHHttpServer::userNames()',
+	'WHHttpServer::addUser()' and 'WHHttpServer::removeUser()' methods
+	in 'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added support for HTTP Basic authentication.

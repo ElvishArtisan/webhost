@@ -40,6 +40,7 @@ MainObject::MainObject(QObject *parent)
   QString cmd=QString(cwd)+"/src/tests/cgitest_script";
   printf("Script at: %s\n",(const char *)cmd.toUtf8());
   test_server->addCgiSource("/cgitest.cgi",cmd);
+  test_server->addUser("CgiTest","user","");
   printf("listening on port 8080\n");
 }
 

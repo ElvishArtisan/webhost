@@ -32,6 +32,7 @@ class WHHttpRequest
 {
  public:
   enum Method {None=0,Get=1,Post=2};
+  enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
   WHHttpRequest(Method meth,const QString &uri,
 		const QStringList &hdr_names,const QStringList &hdr_values,
 		const QByteArray &body=QByteArray());
@@ -46,6 +47,10 @@ class WHHttpRequest
   QString hostName() const;
   uint16_t hostPort() const;
   bool setHost(const QString &str);
+  AuthType authType() const;
+  QString authName() const;
+  QString authPassword() const;
+  bool setAuthorization(const QString &str);
   int64_t contentLength() const;
   void setContentLength(int64_t len);
   QString contentType() const;
@@ -72,6 +77,9 @@ class WHHttpRequest
   QString http_uri;
   QString http_host_name;
   uint16_t http_host_port;
+  AuthType http_auth_type;
+  QString http_auth_name;
+  QString http_auth_password;
   int64_t http_content_length;
   QString http_content_type;
   QString http_referrer;

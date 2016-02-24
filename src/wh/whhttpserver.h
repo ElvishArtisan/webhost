@@ -23,6 +23,7 @@
 
 #include <stdint.h>
 
+#include <map>
 #include <vector>
 
 #include <QByteArray>
@@ -35,6 +36,7 @@
 
 #include <wh/whhttpconnection.h>
 #include <wh/whhttprequest.h>
+#include <wh/whhttpuser.h>
 
 class WHHttpServer : public QObject
 {
@@ -44,9 +46,14 @@ class WHHttpServer : public QObject
   ~WHHttpServer();
   bool listen(uint16_t port);
   bool listen(const QHostAddress &iface,uint16_t port);
+  QStringList userRealms() const;
+  QStringList userNames(const QString &realm);
+  void addUser(const QString &realm,const QString &name,const QString &passwd);
+  void removeUser(const QString &realm,const QString &name);
   void addStaticSource(const QString &uri,const QString &mimetype,
-		       const QString &filename);
-  void addCgiSource(const QString &uri,const QString &filename);
+		       const QString &filename,const QString &realm="");
+  void addCgiSource(const QString &uri,const QString &filename,
+		    const QString &realm="");
   void sendResponse(int id,int stat_code,
 		    const QStringList &hdr_names,const QStringList &hdr_values,
 		    const QByteArray &body=QByteArray(),
@@ -60,6 +67,8 @@ class WHHttpServer : public QObject
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
+  virtual bool authenticateUser(const QString &realm,const QString &name,
+				const QString &passwd);
 
  private slots:
   void newConnectionData();
@@ -74,12 +83,17 @@ class WHHttpServer : public QObject
   void ReadBody(int id);
   void ProcessRequest(int id);
   void SendStaticSource(int id,int n);
+  void SendCgiSource(int id,int n);
   bool IsCgiScript(const QString &uri) const;
+  bool AuthenticateRealm(int id,const QString &realm,const QString &name,
+			 const QString &passwd);
   QStringList http_static_filenames;
   QStringList http_static_uris;
   QStringList http_static_mimetypes;
+  QStringList http_static_realms;
   QStringList http_cgi_filenames;
   QStringList http_cgi_uris;
+  QStringList http_cgi_realms;
   QTcpServer *http_server;
   QSignalMapper *http_read_mapper;
   QSignalMapper *http_disconnect_mapper;
@@ -87,6 +101,7 @@ class WHHttpServer : public QObject
   std::vector<WHHttpConnection *> http_connections;
   QTimer *http_garbage_timer;
   int http_istate;
+  std::map<QString,std::vector<WHHttpUser *> > http_users;
 };
 
 

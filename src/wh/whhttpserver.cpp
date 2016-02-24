@@ -73,19 +73,72 @@ bool WHHttpServer::listen(const QHostAddress &iface,uint16_t port)
 }
 
 
+QStringList WHHttpServer::userRealms() const
+{
+  QStringList ret;
+
+  for(std::map<QString,std::vector<WHHttpUser *> >::const_iterator it=http_users.begin();
+      it!=http_users.end();it++) {
+    ret.push_back(it->first);
+  }
+
+  return ret;
+}
+
+
+QStringList WHHttpServer::userNames(const QString &realm)
+{
+  QStringList ret;
+
+  for(unsigned i=0;i<http_users[realm].size();i++) {
+    ret.push_back(http_users[realm][i]->name());
+  }
+
+  return ret;
+}
+
+
+void WHHttpServer::addUser(const QString &realm,const QString &name,
+			   const QString &passwd)
+{
+  for(unsigned i=0;i<http_users[realm].size();i++) {
+    if(http_users[realm][i]->name()==name) {
+      http_users[realm][i]->setPassword(passwd);
+      return;
+    }
+  }
+  http_users[realm].push_back(new WHHttpUser(name,passwd));
+}
+
+
+void WHHttpServer::removeUser(const QString &realm,const QString &name)
+{
+  for(unsigned i=0;i<http_users[realm].size();i++) {
+    if(http_users[realm][i]->name()==name) {
+      delete http_users[realm][i];
+      http_users[realm].erase(http_users[realm].begin()+i);
+      return;
+    }
+  }
+}
+
+
 void WHHttpServer::addStaticSource(const QString &uri,const QString &mimetype,
-				   const QString &filename)
+				   const QString &filename,const QString &realm)
 {
   http_static_uris.push_back(uri);
   http_static_mimetypes.push_back(mimetype);
   http_static_filenames.push_back(filename);
+  http_static_realms.push_back(realm);
 }
 
 
-void WHHttpServer::addCgiSource(const QString &uri,const QString &filename)
+void WHHttpServer::addCgiSource(const QString &uri,const QString &filename,
+				const QString &realm)
 {
   http_cgi_uris.push_back(uri);
   http_cgi_filenames.push_back(filename);
+  http_cgi_realms.push_back(realm);
 }
 
 
@@ -120,6 +173,18 @@ void WHHttpServer::requestReceived(WHHttpConnection *conn)
   fprintf(stderr,"URI \"%s\" not found\n",
 	  (const char *)conn->request()->uri().toUtf8());
   conn->sendError(404,"404 Not found");
+}
+
+
+bool WHHttpServer::authenticateUser(const QString &realm,const QString &name,
+				    const QString &passwd)
+{
+  for(unsigned i=0;i<http_users[realm].size();i++) {
+    if(http_users[realm][i]->isValid(name,passwd)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -275,6 +340,10 @@ void WHHttpServer::ReadHeaders(int id)
       QString hdr=f0[0];
       f0.erase(f0.begin());
       QString value=f0.join(": ");
+      if(hdr=="Authorization") {
+	req->setAuthorization(value);
+	processed=true;
+      }
       if(hdr=="Content-Length") {
 	int64_t len=value.toLongLong(&ok);
 	if(!ok) {
@@ -356,7 +425,7 @@ void WHHttpServer::ProcessRequest(int id)
   }
   for(int i=0;i<http_cgi_uris.size();i++) {
     if(req->uri()==http_cgi_uris[i]) {
-      conn->startCgiScript(http_cgi_filenames[i]);
+      SendCgiSource(id,i);
       return;
     }
   }
@@ -367,6 +436,12 @@ void WHHttpServer::ProcessRequest(int id)
 void WHHttpServer::SendStaticSource(int id,int n)
 {
   QFile file(http_static_filenames[n]);
+
+  if(!AuthenticateRealm(id,http_static_realms[n],
+			http_connections[id]->request()->authName(),
+			http_connections[id]->request()->authPassword())) {
+    return;
+  }
 
   if(!file.exists()) {
     sendError(id,404);
@@ -382,6 +457,17 @@ void WHHttpServer::SendStaticSource(int id,int n)
 }
 
 
+void WHHttpServer::SendCgiSource(int id,int n)
+{
+  if(!AuthenticateRealm(id,http_cgi_realms[n],
+			http_connections[id]->request()->authName(),
+			http_connections[id]->request()->authPassword())) {
+    return;
+  }
+  http_connections[id]->startCgiScript(http_cgi_filenames[n]);
+}
+
+
 bool WHHttpServer::IsCgiScript(const QString &uri) const
 {
   for(int i=0;i<http_cgi_uris.size();i++) {
@@ -389,5 +475,21 @@ bool WHHttpServer::IsCgiScript(const QString &uri) const
       return true;
     }
   }
+  return false;
+}
+
+
+bool WHHttpServer::AuthenticateRealm(int id,const QString &realm,
+				     const QString &name,const QString &passwd)
+{
+  QStringList hdrs;
+  QStringList values;
+
+  if(realm.isEmpty()||authenticateUser(realm,name,passwd)) {
+    return true;
+  }
+  hdrs.push_back("WWW-Authenticate");
+  values.push_back("Basic realm=\""+realm+"\"");
+  http_connections[id]->sendResponse(401,hdrs,values,"401 Unauthorized");
   return false;
 }

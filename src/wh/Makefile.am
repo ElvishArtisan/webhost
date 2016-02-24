@@ -40,6 +40,7 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whhttpconnection.cpp whhttpconnection.h\
                              whhttprequest.cpp whhttprequest.h\
                              whhttpserver.cpp whhttpserver.h\
+                             whhttpuser.cpp whhttpuser.h\
                              whnetwork.cpp whnetwork.h\
                              whprofile.cpp whprofile.h\
                              whsettings.cpp whsettings.h
@@ -58,6 +59,7 @@ include_HEADERS = whcgiapplication.h\
                   whconfig.h\
                   whhttpconnection.h\
                   whhttpserver.h\
+                  whhttpuser.h\
                   whnetwork.h\
                   whprofile.h\
                   whhttprequest.h\
