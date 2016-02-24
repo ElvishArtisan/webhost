@@ -218,3 +218,7 @@
 	'WHHttpServer::addUser()' and 'WHHttpServer::removeUser()' methods
 	in 'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
 	* Added support for HTTP Basic authentication.
+2016-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'maxsize' parameter from the constructor of the
+	'WHCgiPost' class in 'src/wh/whcgipost.cpp' and
+	'src/wh/whcgipost.h'.

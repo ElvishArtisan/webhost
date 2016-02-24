@@ -35,7 +35,7 @@
 
 #define WHCGIPOST_UPGRADE_DONE_FILE "/done"
 
-WHCgiPost::WHCgiPost(unsigned maxsize,bool auto_delete)
+WHCgiPost::WHCgiPost(bool auto_delete)
 {
   char tempdir[PATH_MAX];
   bool ok=false;

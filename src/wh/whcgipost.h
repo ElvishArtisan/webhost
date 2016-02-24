@@ -41,7 +41,7 @@ class WHCgiPost
   enum Error {ErrorOk=0,ErrorNotPost=1,ErrorNoTempDir=2,ErrorMalformedData=3,
 	      ErrorPostTooLarge=4,ErrorInternal=5,ErrorNotInitialized=6,
 	      ErrorCannotSaveFile=7};
-  WHCgiPost(unsigned maxsize=0,bool auto_delete=true);
+  WHCgiPost(bool auto_delete=true);
   ~WHCgiPost();
   Error error() const;
   QStringList names() const;

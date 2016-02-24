@@ -34,7 +34,7 @@ WHCgiApplication *cgiapp;
 WHCgiApplication::WHCgiApplication(QObject *parent,bool auto_delete)
   : QObject(parent)
 {
-  app_post=new WHCgiPost(0,true);
+  app_post=new WHCgiPost(true);
   if(app_post->error()!=WHCgiPost::ErrorOk) {
     printf("Content-type: text/html\n");
     printf("Status: 500\n");
