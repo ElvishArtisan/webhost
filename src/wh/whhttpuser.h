@@ -28,6 +28,7 @@ class WHHttpUser
  public:
   WHHttpUser(const QString &name,const QString &passwd);
   QString name() const;
+  QString password() const;
   void setPassword(const QString &passwd);
   bool isValid(const QString &name,const QString &passwd);
 

@@ -25,6 +25,7 @@
 #include <QFile>
 
 #include "whhttpserver.h"
+#include "whprofile.h"
 
 WHHttpServer::WHHttpServer(QObject *parent)
   : QObject(parent)
@@ -120,6 +121,68 @@ void WHHttpServer::removeUser(const QString &realm,const QString &name)
       return;
     }
   }
+}
+
+
+bool WHHttpServer::loadUsers(const QString &filename)
+{
+  WHProfile *p=new WHProfile();
+  if(!p->setSource(filename)) {
+    return false;
+  }
+  for(std::map<QString,std::vector<WHHttpUser *> >::const_iterator it=http_users.begin();
+      it!=http_users.end();it++) {
+    for(unsigned i=0;i<it->second.size();i++) {
+      delete it->second[i];
+    }
+  }
+  http_users.clear();
+
+  int count=0;
+  QString realm;
+  QString name;
+  QString passwd;
+  bool ok=false;
+  QString section=QString().sprintf("WebHostUser%d",count+1);
+
+  realm=p->stringValue(section,"Realm","",&ok);
+  while(ok) {
+    name=p->stringValue(section,"Name");
+    passwd=p->stringValue(section,"Password");
+    addUser(realm,name,passwd);
+    count++;
+    section=QString().sprintf("WebHostUser%d",count+1);
+    realm=p->stringValue(section,"Realm","",&ok);
+  }
+
+  return true;
+}
+
+
+bool WHHttpServer::saveUsers(const QString &filename)
+{
+  FILE *f=NULL;
+  int count=0;
+
+  if((f=fopen((filename+".back").toUtf8(),"w"))==NULL) {
+    return false;
+  }
+  for(std::map<QString,std::vector<WHHttpUser *> >::const_iterator it=http_users.begin();
+      it!=http_users.end();it++) {
+    for(unsigned i=0;i<it->second.size();i++) {
+      fprintf(f,"[WebHostUser%d]\n",count+1);
+      fprintf(f,"Realm=%s\n",(const char *)it->first.toUtf8());
+      fprintf(f,"Name=%s\n",(const char *)it->second[i]->name().toUtf8());
+      fprintf(f,"Password=%s\n",
+	      (const char *)it->second[i]->password().toUtf8());
+      fprintf(f,"\n");
+      count++;
+    }
+  }
+  fclose(f);
+  rename((filename+".back").toUtf8(),filename.toUtf8());
+
+  return true;
 }
 
 

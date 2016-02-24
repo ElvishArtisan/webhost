@@ -50,6 +50,8 @@ class WHHttpServer : public QObject
   QStringList userNames(const QString &realm);
   void addUser(const QString &realm,const QString &name,const QString &passwd);
   void removeUser(const QString &realm,const QString &name);
+  bool loadUsers(const QString &filename);
+  bool saveUsers(const QString &filename);
   void addStaticSource(const QString &uri,const QString &mimetype,
 		       const QString &filename,const QString &realm="");
   void addCgiSource(const QString &uri,const QString &filename,

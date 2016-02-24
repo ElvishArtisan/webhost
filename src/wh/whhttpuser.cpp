@@ -33,6 +33,12 @@ QString WHHttpUser::name() const
 }
 
 
+QString WHHttpUser::password() const
+{
+  return user_password;
+}
+
+
 void WHHttpUser::setPassword(const QString &passwd)
 {
   user_password=passwd;
