@@ -115,10 +115,11 @@ void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
 }
 
 
-void WHHttpServer::requestReceived(int id,WHHttpRequest *req)
+void WHHttpServer::requestReceived(WHHttpConnection *conn)
 {
-  fprintf(stderr,"URI \"%s\" not found\n",(const char *)req->uri().toUtf8());
-  sendError(id,404,"404 Not found");
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->request()->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
 }
 
 
@@ -359,7 +360,7 @@ void WHHttpServer::ProcessRequest(int id)
       return;
     }
   }
-  requestReceived(id,req);
+  requestReceived(http_connections[id]);
 }
 
 

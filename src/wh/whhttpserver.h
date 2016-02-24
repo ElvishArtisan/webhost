@@ -59,7 +59,7 @@ class WHHttpServer : public QObject
 		 const QStringList &hdr_values=QStringList());
 
  protected:
-  virtual void requestReceived(int id,WHHttpRequest *req);
+  virtual void requestReceived(WHHttpConnection *conn);
 
  private slots:
   void newConnectionData();

@@ -207,3 +207,7 @@
 	* Fixed a bug in 'src/wh/whhttpconnection.cpp' that was causing
 	incorrect values to be passed in the 'HTTP_HOST' parameter to CGI
 	processes.
+2016-02-24 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the 'WHHttpServer::requestReceived(int,WHHttpRequest *)'
+	method to 'WHHttpServer::requestReceived(WHHttpConnection *)' in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
