@@ -53,6 +53,8 @@ class WHHttpConnection : public QObject
 		 const QStringList &hdr_names=QStringList(),
 		 const QStringList &hdr_values=QStringList());
   void sendHeader(const QString &name="",const QString &value="");
+  int parseState() const;
+  void nextParseState();
 
  signals:
   void cgiFinished();
@@ -69,6 +71,7 @@ class WHHttpConnection : public QObject
   QProcess *conn_cgi_process;
   QStringList conn_cgi_headers;
   bool conn_cgi_headers_active;
+  int conn_parse_state;
 };
 
 

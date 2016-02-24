@@ -266,7 +266,7 @@ void WHHttpServer::newConnectionData()
   if(id<0) {
     http_connections.
       push_back(new WHHttpConnection(http_server->nextPendingConnection(),
-				       this));
+				     this));
     id=http_connections.size()-1;
   }
   connect(http_connections[id]->socket(),SIGNAL(readyRead()),
@@ -280,13 +280,12 @@ void WHHttpServer::newConnectionData()
   connect(http_connections[id],SIGNAL(cgiFinished()),
 	  http_cgi_finished_mapper,SLOT(map()));
   http_cgi_finished_mapper->setMapping(http_connections[id]->socket(),id);
-  http_istate=0;
 }
 
 
 void WHHttpServer::readyReadData(int id)
 {
-  switch(http_istate) {
+  switch(http_connections[id]->parseState()) {
   case 0:
     ReadMethodLine(id);
     break;
@@ -379,7 +378,7 @@ void WHHttpServer::ReadMethodLine(int id)
       sendError(id,505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
       return;
     }
-    http_istate=1;
+    conn->nextParseState();
     ReadHeaders(id);
   }
 }
@@ -452,7 +451,7 @@ void WHHttpServer::ReadHeaders(int id)
 	  ProcessRequest(id);
 	}
 	else {
-	  http_istate=2;
+	  conn->nextParseState();
 	  ReadBody(id);
 	}
 	return;
@@ -466,9 +465,8 @@ void WHHttpServer::ReadBody(int id)
 {
   WHHttpConnection *conn=http_connections[id];
   WHHttpRequest *req=conn->request();
-
-  req->
-    appendBody(conn->socket()->read(req->contentLength()-req->body().length()));
+  req->appendBody(conn->socket()->
+		  read(req->contentLength()-req->body().length()));
   if(req->body().length()==req->contentLength()) {
     ProcessRequest(id);
   }
@@ -514,7 +512,7 @@ void WHHttpServer::SendStaticSource(int id,int n)
     sendError(id,500);
     return;
   }
-  QByteArray data=file.readAll();
+  QByteArray data=file.readAll(); 
   sendResponse(id,200,data,http_static_mimetypes[n]);
   file.close();
 }

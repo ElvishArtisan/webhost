@@ -34,6 +34,7 @@ WHHttpConnection::WHHttpConnection(QTcpSocket *sock,QObject *parent)
   conn_request=new WHHttpRequest();
   conn_cgi_process=NULL;
   conn_cgi_headers_active=true;
+  conn_parse_state=0;
 }
 
 
@@ -262,4 +263,16 @@ void WHHttpConnection::sendHeader(const QString &name,const QString &value)
     QString line=name+": "+value+"\r\n";
     socket()->write(line.toUtf8());
   }
+}
+
+
+int WHHttpConnection::parseState() const
+{
+  return conn_parse_state;
+}
+
+
+void WHHttpConnection::nextParseState()
+{
+  conn_parse_state++;
 }

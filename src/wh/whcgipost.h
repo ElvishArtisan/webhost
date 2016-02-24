@@ -41,8 +41,12 @@ class WHCgiPost
   enum Error {ErrorOk=0,ErrorNotPost=1,ErrorNoTempDir=2,ErrorMalformedData=3,
 	      ErrorPostTooLarge=4,ErrorInternal=5,ErrorNotInitialized=6,
 	      ErrorCannotSaveFile=7};
+  enum Type {Cgi=0,Internal=1};
   WHCgiPost(bool auto_delete=true);
+  WHCgiPost(const QByteArray &post,const QString &mimetype,
+	    bool auto_delete=true);
   ~WHCgiPost();
+  Type type() const;
   Error error() const;
   QStringList names() const;
   QVariant value(const QString &name,bool *ok=NULL);
@@ -80,6 +84,7 @@ class WHCgiPost
   static QString dumpEnvironment();
 
  private:
+  bool Initialize();
   void ReadIpConfig();
   void SendCommand(const QString &cmd) const;
   void LoadUrlEncoding();
@@ -100,6 +105,7 @@ class WHCgiPost
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
   QString post_ntp_hostnames[WEBHOST_MAX_NTP_SERVERS];
   WHProfile *post_profile;
+  Type post_type;
 };
 
 

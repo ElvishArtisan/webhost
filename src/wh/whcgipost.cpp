@@ -37,9 +37,54 @@
 
 WHCgiPost::WHCgiPost(bool auto_delete)
 {
+  bool ok=false;
+  post_type=WHCgiPost::Cgi;
+  post_auto_delete=auto_delete;
+
+  if(!Initialize()) {
+    return;
+  }
+
+  //
+  // Verify Transfer Type
+  //
+  if(getenv("REQUEST_METHOD")==NULL) {
+    post_error=WHCgiPost::ErrorNotPost;
+    return;
+  }
+
+  //
+  // Verify Size
+  //
+  if(getenv("CONTENT_LENGTH")==NULL) {
+    post_content_length=0;
+  }
+  else {
+    post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
+  }
+
+  //
+  // Get the encoding type
+  //
+  post_error=WHCgiPost::ErrorOk;
+  if(getenv("CONTENT_TYPE")!=NULL) {
+    if(QString(getenv("CONTENT_TYPE"))=="application/x-www-form-urlencoded") {
+      post_encoding=WHCgiPost::UrlEncoded;
+      LoadUrlEncoding();
+    }
+    if(QString(getenv("CONTENT_TYPE"))=="multipart/form-data") {
+      post_encoding=WHCgiPost::MultipartEncoded;
+      LoadMultipartEncoding();
+    }
+  }
+
+
+
+  /*
   char tempdir[PATH_MAX];
   bool ok=false;
 
+  post_type=WHCgiPost::Cgi;
   post_encoding=WHCgiPost::AutoEncoded;
   post_error=WHCgiPost::ErrorNotInitialized;
   post_auto_delete=auto_delete;
@@ -103,6 +148,14 @@ WHCgiPost::WHCgiPost(bool auto_delete)
       LoadMultipartEncoding();
     }
   }
+  */
+}
+
+
+WHCgiPost::WHCgiPost(const QByteArray &post,const QString &mimetype,
+		     bool auto_delete)
+{
+  post_type=WHCgiPost::Internal;
 }
 
 
@@ -122,6 +175,12 @@ WHCgiPost::~WHCgiPost()
   delete post_socket;
   delete post_settings;
   delete post_profile;
+}
+
+
+WHCgiPost::Type WHCgiPost::type() const
+{
+  return post_type;
 }
 
 
@@ -509,6 +568,43 @@ QString WHCgiPost::dumpEnvironment()
     i++;
   }
   return ret;
+}
+
+
+bool WHCgiPost::Initialize()
+{
+  char tempdir[PATH_MAX];
+
+  post_encoding=WHCgiPost::AutoEncoded;
+  post_error=WHCgiPost::ErrorNotInitialized;
+  post_settings=new WHSettings();
+
+  post_profile=new WHProfile();
+  post_profile->setSource(WEBHOST_CONF_FILE );
+
+  ReadIpConfig();
+
+  //
+  // Command Socket
+  //
+  post_socket=new QUdpSocket();
+
+  //
+  // Initialize Temp Directory Path
+  //
+  if(getenv("TMPDIR")!=NULL) {
+    strcpy(tempdir,getenv("TMPDIR"));
+  }
+  else {
+    strcpy(tempdir,"/tmp");
+  }
+  strcat(tempdir,"/webhostXXXXXX");
+  post_tempdir=mkdtemp(tempdir);
+  if(post_tempdir.isNull()) {
+    post_error=WHCgiPost::ErrorNoTempDir;
+    return false;
+  }
+  return true;
 }
 
 

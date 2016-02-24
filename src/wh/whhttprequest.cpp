@@ -31,19 +31,28 @@ WHHttpRequest::WHHttpRequest(Method meth,const QString &uri,
 			     const QByteArray &body)
 {
   http_method=meth;
+  http_host_port=0;
   http_uri=uri;
-  http_content_length=-1;
+  http_content_length=0;
   http_content_type="application/octet-stream";
   http_header_names=hdr_names;
   http_header_values=hdr_values;
   http_body=body;
   http_auth_type=WHHttpRequest::AuthNone;
+  http_major_protocol_version=0;
+  http_minor_protocol_version=0;
 }
 
 
 WHHttpRequest::WHHttpRequest()
 {
   http_method=WHHttpRequest::None;
+  http_major_protocol_version=0;
+  http_minor_protocol_version=0;
+  http_host_port=0;
+  http_auth_type=WHHttpRequest::AuthNone;
+  http_content_length=0;
+  http_content_type="application/octet-stream";
 }
 
 

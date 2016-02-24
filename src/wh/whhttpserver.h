@@ -102,7 +102,7 @@ class WHHttpServer : public QObject
   QSignalMapper *http_cgi_finished_mapper;
   std::vector<WHHttpConnection *> http_connections;
   QTimer *http_garbage_timer;
-  int http_istate;
+  //  int http_istate;
   std::map<QString,std::vector<WHHttpUser *> > http_users;
 };
 
