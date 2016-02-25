@@ -234,7 +234,7 @@ void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
 void WHHttpServer::requestReceived(WHHttpConnection *conn)
 {
   fprintf(stderr,"URI \"%s\" not found\n",
-	  (const char *)conn->request()->uri().toUtf8());
+	  (const char *)conn->uri().toUtf8());
   conn->sendError(404,"404 Not found");
 }
 
@@ -333,7 +333,6 @@ void WHHttpServer::ReadMethodLine(int id)
   QStringList hdr_values;
   QString line;
   WHHttpConnection *conn=http_connections[id];
-  WHHttpRequest *req=conn->request();
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
@@ -348,12 +347,12 @@ void WHHttpServer::ReadMethodLine(int id)
     // The HTTP Method
     //
     if(f0[0].trimmed()=="GET") {
-      req->setMethod(WHHttpRequest::Get);
+      conn->setMethod(WHHttpConnection::Get);
     }
     if(f0[0].trimmed()=="POST") {
-      req->setMethod(WHHttpRequest::Post);
+      conn->setMethod(WHHttpConnection::Post);
     }
-    if(req->method()==WHHttpRequest::None) {
+    if(conn->method()==WHHttpConnection::None) {
       hdr_names.push_back("Allow");
       hdr_values.push_back("GET");
       if(IsCgiScript(f0[1].trimmed())) {
@@ -363,18 +362,18 @@ void WHHttpServer::ReadMethodLine(int id)
       return;
     }
 
-    req->setUri(f0[1].trimmed());
+    conn->setUri(f0[1].trimmed());
 
     QStringList f1=f0[2].trimmed().split("/");
     if(f1.size()!=2) {
       sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
       return;
     }
-    if(!req->setProtocolVersion(f1[1])) {
+    if(!conn->setProtocolVersion(f1[1])) {
       sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
       return;
     }
-    if((req->majorProtocolVersion()!=1)||(req->minorProtocolVersion()>1)) {
+    if((conn->majorProtocolVersion()!=1)||(conn->minorProtocolVersion()>1)) {
       sendError(id,505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
       return;
     }
@@ -390,7 +389,6 @@ void WHHttpServer::ReadHeaders(int id)
   QStringList hdr_values;
   QString line;
   WHHttpConnection *conn=http_connections[id];
-  WHHttpRequest *req=conn->request();
   bool ok=false;
 
   while(conn->socket()->canReadLine()) {
@@ -403,7 +401,7 @@ void WHHttpServer::ReadHeaders(int id)
       f0.erase(f0.begin());
       QString value=f0.join(": ");
       if(hdr=="Authorization") {
-	req->setAuthorization(value);
+	conn->setAuthorization(value);
 	processed=true;
       }
       if(hdr=="Content-Length") {
@@ -413,41 +411,41 @@ void WHHttpServer::ReadHeaders(int id)
 		    "400 Bad Request Malformed Content-Length: header");
 	  return;
 	}
-	req->setContentLength(len);
+	conn->setContentLength(len);
 	processed=true;
       }
       if(hdr=="Content-Type") {
 	QStringList f1=value.split(";");
-	req->setContentType(f1[0]);
+	conn->setContentType(f1[0]);
 	processed=true;
       }
       if(hdr=="Host") {
-	if(!req->setHost(value)) {
+	if(!conn->setHost(value)) {
 	  sendError(id,400,"400 Bad Request Malformed Host: header");
 	  return;
 	}
 	processed=true;
       }
       if(hdr=="Referer") {
-	req->setReferrer(value);
+	conn->setReferrer(value);
 	processed=true;
       }
       if(hdr=="User-Agent") {
-	req->setUserAgent(value);
+	conn->setUserAgent(value);
 	processed=true;
       }
       if(!processed) {
-	req->addHeader(hdr,value);
+	conn->addHeader(hdr,value);
       }
     }
     else {
       if(line.isEmpty()) {  // End of headers
-	if((req->minorProtocolVersion()==1)&&(req->hostPort()==0)) {
+	if((conn->minorProtocolVersion()==1)&&(conn->hostPort()==0)) {
 	  sendError(id,400,
 		    "400 Bad Request -- Missing/malformed Host: header");
 	  return;
 	}
-	if(req->method()==WHHttpRequest::Get) {
+	if(conn->method()==WHHttpConnection::Get) {
 	  ProcessRequest(id);
 	}
 	else {
@@ -464,10 +462,9 @@ void WHHttpServer::ReadHeaders(int id)
 void WHHttpServer::ReadBody(int id)
 {
   WHHttpConnection *conn=http_connections[id];
-  WHHttpRequest *req=conn->request();
-  req->appendBody(conn->socket()->
-		  read(req->contentLength()-req->body().length()));
-  if(req->body().length()==req->contentLength()) {
+  conn->appendBody(conn->socket()->
+		  read(conn->contentLength()-conn->body().length()));
+  if(conn->body().length()==conn->contentLength()) {
     ProcessRequest(id);
   }
 }
@@ -476,16 +473,15 @@ void WHHttpServer::ReadBody(int id)
 void WHHttpServer::ProcessRequest(int id)
 {
   WHHttpConnection *conn=http_connections[id];
-  WHHttpRequest *req=conn->request();
 
   for(int i=0;i<http_static_uris.size();i++) {
-    if(req->uri()==http_static_uris[i]) {
+    if(conn->uri()==http_static_uris[i]) {
       SendStaticSource(id,i);
       return;
     }
   }
   for(int i=0;i<http_cgi_uris.size();i++) {
-    if(req->uri()==http_cgi_uris[i]) {
+    if(conn->uri()==http_cgi_uris[i]) {
       SendCgiSource(id,i);
       return;
     }
@@ -499,8 +495,8 @@ void WHHttpServer::SendStaticSource(int id,int n)
   QFile file(http_static_filenames[n]);
 
   if(!AuthenticateRealm(id,http_static_realms[n],
-			http_connections[id]->request()->authName(),
-			http_connections[id]->request()->authPassword())) {
+			http_connections[id]->authName(),
+			http_connections[id]->authPassword())) {
     return;
   }
 
@@ -521,8 +517,8 @@ void WHHttpServer::SendStaticSource(int id,int n)
 void WHHttpServer::SendCgiSource(int id,int n)
 {
   if(!AuthenticateRealm(id,http_cgi_realms[n],
-			http_connections[id]->request()->authName(),
-			http_connections[id]->request()->authPassword())) {
+			http_connections[id]->authName(),
+			http_connections[id]->authPassword())) {
     return;
   }
   http_connections[id]->startCgiScript(http_cgi_filenames[n]);

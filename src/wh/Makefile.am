@@ -38,7 +38,6 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whcmdswitch.cpp whcmdswitch.h\
                              whconfig.cpp whconfig.h\
                              whhttpconnection.cpp whhttpconnection.h\
-                             whhttprequest.cpp whhttprequest.h\
                              whhttpserver.cpp whhttpserver.h\
                              whhttpuser.cpp whhttpuser.h\
                              whnetwork.cpp whnetwork.h\
@@ -62,7 +61,6 @@ include_HEADERS = whcgiapplication.h\
                   whhttpuser.h\
                   whnetwork.h\
                   whprofile.h\
-                  whhttprequest.h\
                   whsettings.h
 
 libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)

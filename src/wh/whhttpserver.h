@@ -35,7 +35,6 @@
 #include <QTimer>
 
 #include <wh/whhttpconnection.h>
-#include <wh/whhttprequest.h>
 #include <wh/whhttpuser.h>
 
 class WHHttpServer : public QObject

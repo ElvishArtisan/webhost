@@ -29,8 +29,8 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   test_server=new WHHttpServer(this);
-  connect(test_server,SIGNAL(requestReceived(int,WHHttpRequest *)),
-	  this,SLOT(requestReceivedData(int,WHHttpRequest *)));
+  connect(test_server,SIGNAL(requestReceived(WHHttpConnection *)),
+	  this,SLOT(requestReceivedData(WHHttpConnection *)));
   if(!test_server->listen(80)) {
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
@@ -42,14 +42,14 @@ MainObject::MainObject(QObject *parent)
 }
 
 
-void MainObject::requestReceivedData(int id,WHHttpRequest *req)
+void MainObject::requestReceivedData(WHHttpConnection *conn)
 {
   printf("Received Request:\n");
-  printf("%s",(const char *)req->dump().toUtf8());
+  printf("%s",(const char *)conn->dump().toUtf8());
   /*
-  test_server->sendResponse(id,200,"Hello World!","text/html");
+  conn->sendResponse(200,"Hello World!","text/html");
   */
-  test_server->sendError(id,404,"404 Not found");
+  conn->sendError(404,"404 Not found");
 }
 
 

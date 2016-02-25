@@ -239,3 +239,5 @@
 	* Incremented the package version to 0.8.9.
 2016-02-25 Fred Gleason <fredg@paravelsystems.com>
 	* Renabled temp file cleanup code in 'src/webhostd/upgrade.cpp'.
+2016-02-25 Fred Gleason <fredg@paravelsystems.com>
+	* Merged the 'WHHttpRequest' class into 'WHHttpConnection'.

@@ -32,7 +32,7 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
-  void requestReceivedData(int id,WHHttpRequest *req);
+  void requestReceivedData(WHHttpConnection *conn);
 
  private:
   WHHttpServer *test_server;

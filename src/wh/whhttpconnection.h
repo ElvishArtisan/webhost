@@ -30,16 +30,44 @@
 #include <QTcpSocket>
 #include <QTimer>
 
-#include <wh/whhttprequest.h>
-
 class WHHttpConnection : public QObject
 {
   Q_OBJECT;
  public:
+  enum Method {None=0,Get=1,Post=2};
+  enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
   WHHttpConnection(QTcpSocket *sock,QObject *parent=0);
   ~WHHttpConnection();
+  unsigned majorProtocolVersion() const;
+  unsigned minorProtocolVersion() const;
+  bool setProtocolVersion(const QString &str);
+  Method method() const;
+  void setMethod(Method meth);
+  QString uri() const;
+  void setUri(const QString &uri);
+  QString hostName() const;
+  uint16_t hostPort() const;
+  bool setHost(const QString &str);
+  AuthType authType() const;
+  QString authName() const;
+  QString authPassword() const;
+  bool setAuthorization(const QString &str);
+  int64_t contentLength() const;
+  void setContentLength(int64_t len);
+  QString contentType() const;
+  void setContentType(const QString &mimetype);
+  QString referrer() const;
+  void setReferrer(const QString &str);
+  QString userAgent() const;
+  void setUserAgent(const QString &str);
+  QStringList headerNames() const;
+  QStringList headerValues() const;
+  QString headerValue(const QString &name) const;
+  void addHeader(const QString &name,const QString &value);
+  QByteArray body() const;
+  void appendBody(const QByteArray &data);
+  QString dump() const;
   QTcpSocket *socket();
-  WHHttpRequest *request();
   void startCgiScript(const QString &filename);
   void sendResponseHeader(int stat_code);
   void sendResponse(int stat_code,
@@ -55,6 +83,9 @@ class WHHttpConnection : public QObject
   void sendHeader(const QString &name="",const QString &value="");
   int parseState() const;
   void nextParseState();
+  static QString statusText(int stat_code);
+  static int timezoneOffset();
+  static QString datetimeStamp(const QDateTime &dt);
 
  signals:
   void cgiFinished();
@@ -66,8 +97,23 @@ class WHHttpConnection : public QObject
   void cgiErrorData(QProcess::ProcessError err);
 
  private:
+  Method conn_method;
+  unsigned conn_major_protocol_version;
+  unsigned conn_minor_protocol_version;
+  QString conn_uri;
+  QString conn_host_name;
+  uint16_t conn_host_port;
+  AuthType conn_auth_type;
+  QString conn_auth_name;
+  QString conn_auth_password;
+  int64_t conn_content_length;
+  QString conn_content_type;
+  QString conn_referrer;
+  QString conn_user_agent;
+  QStringList conn_header_names;
+  QStringList conn_header_values;
+  QByteArray conn_body;
   QTcpSocket *conn_socket;
-  WHHttpRequest *conn_request;
   QProcess *conn_cgi_process;
   QStringList conn_cgi_headers;
   bool conn_cgi_headers_active;
