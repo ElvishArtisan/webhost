@@ -2,9 +2,13 @@
 
 Sent via UDP to port 6352 on the localhost.
 
+# Apache user commands
 ADDUSER <passwd-file> <user> <password>
-
 DELETEUSER <passwd-file> <user>
+
+# WHHttpServer commands
+ADDUSER2 <passwd-file> <realm> <user> <password>
+DELETEUSER2 <passwd-file> <realm> <user>
 
 IP <iface-num> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr>!
 

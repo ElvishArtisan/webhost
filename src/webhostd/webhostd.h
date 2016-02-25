@@ -56,6 +56,8 @@ class MainObject : public QObject
   void Restart(const QStringList &cmds);
   void AddUser(const QStringList &cmds);
   void DeleteUser(const QStringList &cmds);
+  void AddUser2(const QStringList &cmds);
+  void DeleteUser2(const QStringList &cmds);
   void Upgrade(const QStringList &cmds);
   void ProcessCommand(const QString &cmd);
   QUdpSocket *main_command_socket;

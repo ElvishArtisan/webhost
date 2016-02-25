@@ -227,3 +227,10 @@
 	methods in 'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
 2016-02-24 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed multiple races in WHHttpServer.
+2016-02-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'ADDUSER2' and 'DELETEUSER2' commands in
+	'src/webhostd/webhostd.cpp', 'src/webhostd/webhostd.h' and
+	'src/webhostd/users.cpp'.
+	* Added 'WHCgiPost::sendAddUser2Command()' and
+	'WHCgiPost::sendDeleteUser2Command()' methods in 'src/wh/whcgipost.cpp'
+	and 'src/wh/whcgipost.h'.

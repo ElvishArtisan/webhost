@@ -208,8 +208,16 @@ void MainObject::ProcessCommand(const QString &cmd)
     AddUser(cmds);
   }
 
+  if(verb=="adduser2") {
+    AddUser2(cmds);
+  }
+
   if(verb=="deleteuser") {
     DeleteUser(cmds);
+  }
+
+  if(verb=="deleteuser2") {
+    DeleteUser2(cmds);
   }
 
   if(verb=="ip") {

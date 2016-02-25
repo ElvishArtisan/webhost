@@ -398,11 +398,35 @@ void WHCgiPost::sendAddUserCommand(const QString &htpasswd_file,
 }
 
 
+void WHCgiPost::sendAddUser2Command(const QString &htpasswd_file,
+				    const QString &realm,
+				    const QString &username,
+				    const QString &password) const
+{
+  SendCommand("ADDUSER2 "+
+	      htpasswd_file+" "+
+	      realm+" "+
+	      username+" "+
+	      password+"!");
+}
+
+
 void WHCgiPost::sendDeleteUserCommand(const QString &htpasswd_file,
 				      const QString &username)
 {
   SendCommand("DELETEUSER "+
 	      htpasswd_file+" "+
+	      username+"!");
+}
+
+
+void WHCgiPost::sendDeleteUser2Command(const QString &htpasswd_file,
+				       const QString &realm,
+				       const QString &username)
+{
+  SendCommand("DELETEUSER2 "+
+	      htpasswd_file+" "+
+	      realm+" "+
 	      username+"!");
 }
 
