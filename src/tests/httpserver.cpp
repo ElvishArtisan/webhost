@@ -29,27 +29,15 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   test_server=new WHHttpServer(this);
-  connect(test_server,SIGNAL(requestReceived(WHHttpConnection *)),
-	  this,SLOT(requestReceivedData(WHHttpConnection *)));
-  if(!test_server->listen(80)) {
+  if(!test_server->listen(8080)) {
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
   }
-  test_server->addCgiSource("/","/var/www/cgi-bin/glassplayerhost.cgi");
-  test_server->addCgiSource("/cgi-bin/glassplayerhost.cgi",
-			    "/var/www/cgi-bin/glassplayerhost.cgi");
-  printf("listening on port 80\n");
-}
-
-
-void MainObject::requestReceivedData(WHHttpConnection *conn)
-{
-  printf("Received Request:\n");
-  printf("%s",(const char *)conn->dump().toUtf8());
-  /*
-  conn->sendResponse(200,"Hello World!","text/html");
-  */
-  conn->sendError(404,"404 Not found");
+  test_server->addStaticSource("/websock.js","application/javascript",
+			       "/home/fredg/temp/websock.js");
+  test_server->addStaticSource("/websock.html","text/html",
+			       "/home/fredg/temp/websock.html");
+  printf("listening on port 8080\n");
 }
 
 

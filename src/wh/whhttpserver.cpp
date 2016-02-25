@@ -205,32 +205,6 @@ void WHHttpServer::addCgiSource(const QString &uri,const QString &filename,
 }
 
 
-void WHHttpServer::sendResponse(int id,int stat_code,
-				const QStringList &hdr_names,
-				const QStringList &hdr_values,
-				const QByteArray &body,
-				const QString &mimetype)
-{
-  http_connections[id]->
-    sendResponse(stat_code,hdr_names,hdr_values,body,mimetype);
-}
-
-
-void WHHttpServer::sendResponse(int id,int stat_code,
-				const QByteArray &body,const QString &mimetype)
-{
-  sendResponse(id,stat_code,QStringList(),QStringList(),body,mimetype);
-}
-
-
-void WHHttpServer::sendError(int id,int stat_code,const QString &msg,
-			     const QStringList &hdr_names,
-			     const QStringList &hdr_values)
-{
-  http_connections[id]->sendError(stat_code,msg,hdr_names,hdr_values);
-}
-
-
 void WHHttpServer::requestReceived(WHHttpConnection *conn)
 {
   fprintf(stderr,"URI \"%s\" not found\n",
@@ -285,17 +259,19 @@ void WHHttpServer::newConnectionData()
 
 void WHHttpServer::readyReadData(int id)
 {
-  switch(http_connections[id]->parseState()) {
+  WHHttpConnection *conn=http_connections[id];
+
+  switch(conn->parseState()) {
   case 0:
-    ReadMethodLine(id);
+    ReadMethodLine(conn);
     break;
 
   case 1:
-    ReadHeaders(id);
+    ReadHeaders(conn);
     break;
 
   case 2:
-    ReadBody(id);
+    ReadBody(conn);
     break;
   }
 }
@@ -327,19 +303,18 @@ void WHHttpServer::garbageData()
 }
 
 
-void WHHttpServer::ReadMethodLine(int id)
+void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 {
   QStringList hdr_names;
   QStringList hdr_values;
   QString line;
-  WHHttpConnection *conn=http_connections[id];
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
-      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
       return;
     }
 
@@ -358,7 +333,7 @@ void WHHttpServer::ReadMethodLine(int id)
       if(IsCgiScript(f0[1].trimmed())) {
 	hdr_values.back()+=",POST";
       }
-      sendError(id,501,"501 Not implemented",hdr_names,hdr_values);
+      conn->sendError(501,"501 Not implemented",hdr_names,hdr_values);
       return;
     }
 
@@ -366,34 +341,33 @@ void WHHttpServer::ReadMethodLine(int id)
 
     QStringList f1=f0[2].trimmed().split("/");
     if(f1.size()!=2) {
-      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
       return;
     }
     if(!conn->setProtocolVersion(f1[1])) {
-      sendError(id,400,"400 Bad Request<br>Malformed HTTP request");
+      conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
       return;
     }
     if((conn->majorProtocolVersion()!=1)||(conn->minorProtocolVersion()>1)) {
-      sendError(id,505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
+      conn->sendError(505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
       return;
     }
     conn->nextParseState();
-    ReadHeaders(id);
+    ReadHeaders(conn);
   }
 }
 
 
-void WHHttpServer::ReadHeaders(int id)
+void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 {
   QStringList hdr_names;
   QStringList hdr_values;
   QString line;
-  WHHttpConnection *conn=http_connections[id];
   bool ok=false;
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //printf("HEADER: %s\n",(const char *)line.toUtf8());
+    printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
@@ -407,8 +381,8 @@ void WHHttpServer::ReadHeaders(int id)
       if(hdr=="Content-Length") {
 	int64_t len=value.toLongLong(&ok);
 	if(!ok) {
-	  sendError(id,400,
-		    "400 Bad Request Malformed Content-Length: header");
+	  conn->
+	    sendError(400,"400 Bad Request Malformed Content-Length: header");
 	  return;
 	}
 	conn->setContentLength(len);
@@ -421,13 +395,17 @@ void WHHttpServer::ReadHeaders(int id)
       }
       if(hdr=="Host") {
 	if(!conn->setHost(value)) {
-	  sendError(id,400,"400 Bad Request Malformed Host: header");
+	  conn->sendError(400,"400 Bad Request Malformed Host: header");
 	  return;
 	}
 	processed=true;
       }
       if(hdr=="Referer") {
 	conn->setReferrer(value);
+	processed=true;
+      }
+      if(hdr=="Upgrade") {
+	conn->setUpgrade(value);
 	processed=true;
       }
       if(hdr=="User-Agent") {
@@ -441,16 +419,16 @@ void WHHttpServer::ReadHeaders(int id)
     else {
       if(line.isEmpty()) {  // End of headers
 	if((conn->minorProtocolVersion()==1)&&(conn->hostPort()==0)) {
-	  sendError(id,400,
-		    "400 Bad Request -- Missing/malformed Host: header");
+	  conn->
+	    sendError(400,"400 Bad Request -- Missing/malformed Host: header");
 	  return;
 	}
 	if(conn->method()==WHHttpConnection::Get) {
-	  ProcessRequest(id);
+	  ProcessRequest(conn);
 	}
 	else {
 	  conn->nextParseState();
-	  ReadBody(id);
+	  ReadBody(conn);
 	}
 	return;
       }
@@ -459,69 +437,64 @@ void WHHttpServer::ReadHeaders(int id)
 }
 
 
-void WHHttpServer::ReadBody(int id)
+void WHHttpServer::ReadBody(WHHttpConnection *conn)
 {
-  WHHttpConnection *conn=http_connections[id];
   conn->appendBody(conn->socket()->
 		  read(conn->contentLength()-conn->body().length()));
   if(conn->body().length()==conn->contentLength()) {
-    ProcessRequest(id);
+    ProcessRequest(conn);
   }
 }
 
 
-void WHHttpServer::ProcessRequest(int id)
+void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
 {
-  WHHttpConnection *conn=http_connections[id];
-
   for(int i=0;i<http_static_uris.size();i++) {
     if(conn->uri()==http_static_uris[i]) {
-      SendStaticSource(id,i);
+      SendStaticSource(conn,i);
       return;
     }
   }
   for(int i=0;i<http_cgi_uris.size();i++) {
     if(conn->uri()==http_cgi_uris[i]) {
-      SendCgiSource(id,i);
+      SendCgiSource(conn,i);
       return;
     }
   }
-  requestReceived(http_connections[id]);
+  requestReceived(conn);
 }
 
 
-void WHHttpServer::SendStaticSource(int id,int n)
+void WHHttpServer::SendStaticSource(WHHttpConnection *conn,int n)
 {
   QFile file(http_static_filenames[n]);
 
-  if(!AuthenticateRealm(id,http_static_realms[n],
-			http_connections[id]->authName(),
-			http_connections[id]->authPassword())) {
+  if(!AuthenticateRealm(conn,http_static_realms[n],
+			conn->authName(),conn->authPassword())) {
     return;
   }
 
   if(!file.exists()) {
-    sendError(id,404);
+    conn->sendError(404);
     return;
   }
   if(!file.open(QIODevice::ReadOnly)) {
-    sendError(id,500);
+    conn->sendError(500);
     return;
   }
   QByteArray data=file.readAll(); 
-  sendResponse(id,200,data,http_static_mimetypes[n]);
+  conn->sendResponse(200,data,http_static_mimetypes[n]);
   file.close();
 }
 
 
-void WHHttpServer::SendCgiSource(int id,int n)
+void WHHttpServer::SendCgiSource(WHHttpConnection *conn,int n)
 {
-  if(!AuthenticateRealm(id,http_cgi_realms[n],
-			http_connections[id]->authName(),
-			http_connections[id]->authPassword())) {
+  if(!AuthenticateRealm(conn,http_cgi_realms[n],
+			conn->authName(),conn->authPassword())) {
     return;
   }
-  http_connections[id]->startCgiScript(http_cgi_filenames[n]);
+  conn->startCgiScript(http_cgi_filenames[n]);
 }
 
 
@@ -536,8 +509,9 @@ bool WHHttpServer::IsCgiScript(const QString &uri) const
 }
 
 
-bool WHHttpServer::AuthenticateRealm(int id,const QString &realm,
-				     const QString &name,const QString &passwd)
+bool WHHttpServer::AuthenticateRealm(WHHttpConnection *conn,
+				     const QString &realm,const QString &name,
+				     const QString &passwd)
 {
   QStringList hdrs;
   QStringList values;
@@ -547,6 +521,6 @@ bool WHHttpServer::AuthenticateRealm(int id,const QString &realm,
   }
   hdrs.push_back("WWW-Authenticate");
   values.push_back("Basic realm=\""+realm+"\"");
-  http_connections[id]->sendResponse(401,hdrs,values,"401 Unauthorized");
+  conn->sendResponse(401,hdrs,values,"401 Unauthorized");
   return false;
 }

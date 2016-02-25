@@ -218,6 +218,18 @@ void WHHttpConnection::setReferrer(const QString &str)
 }
 
 
+QString WHHttpConnection::upgrade() const
+{
+  return conn_upgrade;
+}
+
+
+void WHHttpConnection::setUpgrade(const QString &str)
+{
+  conn_upgrade=str;
+}
+
+
 QString WHHttpConnection::userAgent() const
 {
   return conn_user_agent;

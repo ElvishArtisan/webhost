@@ -55,16 +55,6 @@ class WHHttpServer : public QObject
 		       const QString &filename,const QString &realm="");
   void addCgiSource(const QString &uri,const QString &filename,
 		    const QString &realm="");
-  void sendResponse(int id,int stat_code,
-		    const QStringList &hdr_names,const QStringList &hdr_values,
-		    const QByteArray &body=QByteArray(),
-		    const QString &mimetype="");
-  void sendResponse(int id,int stat_code,
-		    const QByteArray &body=QByteArray(),
-		    const QString &mimetype="");
-  void sendError(int id,int stat_code,const QString &msg="",
-		 const QStringList &hdr_names=QStringList(),
-		 const QStringList &hdr_values=QStringList());
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
@@ -79,15 +69,16 @@ class WHHttpServer : public QObject
   void garbageData();
 
  private:
-  void ReadMethodLine(int id);
-  void ReadHeaders(int id);
-  void ReadBody(int id);
-  void ProcessRequest(int id);
-  void SendStaticSource(int id,int n);
-  void SendCgiSource(int id,int n);
+  void ReadMethodLine(WHHttpConnection *conn);
+  void ReadHeaders(WHHttpConnection *conn);
+  void ReadBody(WHHttpConnection *conn);
+  void ProcessRequest(WHHttpConnection *conn);
+  void ProcessWebsocket(WHHttpConnection *conn);
+  void SendStaticSource(WHHttpConnection *conn,int n);
+  void SendCgiSource(WHHttpConnection *conn,int n);
   bool IsCgiScript(const QString &uri) const;
-  bool AuthenticateRealm(int id,const QString &realm,const QString &name,
-			 const QString &passwd);
+  bool AuthenticateRealm(WHHttpConnection *conn,const QString &realm,
+			 const QString &name,const QString &passwd);
   QStringList http_static_filenames;
   QStringList http_static_uris;
   QStringList http_static_mimetypes;

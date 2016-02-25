@@ -58,6 +58,8 @@ class WHHttpConnection : public QObject
   void setContentType(const QString &mimetype);
   QString referrer() const;
   void setReferrer(const QString &str);
+  QString upgrade() const;
+  void setUpgrade(const QString &str);
   QString userAgent() const;
   void setUserAgent(const QString &str);
   QStringList headerNames() const;
@@ -109,6 +111,7 @@ class WHHttpConnection : public QObject
   int64_t conn_content_length;
   QString conn_content_type;
   QString conn_referrer;
+  QString conn_upgrade;
   QString conn_user_agent;
   QStringList conn_header_names;
   QStringList conn_header_values;
