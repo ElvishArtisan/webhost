@@ -65,14 +65,12 @@ void MainObject::Upgrade(const QStringList &cmds)
     }
   }
 
-  /*
   //
   // Cleanup temp directory
   //
   unlink(cmds[1].toUtf8());
   unlink((tempdir+"/done").toUtf8());
   rmdir(tempdir.toUtf8());
-  */
 
   //
   // Kill service process
