@@ -5,6 +5,7 @@
 *.lo
 *.o
 *.pc
+*.rpm
 *.spec
 *.tar.gz
 aclocal.m4
