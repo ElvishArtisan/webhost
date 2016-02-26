@@ -37,7 +37,7 @@ MainObject::MainObject(QObject *parent)
     fprintf(stderr,"cgitest: unable to bind port 8080\n");
     exit(256);
   }
-  QString cmd=QString(cwd)+"/src/tests/cgitest_script";
+  QString cmd=QString(cwd)+"/src/tests/cgitest/cgitest_script";
   printf("Script at: %s\n",(const char *)cmd.toUtf8());
   test_server->addCgiSource("/cgitest.cgi",cmd);
   test_server->addUser("CgiTest","user","");

@@ -35,6 +35,9 @@ nodist_sockettest_server_SOURCES = moc_sockettest_server.cpp
 
 sockettest_server_LDADD = @QT4_LIBS@ -lwebhost
 
+EXTRA_DIST = sockettest.html\
+             sockettest.js
+
 CLEANFILES = *~\
              *.idb\
              *ilk\

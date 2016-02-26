@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <QCoreApplication>
 
@@ -28,6 +29,10 @@
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
+  char *cwd=NULL;
+
+  QString path=QString(getcwd(cwd,0));
+  
   test_server=new WHHttpServer(this);
   connect(test_server,
 	  SIGNAL(newSocketConnection(int,const QString &,const QString &)),
@@ -41,11 +46,11 @@ MainObject::MainObject(QObject *parent)
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
   }
-  test_server->addStaticSource("/websock.js","application/javascript",
-			       "/home/fredg/temp/websock.js");
-  test_server->addStaticSource("/websock.html","text/html",
-			       "/home/fredg/temp/websock.html");
-  test_server->addSocketSource("/myconn","chat");
+  test_server->addStaticSource("/sockettest.js","application/javascript",
+			       path+"/src/tests/sockettest/sockettest.js");
+  test_server->addStaticSource("/sockettest.html","text/html",
+			       path+"/src/tests/sockettest/sockettest.html");
+  test_server->addSocketSource("/myconn","myproto");
   printf("listening on port 8080\n");
 }
 
@@ -61,7 +66,7 @@ void MainObject::newSocketConnectionData(int id,const QString &uri,
 void MainObject::socketMessageReceivedData(int id,WHSocketMessage *msg)
 {
   printf("%d: %s\n",id,msg->payload().constData());
-  test_server->sendSocketMessage(id,QString("I got that!"));
+  test_server->sendSocketMessage(id,QString(msg->payload()));
 }
 
 

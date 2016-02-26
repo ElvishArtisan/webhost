@@ -404,7 +404,7 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    //printf("METHODLINE: %s\n",(const char *)line.toUtf8());
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
       conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
@@ -460,7 +460,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    printf("HEADER: %s\n",(const char *)line.toUtf8());
+    //printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {

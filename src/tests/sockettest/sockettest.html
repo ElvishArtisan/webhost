@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf8">
+  <title>Webhost sockettest</title>
+  <script type="text/javascript" src="sockettest.js"></script>
+</head>
+<body onload="javascript:Connect();">
+<table cellpadding="0" cellspacing="0" border="0">
+<tr>
+  <td colspan="2">
+    <strong>Echo text back via a WebSockets connection</strong>
+  </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+<tr>
+  <td colspan="2">
+    Enter text to be echoed:
+  </td>
+</tr>
+<tr>
+  <td colspan="2">
+    <input type="text" id="INPUT" size="80">
+  </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+
+<tr>
+  <td colspan="2">
+    Echoed Text:
+  </td>
+</tr>
+<tr>
+  <td colspan="2" id="OUTPUT" bgcolor="#EEEE88">
+    &nbsp;
+  </td>
+</tr>
+<tr><td>&nbsp;</td></tr>
+
+<tr>
+  <td>
+    &nbsp;
+  </td>
+  <td>
+    <input type="button" value="Echo" onclick="javascript:Send()">
+  </td>
+</tr>
+</table>
+<body>
+<html>
