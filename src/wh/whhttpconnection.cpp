@@ -27,10 +27,12 @@
 
 #include "whhttpserver.h"
 
-WHHttpConnection::WHHttpConnection(QTcpSocket *sock,QObject *parent)
+WHHttpConnection::WHHttpConnection(int id,QTcpSocket *sock,QObject *parent)
   : QObject(parent)
 {
+  conn_id=id;
   conn_method=WHHttpConnection::None;
+  conn_websocket=false;
   conn_major_protocol_version=0;
   conn_minor_protocol_version=0;
   conn_host_port=0;
@@ -59,6 +61,12 @@ WHHttpConnection::~WHHttpConnection()
 }
 
 
+int WHHttpConnection::id() const
+{
+  return conn_id;
+}
+
+
 unsigned WHHttpConnection::majorProtocolVersion() const
 {
   return conn_major_protocol_version;
@@ -68,6 +76,15 @@ unsigned WHHttpConnection::majorProtocolVersion() const
 unsigned WHHttpConnection::minorProtocolVersion() const
 {
   return conn_minor_protocol_version;
+}
+
+
+bool WHHttpConnection::protocolAtLeast(int major,int minor) const
+{
+  return
+    QString().sprintf("%u.%u",
+		      conn_major_protocol_version,conn_minor_protocol_version).
+    toFloat()<=QString().sprintf("%u.%u",major,minor).toFloat();
 }
 
 
@@ -100,6 +117,18 @@ WHHttpConnection::Method WHHttpConnection::method() const
 void WHHttpConnection::setMethod(Method meth)
 {
   conn_method=meth;
+}
+
+
+bool WHHttpConnection::isWebsocket() const
+{
+  return conn_websocket;
+}
+
+
+void WHHttpConnection::setWebsocket(bool state)
+{
+  conn_websocket=state;
 }
 
 
@@ -220,6 +249,18 @@ QString WHHttpConnection::referrer() const
 void WHHttpConnection::setReferrer(const QString &str)
 {
   conn_referrer=str;
+}
+
+
+QString WHHttpConnection::subProtocol() const
+{
+  return conn_sub_protocol;
+}
+
+
+void WHHttpConnection::setSubProtocol(const QString &str)
+{
+  conn_sub_protocol=str;
 }
 
 

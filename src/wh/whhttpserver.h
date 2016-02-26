@@ -38,6 +38,7 @@
 #include <wh/whhttpuser.h>
 #include <wh/whsocketmessage.h>
 
+#define WEBSOCKET_VERSION 13
 #define WEBSOCKET_MAGIC_STRING "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 class WHHttpServer : public QObject
@@ -62,9 +63,13 @@ class WHHttpServer : public QObject
 		       const QString &filename,const QString &realm="");
   void addCgiSource(const QString &uri,const QString &filename,
 		    const QString &realm="");
+  void addSocketSource(const QString &uri,const QString &proto,
+		       const QString &realm="");
 
  signals:
+  void newSocketConnection(int conn_id,const QString &uri,const QString &proto);
   void socketMessageReceived(int conn_id,WHSocketMessage *msg);
+  void socketConnectionClosed(int conn_id);
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
@@ -82,9 +87,9 @@ class WHHttpServer : public QObject
   void ReadMethodLine(WHHttpConnection *conn);
   void ReadHeaders(WHHttpConnection *conn);
   void ReadBody(WHHttpConnection *conn);
-  void ReadWebsocket(int id,WHHttpConnection *conn);
+  void ReadWebsocket(WHHttpConnection *conn);
   void ProcessRequest(WHHttpConnection *conn);
-  void StartWebsocket(WHHttpConnection *conn);
+  void StartWebsocket(WHHttpConnection *conn,int n);
   void SendStaticSource(WHHttpConnection *conn,int n);
   void SendCgiSource(WHHttpConnection *conn,int n);
   bool IsCgiScript(const QString &uri) const;
@@ -98,6 +103,9 @@ class WHHttpServer : public QObject
   QStringList http_cgi_filenames;
   QStringList http_cgi_uris;
   QStringList http_cgi_realms;
+  QStringList http_socket_uris;
+  QStringList http_socket_protocols;
+  QStringList http_socket_realms;
   QTcpServer *http_server;
   QSignalMapper *http_read_mapper;
   QSignalMapper *http_disconnect_mapper;

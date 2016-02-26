@@ -282,6 +282,15 @@ void WHHttpServer::addCgiSource(const QString &uri,const QString &filename,
 }
 
 
+void WHHttpServer::addSocketSource(const QString &uri,const QString &proto,
+				   const QString &realm)
+{
+  http_socket_uris.push_back(uri);
+  http_socket_protocols.push_back(proto);
+  http_socket_realms.push_back(realm);
+}
+
+
 void WHHttpServer::requestReceived(WHHttpConnection *conn)
 {
   fprintf(stderr,"URI \"%s\" not found\n",
@@ -309,16 +318,16 @@ void WHHttpServer::newConnectionData()
   for(unsigned i=0;i<http_connections.size();i++) {
     if(http_connections[i]==NULL) {
       http_connections[i]=
-	new WHHttpConnection(http_server->nextPendingConnection(),this);
+	new WHHttpConnection(i,http_server->nextPendingConnection(),this);
       id=i;
       break;
     }
   }
   if(id<0) {
+    id=http_connections.size();
     http_connections.
-      push_back(new WHHttpConnection(http_server->nextPendingConnection(),
-				     this));
-    id=http_connections.size()-1;
+      push_back(new WHHttpConnection(id,http_server->nextPendingConnection(),
+					this));
   }
   connect(http_connections[id]->socket(),SIGNAL(readyRead()),
 	  http_read_mapper,SLOT(map()));
@@ -352,7 +361,7 @@ void WHHttpServer::readyReadData(int id)
     break;
 
   case 10:
-    ReadWebsocket(id,conn);
+    ReadWebsocket(conn);
     break;
   }
 }
@@ -360,6 +369,9 @@ void WHHttpServer::readyReadData(int id)
 
 void WHHttpServer::disconnectedData(int id)
 {
+  if(http_connections[id]->isWebsocket()) {
+    emit socketConnectionClosed(id);
+  }
   http_garbage_timer->start(0);
 }
 
@@ -448,7 +460,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //    printf("HEADER: %s\n",(const char *)line.toUtf8());
+    printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
@@ -485,6 +497,10 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 	conn->setReferrer(value);
 	processed=true;
       }
+      if(hdr=="Sec-WebSocket-Protocol") {
+	conn->setSubProtocol(value);
+	processed=true;
+      }
       if(hdr=="Upgrade") {
 	conn->setUpgrade(value);
 	processed=true;
@@ -518,7 +534,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 }
 
 
-void WHHttpServer::ReadWebsocket(int id,WHHttpConnection *conn)
+void WHHttpServer::ReadWebsocket(WHHttpConnection *conn)
 {
   QByteArray data=conn->socket()->readAll();
   uint32_t plen=0;
@@ -584,17 +600,17 @@ void WHHttpServer::ReadWebsocket(int id,WHHttpConnection *conn)
   case WHSocketMessage::AppReserv6:
   case WHSocketMessage::AppReserv7:
     if(finished) {
-      emit socketMessageReceived(id,msg);
+      emit socketMessageReceived(conn->id(),msg);
     }
     break;
 
   case WHSocketMessage::Close:
-    sendSocketMessage(id,WHSocketMessage::Close,msg->payload());
+    sendSocketMessage(conn->id(),WHSocketMessage::Close,msg->payload());
     conn->socket()->close();
     break;
 
   case WHSocketMessage::Ping:
-    sendSocketMessage(id,WHSocketMessage::Pong,msg->payload());
+    sendSocketMessage(conn->id(),WHSocketMessage::Pong,msg->payload());
     break;
 
   case WHSocketMessage::Continuation:
@@ -622,7 +638,14 @@ void WHHttpServer::ReadBody(WHHttpConnection *conn)
 void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
 {
   if(conn->upgrade()=="websocket") {
-    StartWebsocket(conn);
+    for(int i=0;i<http_socket_uris.size();i++) {
+      if((conn->uri()==http_socket_uris[i])||
+	 (conn->subProtocol()==http_socket_protocols[i])) {
+	StartWebsocket(conn,i);
+	return;
+      }
+    }
+    requestReceived(conn);
     return;
   }
   for(int i=0;i<http_static_uris.size();i++) {
@@ -641,19 +664,25 @@ void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
 }
 
 
-void WHHttpServer::StartWebsocket(WHHttpConnection *conn)
+void WHHttpServer::StartWebsocket(WHHttpConnection *conn,int n)
 {
   QStringList hdrs=conn->headerNames();
   QStringList values=conn->headerValues();
   QString key;
   QByteArray resp;
 
+  if(!AuthenticateRealm(conn,http_socket_realms[n],
+			conn->authName(),conn->authPassword())) {
+    return;
+  }
+
   for(int i=0;i<hdrs.size();i++) {
     if(hdrs[i]=="Sec-WebSocket-Key") {
       key=values[i].trimmed();
     }
   }
-  if((conn->method()!=WHHttpConnection::Get)||key.isEmpty()) {
+  if((!conn->protocolAtLeast(1,1))||(conn->method()!=WHHttpConnection::Get)||
+     key.isEmpty()) {
     conn->sendError(400);
     return;
   }
@@ -669,6 +698,8 @@ void WHHttpServer::StartWebsocket(WHHttpConnection *conn)
   conn->sendHeader("Sec-WebSocket-Accept",resp);
   conn->sendHeader();
   conn->setParseState(10);
+  conn->setWebsocket(true);
+  emit newSocketConnection(conn->id(),conn->uri(),conn->subProtocol());
 }
 
 

@@ -32,7 +32,9 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private slots:
+  void newSocketConnectionData(int id,const QString &uri,const QString &proto);
   void socketMessageReceivedData(int id,WHSocketMessage *msg);
+  void socketConnectionClosedData(int id);
 
  private:
   WHHttpServer *test_server;

@@ -38,13 +38,17 @@ class WHHttpConnection : public QObject
  public:
   enum Method {None=0,Get=1,Post=2};
   enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
-  WHHttpConnection(QTcpSocket *sock,QObject *parent=0);
+  WHHttpConnection(int id,QTcpSocket *sock,QObject *parent=0);
   ~WHHttpConnection();
+  int id() const;
   unsigned majorProtocolVersion() const;
   unsigned minorProtocolVersion() const;
+  bool protocolAtLeast(int major,int minor) const;
   bool setProtocolVersion(const QString &str);
   Method method() const;
   void setMethod(Method meth);
+  bool isWebsocket() const;
+  void setWebsocket(bool state);
   QString uri() const;
   void setUri(const QString &uri);
   QString hostName() const;
@@ -60,6 +64,8 @@ class WHHttpConnection : public QObject
   void setContentType(const QString &mimetype);
   QString referrer() const;
   void setReferrer(const QString &str);
+  QString subProtocol() const;
+  void setSubProtocol(const QString &str);
   QString upgrade() const;
   void setUpgrade(const QString &str);
   QString userAgent() const;
@@ -103,7 +109,9 @@ class WHHttpConnection : public QObject
   void cgiErrorData(QProcess::ProcessError err);
 
  private:
+  int conn_id;
   Method conn_method;
+  bool conn_websocket;
   unsigned conn_major_protocol_version;
   unsigned conn_minor_protocol_version;
   QString conn_uri;
@@ -115,6 +123,7 @@ class WHHttpConnection : public QObject
   int64_t conn_content_length;
   QString conn_content_type;
   QString conn_referrer;
+  QString conn_sub_protocol;
   QString conn_upgrade;
   QString conn_user_agent;
   QStringList conn_header_names;
