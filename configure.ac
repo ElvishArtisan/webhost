@@ -112,6 +112,9 @@ AC_CONFIG_FILES([ \
     docs/Makefile \
     src/wh/Makefile \
     src/tests/Makefile \
+    src/tests/cgitest/Makefile \
+    src/tests/filedrop/Makefile \
+    src/tests/sockettest/Makefile \
     src/webhostd/Makefile \
     src/Makefile \
     rc.webhost \

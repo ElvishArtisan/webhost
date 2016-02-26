@@ -1,6 +1,6 @@
-// httpserver.cpp
+// sockettest_server.cpp
 //
-// Test harness for the WHHttp classes
+// Test server for the webhost WebSocket classes
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -23,7 +23,7 @@
 
 #include <QCoreApplication>
 
-#include "httpserver.h"
+#include "sockettest_server.h"
 
 MainObject::MainObject(QObject *parent)
   : QObject(parent)

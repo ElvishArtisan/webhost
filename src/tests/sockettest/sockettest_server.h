@@ -1,6 +1,6 @@
-// httpserver.h
+// sockettest_server.h
 //
-// Test harness for the WHHttp classes
+// Test server for the webhost WebSocket classes
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef HTTPSERVER_H
-#define HTTPSERVER_H
+#ifndef SOCKETTEST_SERVER_H
+#define SOCKETTEST_SERVER_H
 
 #include <QObject>
 
@@ -42,4 +42,4 @@ class MainObject : public QObject
 };
 
 
-#endif  // HTTPSERVER_H
+#endif  // SOCKETTEST_SERVER_H

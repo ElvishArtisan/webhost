@@ -1,6 +1,6 @@
 ## automake.am
 ##
-## Automake.am for webhost tests
+## Automake.am for webhost tests/filedrop
 ##
 ##   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 ##
@@ -19,9 +19,22 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-SUBDIRS = cgitest\
-          filedrop\
-          sockettest
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
+LIBS = -L$(top_srcdir)/src/wh @OPENSSL_LIBS@
+MOC = @MOC@
+
+# The dependency for qt's Meta Object Compiler (moc)
+moc_%.cpp:	%.h
+	@MOC@ $< -o $@
+
+noinst_PROGRAMS = filedrop.cgi
+
+dist_filedrop_cgi_SOURCES = filedrop.cpp filedrop.h\
+                            filepage.cpp filepage.h
+
+filedrop_cgi_LDADD = @QT4_LIBS@ -lwebhost
+
+EXTRA_DIST = filedrop.html
 
 CLEANFILES = *~\
              *.idb\
