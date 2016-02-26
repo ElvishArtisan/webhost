@@ -29,6 +29,8 @@ MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
   test_server=new WHHttpServer(this);
+  connect(test_server,SIGNAL(socketMessageReceived(int,WHSocketMessage *)),
+	  this,SLOT(socketMessageReceivedData(int,WHSocketMessage *)));
   if(!test_server->listen(8080)) {
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
@@ -38,6 +40,13 @@ MainObject::MainObject(QObject *parent)
   test_server->addStaticSource("/websock.html","text/html",
 			       "/home/fredg/temp/websock.html");
   printf("listening on port 8080\n");
+}
+
+
+void MainObject::socketMessageReceivedData(int id,WHSocketMessage *msg)
+{
+  printf("%d: %s\n",id,msg->payload().constData());
+  test_server->sendSocketMessage(id,QString("I got that!"));
 }
 
 

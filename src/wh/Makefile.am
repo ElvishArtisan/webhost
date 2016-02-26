@@ -20,7 +20,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src @QT4_CFLAGS@
+AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src @QT4_CFLAGS@ @OPENSSL_CFLAGS@
 MOC = @MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
@@ -42,7 +42,8 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whhttpuser.cpp whhttpuser.h\
                              whnetwork.cpp whnetwork.h\
                              whprofile.cpp whprofile.h\
-                             whsettings.cpp whsettings.h
+                             whsettings.cpp whsettings.h\
+                             whsocketmessage.cpp whsocketmessage.h
 
 nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp\
                                moc_whhttpconnection.cpp\

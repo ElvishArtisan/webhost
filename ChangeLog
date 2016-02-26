@@ -245,3 +245,5 @@
 	* Removed the 'WHHttpServer::sendResponse()',
 	'WHHttpServer::sendHeader()' and 'WHHttpServer::sendError()' methods
 	from 'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+2016-02-26 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented basic WebSocket support.

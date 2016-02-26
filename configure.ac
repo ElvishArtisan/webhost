@@ -73,6 +73,11 @@ AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
 AC_SUBST(MOC,$MOC_NAME)
 
 #
+# Check for OpenSSL
+#
+PKG_CHECK_MODULES(OPENSSL,libcrypto,[],[AC_MSG_ERROR([*** OpenSSL not found ***])])
+
+#
 # Determine the target architecture
 #
 AR_GCC_TARGET()

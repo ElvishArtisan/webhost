@@ -2,7 +2,7 @@
 ##
 ## Automake.am for webhost tests
 ##
-##   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -19,8 +19,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ -I$(top_srcdir)/src
-LIBS = -L$(top_srcdir)/src/wh
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
+LIBS = -L$(top_srcdir)/src/wh @OPENSSL_LIBS@
 MOC = @MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)

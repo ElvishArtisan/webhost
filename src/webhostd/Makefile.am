@@ -19,7 +19,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -I$(top_srcdir)/src -Wno-strict-aliasing @QT4_CFLAGS@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -I$(top_srcdir)/src -Wno-strict-aliasing @QT4_CFLAGS@ @OPENSSL_CFLAGS@
 LIBS = -L$(top_srcdir)/src/wh
 MOC = @QT4_MOC@
 
@@ -41,7 +41,7 @@ dist_webhostd_SOURCES = config.cpp config.h\
 
 nodist_webhostd_SOURCES = moc_webhostd.cpp
 
-webhostd_LDADD = @QT4_LIBS@ -lwebhost
+webhostd_LDADD = @QT4_LIBS@ -lwebhost @OPENSSL_LIBS@
 webhostd_LDFLAGS = 
 
 CLEANFILES = *~\

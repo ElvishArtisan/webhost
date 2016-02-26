@@ -30,6 +30,8 @@
 #include <QTcpSocket>
 #include <QTimer>
 
+#include <wh/whsocketmessage.h>
+
 class WHHttpConnection : public QObject
 {
   Q_OBJECT;
@@ -70,6 +72,8 @@ class WHHttpConnection : public QObject
   void appendBody(const QByteArray &data);
   QString dump() const;
   QTcpSocket *socket();
+  WHSocketMessage *appSocketMessage();
+  WHSocketMessage *cntlSocketMessage();
   void startCgiScript(const QString &filename);
   void sendResponseHeader(int stat_code);
   void sendResponse(int stat_code,
@@ -84,7 +88,7 @@ class WHHttpConnection : public QObject
 		 const QStringList &hdr_values=QStringList());
   void sendHeader(const QString &name="",const QString &value="");
   int parseState() const;
-  void nextParseState();
+  void setParseState(int state);
   static QString statusText(int stat_code);
   static int timezoneOffset();
   static QString datetimeStamp(const QDateTime &dt);
@@ -117,6 +121,8 @@ class WHHttpConnection : public QObject
   QStringList conn_header_values;
   QByteArray conn_body;
   QTcpSocket *conn_socket;
+  WHSocketMessage *conn_app_socket_message;
+  WHSocketMessage *conn_cntl_socket_message;
   QProcess *conn_cgi_process;
   QStringList conn_cgi_headers;
   bool conn_cgi_headers_active;

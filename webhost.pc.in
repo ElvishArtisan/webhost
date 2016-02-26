@@ -7,5 +7,5 @@ Name: webhost
 Description: Embedded web hosting framework
 Version: @VERSION@
 Requires: QtCore QtNetwork
-Libs: -L${libdir} -lwebhost
-Cflags: -I${includedir} -I/usr/include
+Libs: -L${libdir} -lwebhost @OPENSSL_LIBS@
+Cflags: -I${includedir} -I/usr/include @OPENSSL_CFLAGS@

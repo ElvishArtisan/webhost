@@ -42,11 +42,16 @@ WHHttpConnection::WHHttpConnection(QTcpSocket *sock,QObject *parent)
   conn_cgi_process=NULL;
   conn_cgi_headers_active=true;
   conn_parse_state=0;
+
+  conn_app_socket_message=new WHSocketMessage();
+  conn_cntl_socket_message=new WHSocketMessage();
 }
 
 
 WHHttpConnection::~WHHttpConnection()
 {
+  delete conn_cntl_socket_message;
+  delete conn_app_socket_message;
   if(conn_cgi_process!=NULL) {
     delete conn_cgi_process;
   }
@@ -375,10 +380,10 @@ void WHHttpConnection::sendResponseHeader(int stat_code)
 
 
 void WHHttpConnection::sendResponse(int stat_code,
-				      const QStringList &hdr_names,
-				      const QStringList &hdr_values,
-				      const QByteArray &body,
-				      const QString &mimetype)
+				    const QStringList &hdr_names,
+				    const QStringList &hdr_values,
+				    const QByteArray &body,
+				    const QString &mimetype)
 {
   sendResponseHeader(stat_code);
   if(body.length()>0) {
@@ -419,6 +424,16 @@ QTcpSocket *WHHttpConnection::socket()
   return conn_socket;
 }
 
+
+WHSocketMessage *WHHttpConnection::appSocketMessage()
+{
+  return conn_app_socket_message;
+}
+
+WHSocketMessage *WHHttpConnection::cntlSocketMessage()
+{
+  return conn_cntl_socket_message;
+}
 
 void WHHttpConnection::cgiStartedData()
 {
@@ -534,9 +549,9 @@ int WHHttpConnection::parseState() const
 }
 
 
-void WHHttpConnection::nextParseState()
+void WHHttpConnection::setParseState(int state)
 {
-  conn_parse_state++;
+  conn_parse_state=state;
 }
 
 

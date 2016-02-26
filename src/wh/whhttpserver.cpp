@@ -18,11 +18,14 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 
 #include <QDateTime>
 #include <QFile>
+
+#include <openssl/evp.h>
 
 #include "whhttpserver.h"
 #include "whprofile.h"
@@ -71,6 +74,80 @@ bool WHHttpServer::listen(uint16_t port)
 bool WHHttpServer::listen(const QHostAddress &iface,uint16_t port)
 {
   return http_server->listen(iface,port);
+}
+
+
+void WHHttpServer::sendSocketMessage(int conn_id,WHSocketMessage::OpCode opcode,
+				     const QByteArray &data)
+{
+  QByteArray packet;
+  uint32_t key=random();
+  uint8_t keychar[4];
+  WHHttpConnection *conn=http_connections[conn_id];
+
+  //
+  // OpCode
+  //
+  packet.append(0x80|(0x0F&opcode));
+
+  //
+  // Payload Length
+  //
+  // WARNING: This breaks with messages longer than 4,294,967,295 bytes!
+  //          See RFC 6455 Section 5.2
+  //
+  if(data.length()<126) {
+    packet.append(0x80|data.length());
+  }
+  else {
+    if(data.length()<65536) {
+      packet.append(254);
+      packet.append(data.length()>>8);
+      packet.append(0xFF&data.length());
+    }
+    else {
+      packet.append(255);
+      packet.append((char)0);
+      packet.append((char)0);
+      packet.append((char)0);
+      packet.append((char)0);
+      packet.append(data.length()>>24);
+      packet.append(0xFF&(data.length()>>16));
+      packet.append(0xFF&(data.length()>>8));
+      packet.append(0xFF&data.length());
+    }
+  }
+
+  //
+  // Masking Key
+  //
+  keychar[0]=key>>24;
+  keychar[1]=0xFF&(key>>16);
+  keychar[2]=0xFF&(key>>8);
+  keychar[3]=0xFF&key;
+  for(int i=0;i<4;i++) {
+    packet.append(keychar[i]);
+  }
+
+  //
+  // Payload
+  //
+  for(int i=0;i<data.length();i++) {
+    packet.append(data[i]^keychar[i%4]);
+  }
+  conn->socket()->write(packet);
+}
+
+
+void WHHttpServer::sendSocketMessage(int conn_id,const QByteArray &data)
+{
+  sendSocketMessage(conn_id,WHSocketMessage::Binary,data);
+}
+
+
+void WHHttpServer::sendSocketMessage(int conn_id,const QString &str)
+{
+  sendSocketMessage(conn_id,WHSocketMessage::Text,str.toUtf8());
 }
 
 
@@ -273,6 +350,10 @@ void WHHttpServer::readyReadData(int id)
   case 2:
     ReadBody(conn);
     break;
+
+  case 10:
+    ReadWebsocket(id,conn);
+    break;
   }
 }
 
@@ -311,7 +392,7 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    //    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
       conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
@@ -352,7 +433,7 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
       conn->sendError(505,"505 HTTP Version Not Supported<br>This server only supports HTTP v1.x");
       return;
     }
-    conn->nextParseState();
+    conn->setParseState(1);
     ReadHeaders(conn);
   }
 }
@@ -367,7 +448,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    printf("HEADER: %s\n",(const char *)line.toUtf8());
+    //    printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
@@ -427,12 +508,103 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 	  ProcessRequest(conn);
 	}
 	else {
-	  conn->nextParseState();
+	  conn->setParseState(2);
 	  ReadBody(conn);
 	}
 	return;
       }
     }
+  }
+}
+
+
+void WHHttpServer::ReadWebsocket(int id,WHHttpConnection *conn)
+{
+  QByteArray data=conn->socket()->readAll();
+  uint32_t plen=0;
+  int offset=0;
+  WHSocketMessage *msg=NULL;
+
+  if((0x70&data[0])!=0) {  // Extension bits set
+    conn->socket()->close();
+  }
+  if((0x80&data[1])==0) {  // Mask not set
+    conn->socket()->close();
+  }
+  WHSocketMessage::OpCode opcode=(WHSocketMessage::OpCode)(0x0F&data[0]);
+  if(WHSocketMessage::isControlMessage(opcode)) {
+    msg=conn->cntlSocketMessage();
+  }
+  else {
+    msg=conn->appSocketMessage();
+  }
+
+  bool finished=(0x80&data[0])!=0;
+
+  if(opcode!=WHSocketMessage::Continuation) {
+    msg->setOpCode(opcode);
+    msg->clearPayload();
+  }
+  
+  //
+  // Payload Length
+  //
+  // WARNING: This breaks with messages longer than 4,294,967,295 bytes!
+  //          See RFC 6455 Section 5.2
+  //
+  plen=0x7F&data[1];
+  if(plen==126) {
+    plen=((0xFF&data[2])<<8)+(0xFF&data[3]);
+    offset=2;
+  }
+  else {
+    if(plen==127) {
+      plen=((0xFF&data[6])<<24)+((0xFF&data[7])<<16)+((0xFF&data[8])<<8)+
+	(0xFF&data[9]);
+      offset=8;
+    }
+  }
+
+  //
+  // Extract Payload
+  //
+  for(uint32_t i=0;i<plen;i++) {
+    msg->appendPayload(data[offset+6+i]^data[offset+2+(i%4)]);
+  }
+
+  //
+  // Disposition
+  //
+  switch(msg->opCode()) {
+  case WHSocketMessage::Text:
+  case WHSocketMessage::Binary:
+  case WHSocketMessage::AppReserv3:
+  case WHSocketMessage::AppReserv4:
+  case WHSocketMessage::AppReserv5:
+  case WHSocketMessage::AppReserv6:
+  case WHSocketMessage::AppReserv7:
+    if(finished) {
+      emit socketMessageReceived(id,msg);
+    }
+    break;
+
+  case WHSocketMessage::Close:
+    sendSocketMessage(id,WHSocketMessage::Close,msg->payload());
+    conn->socket()->close();
+    break;
+
+  case WHSocketMessage::Ping:
+    sendSocketMessage(id,WHSocketMessage::Pong,msg->payload());
+    break;
+
+  case WHSocketMessage::Continuation:
+  case WHSocketMessage::Pong:
+  case WHSocketMessage::CntlReserv11:
+  case WHSocketMessage::CntlReserv12:
+  case WHSocketMessage::CntlReserv13:
+  case WHSocketMessage::CntlReserv14:
+  case WHSocketMessage::CntlReserv15:
+    break;
   }
 }
 
@@ -449,6 +621,10 @@ void WHHttpServer::ReadBody(WHHttpConnection *conn)
 
 void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
 {
+  if(conn->upgrade()=="websocket") {
+    StartWebsocket(conn);
+    return;
+  }
   for(int i=0;i<http_static_uris.size();i++) {
     if(conn->uri()==http_static_uris[i]) {
       SendStaticSource(conn,i);
@@ -462,6 +638,37 @@ void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
     }
   }
   requestReceived(conn);
+}
+
+
+void WHHttpServer::StartWebsocket(WHHttpConnection *conn)
+{
+  QStringList hdrs=conn->headerNames();
+  QStringList values=conn->headerValues();
+  QString key;
+  QByteArray resp;
+
+  for(int i=0;i<hdrs.size();i++) {
+    if(hdrs[i]=="Sec-WebSocket-Key") {
+      key=values[i].trimmed();
+    }
+  }
+  if((conn->method()!=WHHttpConnection::Get)||key.isEmpty()) {
+    conn->sendError(400);
+    return;
+  }
+  resp=GetWebsocketHandshake(key);
+  if(resp.length()==0) {
+    conn->sendError(500,"500 Internal processing error");
+    return;
+  }
+  QString statline="HTTP/1.1 101 Switching Protocols\r\n";
+  conn->socket()->write(statline.toUtf8());
+  conn->sendHeader("Upgrade","websocket");
+  conn->sendHeader("Connection","upgrade");
+  conn->sendHeader("Sec-WebSocket-Accept",resp);
+  conn->sendHeader();
+  conn->setParseState(10);
 }
 
 
@@ -523,4 +730,26 @@ bool WHHttpServer::AuthenticateRealm(WHHttpConnection *conn,
   values.push_back("Basic realm=\""+realm+"\"");
   conn->sendResponse(401,hdrs,values,"401 Unauthorized");
   return false;
+}
+
+
+QByteArray WHHttpServer::GetWebsocketHandshake(const QString &key) const
+{
+  EVP_MD_CTX *mdctx;
+  const EVP_MD *md;
+  unsigned char md_value[EVP_MAX_MD_SIZE];
+  unsigned md_len;
+
+  OpenSSL_add_all_digests();
+  if((md=EVP_get_digestbyname("sha1"))==NULL) {
+    return QByteArray();
+  }
+  mdctx=EVP_MD_CTX_create();
+  EVP_DigestInit_ex(mdctx,md,NULL);
+  EVP_DigestUpdate(mdctx,(key+WEBSOCKET_MAGIC_STRING).toUtf8(),
+		   (key+WEBSOCKET_MAGIC_STRING).length());
+  EVP_DigestFinal_ex(mdctx,md_value,&md_len);
+  EVP_MD_CTX_destroy(mdctx);
+
+  return QByteArray((const char *)md_value).toBase64();
 }

@@ -36,6 +36,9 @@
 
 #include <wh/whhttpconnection.h>
 #include <wh/whhttpuser.h>
+#include <wh/whsocketmessage.h>
+
+#define WEBSOCKET_MAGIC_STRING "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 class WHHttpServer : public QObject
 {
@@ -45,6 +48,10 @@ class WHHttpServer : public QObject
   ~WHHttpServer();
   bool listen(uint16_t port);
   bool listen(const QHostAddress &iface,uint16_t port);
+  void sendSocketMessage(int conn_id,WHSocketMessage::OpCode opcode,
+			 const QByteArray &data);
+  void sendSocketMessage(int conn_id,const QByteArray &data);
+  void sendSocketMessage(int conn_id,const QString &str);
   QStringList userRealms() const;
   QStringList userNames(const QString &realm);
   void addUser(const QString &realm,const QString &name,const QString &passwd);
@@ -55,6 +62,9 @@ class WHHttpServer : public QObject
 		       const QString &filename,const QString &realm="");
   void addCgiSource(const QString &uri,const QString &filename,
 		    const QString &realm="");
+
+ signals:
+  void socketMessageReceived(int conn_id,WHSocketMessage *msg);
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
@@ -72,13 +82,15 @@ class WHHttpServer : public QObject
   void ReadMethodLine(WHHttpConnection *conn);
   void ReadHeaders(WHHttpConnection *conn);
   void ReadBody(WHHttpConnection *conn);
+  void ReadWebsocket(int id,WHHttpConnection *conn);
   void ProcessRequest(WHHttpConnection *conn);
-  void ProcessWebsocket(WHHttpConnection *conn);
+  void StartWebsocket(WHHttpConnection *conn);
   void SendStaticSource(WHHttpConnection *conn,int n);
   void SendCgiSource(WHHttpConnection *conn,int n);
   bool IsCgiScript(const QString &uri) const;
   bool AuthenticateRealm(WHHttpConnection *conn,const QString &realm,
 			 const QString &name,const QString &passwd);
+  QByteArray GetWebsocketHandshake(const QString &key) const;
   QStringList http_static_filenames;
   QStringList http_static_uris;
   QStringList http_static_mimetypes;
