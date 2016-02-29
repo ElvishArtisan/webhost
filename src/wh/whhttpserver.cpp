@@ -33,6 +33,8 @@
 WHHttpServer::WHHttpServer(QObject *parent)
   : QObject(parent)
 {
+  http_dump_transactions=getenv("Webhost_ShowHttpTransaction")!=NULL;
+
   http_server=new QTcpServer(this);
   connect(http_server,SIGNAL(newConnection()),this,SLOT(newConnectionData()));
 
@@ -318,7 +320,8 @@ void WHHttpServer::newConnectionData()
   for(unsigned i=0;i<http_connections.size();i++) {
     if(http_connections[i]==NULL) {
       http_connections[i]=
-	new WHHttpConnection(i,http_server->nextPendingConnection(),this);
+	new WHHttpConnection(i,http_server->nextPendingConnection(),
+			     http_dump_transactions,this);
       id=i;
       break;
     }
@@ -327,7 +330,7 @@ void WHHttpServer::newConnectionData()
     id=http_connections.size();
     http_connections.
       push_back(new WHHttpConnection(id,http_server->nextPendingConnection(),
-					this));
+				     http_dump_transactions,this));
   }
   connect(http_connections[id]->socket(),SIGNAL(readyRead()),
 	  http_read_mapper,SLOT(map()));
@@ -407,7 +410,9 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    if(http_dump_transactions) {
+      fprintf(stderr,"REQUEST-LINE: %s\n",(const char *)line.toUtf8());
+    }
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
       conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
@@ -463,18 +468,20 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //    printf("HEADER: %s\n",(const char *)line.toUtf8());
+    if(http_dump_transactions) {
+      fprintf(stderr,"HEADER: %s\n",(const char *)line.toUtf8());
+    }
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
-      QString hdr=f0[0];
+      QString hdr=f0[0].trimmed().toLower();
       f0.erase(f0.begin());
       QString value=f0.join(": ");
-      if(hdr=="Authorization") {
+      if(hdr=="authorization") {
 	conn->setAuthorization(value);
 	processed=true;
       }
-      if(hdr=="Content-Length") {
+      if(hdr=="content-length") {
 	int64_t len=value.toLongLong(&ok);
 	if(!ok) {
 	  conn->
@@ -484,31 +491,31 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 	conn->setContentLength(len);
 	processed=true;
       }
-      if(hdr=="Content-Type") {
+      if(hdr=="content-type") {
 	QStringList f1=value.split(";");
 	conn->setContentType(f1[0]);
 	processed=true;
       }
-      if(hdr=="Host") {
+      if(hdr=="host") {
 	if(!conn->setHost(value)) {
 	  conn->sendError(400,"400 Bad Request Malformed Host: header");
 	  return;
 	}
 	processed=true;
       }
-      if(hdr=="Referer") {
+      if(hdr=="referer") {
 	conn->setReferrer(value);
 	processed=true;
       }
-      if(hdr=="Sec-WebSocket-Protocol") {
+      if(hdr=="sec-websocket-protocol") {
 	conn->setSubProtocol(value);
 	processed=true;
       }
-      if(hdr=="Upgrade") {
+      if(hdr=="upgrade") {
 	conn->setUpgrade(value);
 	processed=true;
       }
-      if(hdr=="User-Agent") {
+      if(hdr=="user-agent") {
 	conn->setUserAgent(value);
 	processed=true;
       }
@@ -646,7 +653,7 @@ void WHHttpServer::ReadBody(WHHttpConnection *conn)
 
 void WHHttpServer::ProcessRequest(WHHttpConnection *conn)
 {
-  if(conn->upgrade()=="websocket") {
+  if(conn->upgrade().toLower()=="websocket") {
     for(int i=0;i<http_socket_uris.size();i++) {
       if((conn->uri()==http_socket_uris[i])||
 	 (conn->subProtocol()==http_socket_protocols[i])) {
@@ -686,7 +693,7 @@ void WHHttpServer::StartWebsocket(WHHttpConnection *conn,int n)
   }
 
   for(int i=0;i<hdrs.size();i++) {
-    if(hdrs[i]=="Sec-WebSocket-Key") {
+    if(hdrs[i]=="sec-websocket-key") {
       key=values[i].trimmed();
     }
   }
@@ -701,6 +708,9 @@ void WHHttpServer::StartWebsocket(WHHttpConnection *conn,int n)
     return;
   }
   QString statline="HTTP/1.1 101 Switching Protocols\r\n";
+  if(http_dump_transactions) {
+    fprintf(stderr,"STATUS-LINE: %s",(const char *)statline.toUtf8());
+  }
   conn->socket()->write(statline.toUtf8());
   conn->sendHeader("Upgrade","websocket");
   conn->sendHeader("Connection","upgrade");

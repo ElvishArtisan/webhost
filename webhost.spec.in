@@ -79,6 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libwebhost.so.@INTERFACE_MAJOR@
 %{_libdir}/libwebhost.so.@INTERFACE_MAJOR@.@INTERFACE_MINOR@.@INTERFACE_POINT@
 %{_sbindir}/webhostd
+%doc docs/DEBUGGING.txt
 
 
 %files devel

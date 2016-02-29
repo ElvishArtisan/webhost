@@ -22,7 +22,7 @@ var sock;
 
 function Connect()
 {
-    sock=new WebSocket('ws://localhost:8080/myconn','myproto');
+    sock=new WebSocket('ws://192.168.95.149:8080/myconn','myproto');
 
     sock.onmessage=function(event) {
 	Id('OUTPUT').innerHTML=event.data;

@@ -1,0 +1,12 @@
+The following environmental variables can be used to debug various aspects
+of Webhost:
+
+-----------------------------------------------------------------------------
+
+Webhost_ShowHttpTransaction
+
+Defining this will cause WHHttpServer to dump HTTP transactions
+(the request-line, status-line and their respective associated headers)
+for each HTTP transaction to standard error.
+
+-----------------------------------------------------------------------------

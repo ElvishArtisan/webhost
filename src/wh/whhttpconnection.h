@@ -38,7 +38,7 @@ class WHHttpConnection : public QObject
  public:
   enum Method {None=0,Get=1,Post=2};
   enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
-  WHHttpConnection(int id,QTcpSocket *sock,QObject *parent=0);
+  WHHttpConnection(int id,QTcpSocket *sock,bool dump_trans,QObject *parent=0);
   ~WHHttpConnection();
   int id() const;
   unsigned majorProtocolVersion() const;
@@ -142,6 +142,7 @@ class WHHttpConnection : public QObject
   QStringList conn_cgi_headers;
   bool conn_cgi_headers_active;
   int conn_parse_state;
+  bool conn_dump_transactions;
 };
 
 

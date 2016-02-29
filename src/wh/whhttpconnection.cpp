@@ -27,10 +27,12 @@
 
 #include "whhttpserver.h"
 
-WHHttpConnection::WHHttpConnection(int id,QTcpSocket *sock,QObject *parent)
+WHHttpConnection::WHHttpConnection(int id,QTcpSocket *sock,bool dump_trans,
+				   QObject *parent)
   : QObject(parent)
 {
   conn_id=id;
+  conn_dump_transactions=dump_trans;
   conn_method=WHHttpConnection::None;
   conn_websocket=false;
   conn_major_protocol_version=0;
@@ -438,6 +440,9 @@ void WHHttpConnection::sendResponseHeader(int stat_code)
 {
   QString statline=QString().sprintf("HTTP/1.1 %d ",stat_code)+
     WHHttpConnection::statusText(stat_code)+"\r\n";
+  if(conn_dump_transactions) {
+    fprintf(stderr,"STATUS-LINE: %s",(const char *)statline.toUtf8());
+  }
   socket()->write(statline.toUtf8());
   sendHeader("Date",WHHttpConnection::
 	 datetimeStamp(QDateTime(QDate::currentDate(),QTime::currentTime())));
@@ -601,11 +606,16 @@ void WHHttpConnection::cgiErrorData(QProcess::ProcessError err)
 void WHHttpConnection::sendHeader(const QString &name,const QString &value)
 {
   if(name.isEmpty()&&value.isEmpty()) {
+    if(conn_dump_transactions) {
+      fprintf(stderr,"HEADER:\r\n");
+    }
     socket()->write("\r\n");
   }
   else {
     QString line=name+": "+value+"\r\n";
-    //    printf("SENDING: %s",(const char *)line.toUtf8());
+    if(conn_dump_transactions) {
+      fprintf(stderr,"HEADER: %s",(const char *)line.toUtf8());
+    }
     socket()->write(line.toUtf8());
   }
 }

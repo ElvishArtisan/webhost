@@ -19,7 +19,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-EXTRA_DIST = webroot_commands.txt
+EXTRA_DIST = DEBUGGING.txt\
+             webroot_commands.txt
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = *~\
