@@ -70,6 +70,10 @@ class WHHttpConnection : public QObject
   void setUpgrade(const QString &str);
   QString userAgent() const;
   void setUserAgent(const QString &str);
+  uint16_t socketCloseStatus() const;
+  void setSocketCloseStatus(uint16_t);
+  QByteArray socketCloseBody() const;
+  void setSocketCloseBody(const QByteArray &data);
   QStringList headerNames() const;
   QStringList headerValues() const;
   QString headerValue(const QString &name) const;
@@ -126,6 +130,8 @@ class WHHttpConnection : public QObject
   QString conn_sub_protocol;
   QString conn_upgrade;
   QString conn_user_agent;
+  uint16_t conn_socket_close_status;
+  QByteArray conn_socket_close_body;
   QStringList conn_header_names;
   QStringList conn_header_values;
   QByteArray conn_body;

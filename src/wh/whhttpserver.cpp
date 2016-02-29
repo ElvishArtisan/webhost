@@ -139,6 +139,18 @@ void WHHttpServer::sendSocketMessage(int conn_id,const QString &str)
 }
 
 
+void WHHttpServer::closeSocketConnection(int conn_id,uint16_t status,
+					 const QByteArray &body)
+{
+  QByteArray payload;
+
+  payload.append(0xFF&(status>>8));
+  payload.append(0xFF&status);
+  payload.append(body);
+  sendSocketMessage(conn_id,WHSocketMessage::Close,payload);
+}
+
+
 QStringList WHHttpServer::userRealms() const
 {
   QStringList ret;
@@ -357,8 +369,11 @@ void WHHttpServer::readyReadData(int id)
 
 void WHHttpServer::disconnectedData(int id)
 {
+  WHHttpConnection *conn=http_connections[id];
+
   if(http_connections[id]->isWebsocket()) {
-    emit socketConnectionClosed(id);
+    emit socketConnectionClosed(id,conn->socketCloseStatus(),
+				conn->socketCloseBody());
   }
   http_garbage_timer->start(0);
 }
@@ -392,7 +407,7 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    //    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
       conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
@@ -448,7 +463,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    printf("HEADER: %s\n",(const char *)line.toUtf8());
+    //    printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
@@ -593,6 +608,12 @@ void WHHttpServer::ReadWebsocket(WHHttpConnection *conn)
     break;
 
   case WHSocketMessage::Close:
+    if(msg->payload().length()>=2) {
+      uint16_t status=((0xFF&msg->payload()[0])<<8)+(0xFF&msg->payload()[1]);
+      conn->setSocketCloseStatus(status);
+      conn->setSocketCloseBody(msg->payload().
+			       mid(2,msg->payload().length()-2).constData());
+    }
     sendSocketMessage(conn->id(),WHSocketMessage::Close,msg->payload());
     conn->socket()->close();
     break;

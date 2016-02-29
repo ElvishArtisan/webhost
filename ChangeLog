@@ -258,3 +258,7 @@
 2016-02-29 Fred Gleason <fredg@paravelsystems.com>
 	* Removed code to mask outgoing WebSocket frames in
 	'src/wh/whhttpserver.cpp'.
+2016-02-29 Fred Gleason <fredg@paravelsystems.com>
+	* Added support for connection close status codes in
+	'src/wh/whhttpserver.cpp', 'src/wh/whhttpserver.h',
+	'src/wh/whhttpconnection.cpp' and 'src/wh/whhttpconnection.h'.

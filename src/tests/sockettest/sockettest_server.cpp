@@ -40,8 +40,10 @@ MainObject::MainObject(QObject *parent)
 	  SLOT(newSocketConnectionData(int,const QString &,const QString &)));
   connect(test_server,SIGNAL(socketMessageReceived(int,WHSocketMessage *)),
 	  this,SLOT(socketMessageReceivedData(int,WHSocketMessage *)));
-  connect(test_server,SIGNAL(socketConnectionClosed(int)),
-	  this,SLOT(socketConnectionClosedData(int)));
+  connect(test_server,
+	  SIGNAL(socketConnectionClosed(int,uint16_t,const QByteArray &)),
+	  this,
+	  SLOT(socketConnectionClosedData(int,uint16_t,const QByteArray &)));
   if(!test_server->listen(8080)) {
     fprintf(stderr,"httpserver: unable to bind port 8080\n");
     exit(256);
@@ -70,9 +72,10 @@ void MainObject::socketMessageReceivedData(int id,WHSocketMessage *msg)
 }
 
 
-void MainObject::socketConnectionClosedData(int id)
+void MainObject::socketConnectionClosedData(int id,uint16_t status,
+					    const QByteArray &body)
 {
-  printf("%d: WebSocket disconnected\n",id);
+  printf("%d: WebSocket disconnected [%u]\n",id,0xFFFF&status);
 }
 
 

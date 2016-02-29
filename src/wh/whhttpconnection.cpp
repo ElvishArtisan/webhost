@@ -161,6 +161,8 @@ bool WHHttpConnection::setHost(const QString &str)
   QStringList f0=str.split(":");
   bool ok=false;
 
+  conn_socket_close_status=1005;
+
   if(f0.size()>2) {
     return false;
   }
@@ -285,6 +287,30 @@ QString WHHttpConnection::userAgent() const
 void WHHttpConnection::setUserAgent(const QString &str)
 {
   conn_user_agent=str;
+}
+
+
+uint16_t WHHttpConnection::socketCloseStatus() const
+{
+  return conn_socket_close_status;
+}
+
+
+void WHHttpConnection::setSocketCloseStatus(uint16_t status)
+{
+  conn_socket_close_status=status;
+}
+
+
+QByteArray WHHttpConnection::socketCloseBody() const
+{
+  return conn_socket_close_body;
+}
+
+
+void WHHttpConnection::setSocketCloseBody(const QByteArray &data)
+{
+  conn_socket_close_body=data;
 }
 
 
@@ -579,7 +605,7 @@ void WHHttpConnection::sendHeader(const QString &name,const QString &value)
   }
   else {
     QString line=name+": "+value+"\r\n";
-  printf("SENDING: %s",(const char *)line.toUtf8());
+    //    printf("SENDING: %s",(const char *)line.toUtf8());
     socket()->write(line.toUtf8());
   }
 }

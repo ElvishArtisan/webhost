@@ -53,6 +53,8 @@ class WHHttpServer : public QObject
 			 const QByteArray &data);
   void sendSocketMessage(int conn_id,const QByteArray &data);
   void sendSocketMessage(int conn_id,const QString &str);
+  void closeSocketConnection(int conn_id,uint16_t status,
+			     const QByteArray &body=QByteArray());
   QStringList userRealms() const;
   QStringList userNames(const QString &realm);
   void addUser(const QString &realm,const QString &name,const QString &passwd);
@@ -69,7 +71,8 @@ class WHHttpServer : public QObject
  signals:
   void newSocketConnection(int conn_id,const QString &uri,const QString &proto);
   void socketMessageReceived(int conn_id,WHSocketMessage *msg);
-  void socketConnectionClosed(int conn_id);
+  void socketConnectionClosed(int conn_id,uint16_t stat_code,
+			      const QByteArray &body);
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
