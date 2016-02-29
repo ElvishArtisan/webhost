@@ -53,6 +53,7 @@ MainObject::MainObject(QObject *parent)
   test_server->addStaticSource("/sockettest.html","text/html",
 			       path+"/src/tests/sockettest/sockettest.html");
   test_server->addSocketSource("/myconn","myproto");
+
   printf("listening on port 8080\n");
 }
 

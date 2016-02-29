@@ -36,7 +36,7 @@ class WHHttpConnection : public QObject
 {
   Q_OBJECT;
  public:
-  enum Method {None=0,Get=1,Post=2};
+  enum Method {None=0,Get=1,Post=2,Head=3};
   enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
   WHHttpConnection(int id,QTcpSocket *sock,bool dump_trans,QObject *parent=0);
   ~WHHttpConnection();
@@ -85,7 +85,7 @@ class WHHttpConnection : public QObject
   WHSocketMessage *appSocketMessage();
   WHSocketMessage *cntlSocketMessage();
   void startCgiScript(const QString &filename);
-  void sendResponseHeader(int stat_code);
+  void sendResponseHeader(int stat_code,const QString &mimetype="");
   void sendResponse(int stat_code,
 		    const QStringList &hdr_names,const QStringList &hdr_values,
 		    const QByteArray &body=QByteArray(),

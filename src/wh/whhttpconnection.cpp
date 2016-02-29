@@ -436,7 +436,7 @@ void WHHttpConnection::startCgiScript(const QString &filename)
 }
 
 
-void WHHttpConnection::sendResponseHeader(int stat_code)
+void WHHttpConnection::sendResponseHeader(int stat_code,const QString &mimetype)
 {
   QString statline=QString().sprintf("HTTP/1.1 %d ",stat_code)+
     WHHttpConnection::statusText(stat_code)+"\r\n";
@@ -448,6 +448,9 @@ void WHHttpConnection::sendResponseHeader(int stat_code)
 	 datetimeStamp(QDateTime(QDate::currentDate(),QTime::currentTime())));
   sendHeader("Server",QString("Webhost/")+VERSION);
   sendHeader("Connection","close");// FIXME: Implement persistent connections
+  if(!mimetype.isEmpty()) {
+    sendHeader("Content-Type",mimetype);
+  }
 }
 
 
@@ -457,10 +460,9 @@ void WHHttpConnection::sendResponse(int stat_code,
 				    const QByteArray &body,
 				    const QString &mimetype)
 {
-  sendResponseHeader(stat_code);
+  sendResponseHeader(stat_code,mimetype);
   if(body.length()>0) {
     sendHeader("Content-Length",QString().sprintf("%d",body.length()));
-    sendHeader("Content-Type",mimetype);
   }
   for(int i=0;i<hdr_names.size();i++) {
     sendHeader(hdr_names[i],hdr_values[i]);

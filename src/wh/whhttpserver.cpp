@@ -428,6 +428,9 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
     if(f0[0].trimmed()=="POST") {
       conn->setMethod(WHHttpConnection::Post);
     }
+    if(f0[0].trimmed()=="HEAD") {
+      conn->setMethod(WHHttpConnection::Head);
+    }
     if(conn->method()==WHHttpConnection::None) {
       hdr_names.push_back("Allow");
       hdr_values.push_back("GET");
@@ -726,6 +729,7 @@ void WHHttpServer::StartWebsocket(WHHttpConnection *conn,int n)
 void WHHttpServer::SendStaticSource(WHHttpConnection *conn,int n)
 {
   QFile file(http_static_filenames[n]);
+  QByteArray data;
 
   if(!AuthenticateRealm(conn,http_static_realms[n],
 			conn->authName(),conn->authPassword())) {
@@ -740,9 +744,23 @@ void WHHttpServer::SendStaticSource(WHHttpConnection *conn,int n)
     conn->sendError(500);
     return;
   }
-  QByteArray data=file.readAll(); 
-  conn->sendResponse(200,data,http_static_mimetypes[n]);
-  file.close();
+  switch(conn->method()) {
+  case WHHttpConnection::Get:
+  case WHHttpConnection::Post:
+    data=file.readAll(); 
+    conn->sendResponse(200,data,http_static_mimetypes[n]);
+    file.close();
+    break;
+
+  case WHHttpConnection::Head:
+    conn->sendResponseHeader(200,http_static_mimetypes[n]);
+    conn->sendHeader();
+    break;
+
+  case WHHttpConnection::None:
+    conn->sendResponse(500,"500 Internal Server Error");
+    break;
+  }
 }
 
 
@@ -750,6 +768,10 @@ void WHHttpServer::SendCgiSource(WHHttpConnection *conn,int n)
 {
   if(!AuthenticateRealm(conn,http_cgi_realms[n],
 			conn->authName(),conn->authPassword())) {
+    return;
+  }
+  if(conn->method()==WHHttpConnection::Head) {
+    conn->sendResponse(405,"405 Method Not Allowd");
     return;
   }
   conn->startCgiScript(http_cgi_filenames[n]);

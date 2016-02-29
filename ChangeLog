@@ -268,3 +268,7 @@
 	* Fixed bugs in 'src/wh/whhttpserver.cpp' and
 	'src/wh/whhttpconnection.cpp' that broke WebSocket support on
 	Safari, Internet Explorer and Edge browsers.
+2016-02-29 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented HTTP HEAD support in 'src/wh/whhttpserver.cpp',
+	'src/wh/whhttpserver.h', 'src/wh/whhttpconnection.cpp' and
+	'src/wh/whhttpconnection.h'.
