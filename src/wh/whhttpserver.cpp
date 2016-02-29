@@ -81,8 +81,6 @@ void WHHttpServer::sendSocketMessage(int conn_id,WHSocketMessage::OpCode opcode,
 				     const QByteArray &data)
 {
   QByteArray packet;
-  uint32_t key=random();
-  uint8_t keychar[4];
   WHHttpConnection *conn=http_connections[conn_id];
 
   //
@@ -96,17 +94,19 @@ void WHHttpServer::sendSocketMessage(int conn_id,WHSocketMessage::OpCode opcode,
   // WARNING: This breaks with messages longer than 4,294,967,295 bytes!
   //          See RFC 6455 Section 5.2
   //
+  // DO NOT MASK return messages, as per RFC 6455 Sect. 5.1
+  //
   if(data.length()<126) {
-    packet.append(0x80|data.length());
+    packet.append(data.length());
   }
   else {
     if(data.length()<65536) {
-      packet.append(254);
+      packet.append(126);
       packet.append(data.length()>>8);
       packet.append(0xFF&data.length());
     }
     else {
-      packet.append(255);
+      packet.append(127);
       packet.append((char)0);
       packet.append((char)0);
       packet.append((char)0);
@@ -119,22 +119,10 @@ void WHHttpServer::sendSocketMessage(int conn_id,WHSocketMessage::OpCode opcode,
   }
 
   //
-  // Masking Key
-  //
-  keychar[0]=key>>24;
-  keychar[1]=0xFF&(key>>16);
-  keychar[2]=0xFF&(key>>8);
-  keychar[3]=0xFF&key;
-  for(int i=0;i<4;i++) {
-    packet.append(keychar[i]);
-  }
-
-  //
   // Payload
   //
-  for(int i=0;i<data.length();i++) {
-    packet.append(data[i]^keychar[i%4]);
-  }
+  packet.append(data);
+
   conn->socket()->write(packet);
 }
 
@@ -404,7 +392,7 @@ void WHHttpServer::ReadMethodLine(WHHttpConnection *conn)
 
   if(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //printf("METHODLINE: %s\n",(const char *)line.toUtf8());
+    printf("METHODLINE: %s\n",(const char *)line.toUtf8());
     QStringList f0=line.split(" ");
     if(f0.size()!=3) {
       conn->sendError(400,"400 Bad Request<br>Malformed HTTP request");
@@ -460,7 +448,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
 
   while(conn->socket()->canReadLine()) {
     line=QString(conn->socket()->readLine()).trimmed();
-    //printf("HEADER: %s\n",(const char *)line.toUtf8());
+    printf("HEADER: %s\n",(const char *)line.toUtf8());
     bool processed=false;
     QStringList f0=line.split(": ",QString::KeepEmptyParts);
     if(f0.size()>=2) {
@@ -696,6 +684,7 @@ void WHHttpServer::StartWebsocket(WHHttpConnection *conn,int n)
   conn->sendHeader("Upgrade","websocket");
   conn->sendHeader("Connection","upgrade");
   conn->sendHeader("Sec-WebSocket-Accept",resp);
+  conn->sendHeader("Sec-WebSocket-Protocol",conn->subProtocol());
   conn->sendHeader();
   conn->setParseState(10);
   conn->setWebsocket(true);

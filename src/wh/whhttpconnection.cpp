@@ -579,6 +579,7 @@ void WHHttpConnection::sendHeader(const QString &name,const QString &value)
   }
   else {
     QString line=name+": "+value+"\r\n";
+  printf("SENDING: %s",(const char *)line.toUtf8());
     socket()->write(line.toUtf8());
   }
 }

@@ -255,3 +255,6 @@
 	* Refactored the test cases into separate directories under 'test/'.
 2016-02-26 Fred Gleason <fredg@paravelsystems.com>
 	* Added a WebSockets test in 'src/tests/sockettest/'.
+2016-02-29 Fred Gleason <fredg@paravelsystems.com>
+	* Removed code to mask outgoing WebSocket frames in
+	'src/wh/whhttpserver.cpp'.
