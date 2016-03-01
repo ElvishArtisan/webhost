@@ -59,6 +59,7 @@ include_HEADERS = whcgiapplication.h\
                   whconfig.h\
                   whhttpconnection.h\
                   whhttpserver.h\
+                  whsocketmessage.h\
                   whhttpuser.h\
                   whnetwork.h\
                   whprofile.h\

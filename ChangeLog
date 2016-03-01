@@ -272,3 +272,7 @@
 	* Implemented HTTP HEAD support in 'src/wh/whhttpserver.cpp',
 	'src/wh/whhttpserver.h', 'src/wh/whhttpconnection.cpp' and
 	'src/wh/whhttpconnection.h'.
+2016-03-01 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/tests/sockettest/sockettest.js' that caused
+	the WebSocket connection to fail when the server was not running
+	on localhost.

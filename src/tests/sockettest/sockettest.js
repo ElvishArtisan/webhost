@@ -22,7 +22,8 @@ var sock;
 
 function Connect()
 {
-    sock=new WebSocket('ws://localhost:8080/myconn','myproto');
+    sock=new WebSocket('ws://'+location.hostname+':'+location.port+'/myconn',
+		       'myproto');
 
     sock.onmessage=function(event) {
 	Id('OUTPUT').innerHTML=event.data;
