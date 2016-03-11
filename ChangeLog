@@ -276,3 +276,5 @@
 	* Fixed a bug in 'src/tests/sockettest/sockettest.js' that caused
 	the WebSocket connection to fail when the server was not running
 	on localhost.
+2016-03-11 Fred Gleason <fredg@paravelsystems.com>
+	* Cleaned up messages in 'src/tests/sockettest/sockettest_server.cpp'.

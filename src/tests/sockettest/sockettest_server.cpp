@@ -54,21 +54,21 @@ MainObject::MainObject(QObject *parent)
 			       path+"/src/tests/sockettest/sockettest.html");
   test_server->addSocketSource("/myconn","myproto");
 
-  printf("listening on port 8080\n");
+  printf("listening at http://localhost:8080/sockettest.html\n");
 }
 
 
 void MainObject::newSocketConnectionData(int id,const QString &uri,
 					 const QString &proto)
 {
-  printf("%d: new WebSocket: uri: %s  proto: %s\n",id,
+  printf("new WebSocket connection %d: uri: %s  proto: %s\n",id,
 	 (const char *)uri.toUtf8(),(const char *)proto.toUtf8());
 }
 
 
 void MainObject::socketMessageReceivedData(int id,WHSocketMessage *msg)
 {
-  printf("%d: %s\n",id,msg->payload().constData());
+  printf("echoing connection %d: %s\n",id,msg->payload().constData());
   test_server->sendSocketMessage(id,QString(msg->payload()));
 }
 
@@ -76,7 +76,7 @@ void MainObject::socketMessageReceivedData(int id,WHSocketMessage *msg)
 void MainObject::socketConnectionClosedData(int id,uint16_t status,
 					    const QByteArray &body)
 {
-  printf("%d: WebSocket disconnected [%u]\n",id,0xFFFF&status);
+  printf("WebSocket connection %d dropped [status code: %u]\n",id,0xFFFF&status);
 }
 
 
