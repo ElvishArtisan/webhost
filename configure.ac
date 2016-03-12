@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -50,9 +50,9 @@ AC_LANG(C++)
 #      increment 'AGE'.
 #   6. If any interfaces have been removed since the last public release,
 #      then set 'AGE' to 0.
-CURRENT=2
+CURRENT=3
 REVISION=0
-AGE=2
+AGE=0
 POINT=$(($CURRENT - $AGE))
 
 #

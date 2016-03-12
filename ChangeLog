@@ -278,3 +278,6 @@
 	on localhost.
 2016-03-11 Fred Gleason <fredg@paravelsystems.com>
 	* Cleaned up messages in 'src/tests/sockettest/sockettest_server.cpp'.
+2016-03-11 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 3:0:0.
+	* Incremented the package version to 0.8.10.
