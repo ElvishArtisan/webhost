@@ -68,87 +68,16 @@ WHCgiPost::WHCgiPost(bool auto_delete)
   //
   post_error=WHCgiPost::ErrorOk;
   if(getenv("CONTENT_TYPE")!=NULL) {
-    if(QString(getenv("CONTENT_TYPE"))=="application/x-www-form-urlencoded") {
+    QStringList f0=QString(getenv("CONTENT_TYPE")).split(";");
+    if(f0[0].trimmed().toLower()=="application/x-www-form-urlencoded") {
       post_encoding=WHCgiPost::UrlEncoded;
       LoadUrlEncoding();
     }
-    if(QString(getenv("CONTENT_TYPE"))=="multipart/form-data") {
+  if(f0[0].trimmed().toLower()=="multipart/form-data") {
       post_encoding=WHCgiPost::MultipartEncoded;
       LoadMultipartEncoding();
     }
   }
-
-
-
-  /*
-  char tempdir[PATH_MAX];
-  bool ok=false;
-
-  post_type=WHCgiPost::Cgi;
-  post_encoding=WHCgiPost::AutoEncoded;
-  post_error=WHCgiPost::ErrorNotInitialized;
-  post_auto_delete=auto_delete;
-  post_settings=new WHSettings();
-
-  post_profile=new WHProfile();
-  post_profile->setSource(WEBHOST_CONF_FILE );
-
-  ReadIpConfig();
-
-  //
-  // Command Socket
-  //
-  post_socket=new QUdpSocket();
-
-  //
-  // Verify Transfer Type
-  //
-  if(getenv("REQUEST_METHOD")==NULL) {
-    post_error=WHCgiPost::ErrorNotPost;
-    return;
-  }
-
-  //
-  // Verify Size
-  //
-  if(getenv("CONTENT_LENGTH")==NULL) {
-    post_content_length=0;
-  }
-  else {
-    post_content_length=QString(getenv("CONTENT_LENGTH")).toUInt(&ok);
-  }
-
-  //
-  // Initialize Temp Directory Path
-  //
-  if(getenv("TMPDIR")!=NULL) {
-    strcpy(tempdir,getenv("TMPDIR"));
-  }
-  else {
-    strcpy(tempdir,"/tmp");
-  }
-  strcat(tempdir,"/webhostXXXXXX");
-  post_tempdir=mkdtemp(tempdir);
-  if(post_tempdir.isNull()) {
-    post_error=WHCgiPost::ErrorNoTempDir;
-    return;
-  }
-
-  //
-  // Get the encoding type
-  //
-  post_error=WHCgiPost::ErrorOk;
-  if(getenv("CONTENT_TYPE")!=NULL) {
-    if(QString(getenv("CONTENT_TYPE"))=="application/x-www-form-urlencoded") {
-      post_encoding=WHCgiPost::UrlEncoded;
-      LoadUrlEncoding();
-    }
-    if(QString(getenv("CONTENT_TYPE"))=="multipart/form-data") {
-      post_encoding=WHCgiPost::MultipartEncoded;
-      LoadMultipartEncoding();
-    }
-  }
-  */
 }
 
 
