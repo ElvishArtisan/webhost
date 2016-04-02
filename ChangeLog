@@ -284,3 +284,6 @@
 2016-04-02 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a regression in 'src/wh/whcgipost.cpp' that broke post
 	processing.
+2016-04-02 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 3:1:0.
+	* Incremented the package version to 0.8.11.
