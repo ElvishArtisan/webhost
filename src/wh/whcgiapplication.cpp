@@ -80,6 +80,26 @@ void WHCgiApplication::exit(int resp_code,const QString &msg,bool no_cleanup)
 }
 
 
+void WHCgiApplication::renderPage(int id)
+{
+  WHCgiObject *page=NULL;
+
+  if((page=GetPage(id))==NULL) {
+    if((page=GetPage(0))==NULL) {
+      exit(500,QString().sprintf("Unknown page ID %d requested",id));
+    }
+  }
+  page->renderHead();
+  page->renderBodyStart();
+  if((id>0)&&(!page->menuText().isEmpty())) {
+    RenderMenu(id);
+  }
+  page->render();
+  page->renderBodyEnd();
+  exit(200);
+}
+
+
 void WHCgiApplication::redirect(const QString &url,bool no_cleanup)
 {
   printf("Location: %s\n\n",(const char *)url.toUtf8());

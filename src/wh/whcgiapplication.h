@@ -42,6 +42,7 @@ class WHCgiApplication : public QObject
   ~WHCgiApplication();
   void addPage(int cmd_id,WHCgiObject *page);
   void exit(int resp_code,const QString &msg="",bool no_cleanup=false);
+  void renderPage(int id);
   void redirect(const QString &url,bool no_cleanup=false);
 
  private slots:
