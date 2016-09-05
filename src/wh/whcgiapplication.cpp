@@ -140,11 +140,11 @@ WHCgiPost *WHCgiApplication::post() const
 
 void WHCgiApplication::RenderMenu(int id)
 {
-  printf("<table border=0 cellpadding=1 cellspacing=0><tr class=\"tab-head\">\n");
-  printf("<td>|</td>\n");
+  printf("<table class=\"tab-head\"><tr class=\"tab-head\">\n");
+  printf("<td class=\"tab-head\">|</td>\n");
   for(unsigned i=0;i<app_pages.size();i++) {
     if(!app_pages[i]->menuRef().isEmpty()) {
-      printf("<td nowrap>&#160;");
+      printf("<td class=\"tab-head\">&#160;");
       if(app_pages[i]->id()==id) {
 	printf("%s",(const char *)app_pages[i]->menuText().toUtf8());
       }
@@ -154,7 +154,7 @@ void WHCgiApplication::RenderMenu(int id)
 	       (const char *)app_pages[i]->menuText().toUtf8());
 
       }
-      printf("&#160;</td><td>|</td>\n");
+      printf("&#160;</td><td class=\"tab-head\">|</td>\n");
     }
   }
   printf("</tr></table>\n");

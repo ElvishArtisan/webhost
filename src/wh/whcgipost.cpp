@@ -18,6 +18,7 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -436,7 +437,7 @@ QString WHCgiPost::dump()
 
   ret+=QString().sprintf("Content-type: text/html\n\n");
   ret+=QString().
-    sprintf("<table cellpadding=\"5\" cellspacing=\"0\" border=\"1\">\n");
+    sprintf("<table>\n");
   ret+=QString().sprintf("<tr>\n");
   ret+=QString().
     sprintf("<td colspan=\"3\" align=\"center\"><strong>WHCgiPost Data Dump</strong></td>\n");
@@ -660,7 +661,7 @@ void WHCgiPost::LoadMultipartEncoding()
 
   if((n=getline(&data,(size_t *)&n,stdin))<=0) {
     printf("Content-type: text/html\n\n");
-    printf("LoadMultipartEncoding()\n");
+    printf("LoadMultipartEncoding() [%s]\n",strerror(errno));
     post_error=WHCgiPost::ErrorMalformedData;
     return;
   }

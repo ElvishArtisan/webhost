@@ -41,6 +41,8 @@ class WHCgiPage : public WHCgiObject
   void addScript(const QString &scriptname);
   QString onLoadEvent() const;
   void setOnLoadEvent(const QString &str);
+  QString styleSheet() const;
+  void setStyleSheet(const QString &str);
   virtual void renderHead();
   virtual void renderBodyStart();
   virtual void render()=0;
@@ -54,6 +56,7 @@ class WHCgiPage : public WHCgiObject
   QStringList page_scripts;
   QString page_menu_ref;
   QString page_on_load_event;
+  QString page_style_sheet;
 };
 
 

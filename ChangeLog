@@ -293,3 +293,8 @@
 2016-05-14 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 4:0:1.
 	* Incremented the package version to 1.0.0.
+2016-09-05 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the 'charset' attribute from 'windows-1252' to 'utf-8'
+	in src/wh/whcgipage.cpp'.
+	* Added 'WHCgiPage::styleSheet()' and 'WHCgiPage::setStyleSheet()'
+	methods in 'src/wh/whcgipage.cpp' and 'src/wh/whcgipage.h'.

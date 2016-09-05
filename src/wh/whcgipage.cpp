@@ -101,6 +101,18 @@ void WHCgiPage::setOnLoadEvent(const QString &str)
 }
 
 
+QString WHCgiPage::styleSheet() const
+{
+  return page_style_sheet;
+}
+
+
+void WHCgiPage::setStyleSheet(const QString &str)
+{
+  page_style_sheet=str;
+}
+
+
 void WHCgiPage::renderHead()
 {
   printf("Content-type: %s\n",(const char *)page_mime_type.toUtf8());
@@ -109,13 +121,51 @@ void WHCgiPage::renderHead()
   printf("<html itemscope=\"\" itemtype=\"http://schema.org/WebPage\" lang=\"%s\">\n",(const char *)settings()->language().toUtf8());
   printf("<head>\n");
   printf("<title>%s</title>\n",(const char *)page_title_text.toUtf8());
-  printf("<meta content=\"text/html; charset=windows-1252\" http-equiv=Content-Type>\n");
+  printf("<meta content=\"text/html; charset=utf-8\" http-equiv=Content-Type>\n");
   for(int i=0;i<page_scripts.size();i++) {
     printf("<script type=\"text/javascript\" src=\"%s\"></script>\n",
 	   (const char *)page_scripts[i].toUtf8());
   }
   printf("<style>\n");
-  printf(".tab-head { background:#6383b7; color:white; text-align: center; }\n");
+
+  //
+  // Main Document Style
+  //
+  QString style=QString("body {")+
+    "background-color: "+settings()->backgroundColor()+";}";
+  style+=QString("a:active {")+
+    "color: "+settings()->activeLinkColor()+";}";
+  style+=QString("a:link {")+
+    "color: "+settings()->linkColor()+";}";
+  style+=QString("a:visited {")+
+    "color: "+settings()->visitedLinkColor()+";}";
+  style+=QString("td {")+
+    "padding: 0px;"+
+    "border-spacing: 0px;"+
+    "border: 0px;"+
+    "}";
+
+  //
+  // Control Bar Style
+  //
+  style+=QString(".tab-head {")+
+    "background-color: #6383B7;"+
+    "color: white;"+
+    "text-align: center;"+
+    "vertical-align: middle;"+
+    "white-space: nowrap;"+
+    "padding: 0px;"+
+    "border-spacing: 0px;"+
+    "}";
+
+  //
+  // Custom Styles
+  //
+  if(!styleSheet().isEmpty()) {
+    printf("%s\n",(const char *)styleSheet().toUtf8());
+  }
+
+  printf("%s\n",(const char *)style.toUtf8());
   printf("</style>\n");
   printf("</head>\n");
 }
@@ -124,15 +174,13 @@ void WHCgiPage::renderHead()
 void WHCgiPage::renderBodyStart()
 {
   QString on_load="";
-  if(!page_on_load_event.isEmpty()) {
-    on_load="onload=\""+page_on_load_event+"\"";
+  if(page_on_load_event.isEmpty()) {
+    printf("<body>\n");
   }
-  printf("<body %s bgColor=\"%s\" alink=\"%s\" link=\"%s\" vlink=\"%s\">\n",
-	 (const char *)on_load.toUtf8(),
-	 (const char *)settings()->backgroundColor().toUtf8(),
-	 (const char *)settings()->activeLinkColor().toUtf8(),
-	 (const char *)settings()->linkColor().toUtf8(),
-	 (const char *)settings()->visitedLinkColor().toUtf8());
+  else {
+    printf("<body onload=\"%s\">\n",
+	   (const char *)page_on_load_event.toUtf8());
+  }
 }
 
 
