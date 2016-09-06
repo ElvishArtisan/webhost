@@ -300,3 +300,6 @@
 	methods in 'src/wh/whcgipage.cpp' and 'src/wh/whcgipage.h'.
 2016-09-05 Fred Gleason <fredg@paravelsystems.com>
 	* Removed superfluous include statements.
+2016-09-05 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 5:0:2.
+	* Incremented the package version to 1.1.0.
