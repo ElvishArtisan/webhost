@@ -298,3 +298,5 @@
 	in src/wh/whcgipage.cpp'.
 	* Added 'WHCgiPage::styleSheet()' and 'WHCgiPage::setStyleSheet()'
 	methods in 'src/wh/whcgipage.cpp' and 'src/wh/whcgipage.h'.
+2016-09-05 Fred Gleason <fredg@paravelsystems.com>
+	* Removed superfluous include statements.

@@ -36,7 +36,6 @@ WHCgiPage::WHCgiPage(WHCgiPost *post)
 
 QString WHCgiPage::menuText() const
 {
-  syslog(LOG_NOTICE,"WHCgiPage::menuText: %s",(const char *)page_menu_text.toUtf8());
   return page_menu_text;
 }
 

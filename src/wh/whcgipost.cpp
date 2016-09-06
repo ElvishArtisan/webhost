@@ -74,7 +74,7 @@ WHCgiPost::WHCgiPost(bool auto_delete)
       post_encoding=WHCgiPost::UrlEncoded;
       LoadUrlEncoding();
     }
-  if(f0[0].trimmed().toLower()=="multipart/form-data") {
+    if(f0[0].trimmed().toLower()=="multipart/form-data") {
       post_encoding=WHCgiPost::MultipartEncoded;
       LoadMultipartEncoding();
     }
