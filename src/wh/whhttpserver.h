@@ -76,6 +76,11 @@ class WHHttpServer : public QObject
 
  protected:
   virtual void requestReceived(WHHttpConnection *conn);
+  virtual void getRequestReceived(WHHttpConnection *conn);
+  virtual void postRequestReceived(WHHttpConnection *conn);
+  virtual void headRequestReceived(WHHttpConnection *conn);
+  virtual void putRequestReceived(WHHttpConnection *conn);
+  virtual void deleteRequestReceived(WHHttpConnection *conn);
   virtual bool authenticateUser(const QString &realm,const QString &name,
 				const QString &passwd);
 

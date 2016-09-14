@@ -36,7 +36,7 @@ class WHHttpConnection : public QObject
 {
   Q_OBJECT;
  public:
-  enum Method {None=0,Get=1,Post=2,Head=3};
+  enum Method {None=0,Get=1,Post=2,Head=3,Put=4,Delete=5};
   enum AuthType {AuthNone=0,AuthBasic=1,AuthDigest=2};
   WHHttpConnection(int id,QTcpSocket *sock,bool dump_trans,QObject *parent=0);
   ~WHHttpConnection();

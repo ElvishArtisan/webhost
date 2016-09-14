@@ -305,3 +305,16 @@
 	* Incremented the package version to 1.1.0.
 2016-09-14 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a typo in 'configure.ac'.
+2016-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Method::Put' and 'Method::Delete' values to the
+	'WHHttpConnection::Method enumeration in 'src/wh/whhttpconnection.h'.
+	* Added a 'WHHttpServer::getRequestReceived()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added a 'WHHttpServer::postRequestReceived()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added a 'WHHttpServer::headRequestReceived()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added a 'WHHttpServer::putRequestReceived()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+	* Added a 'WHHttpServer::deleteRequestReceived()' method in
+	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.

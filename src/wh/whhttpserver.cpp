@@ -295,6 +295,70 @@ void WHHttpServer::addSocketSource(const QString &uri,const QString &proto,
 
 void WHHttpServer::requestReceived(WHHttpConnection *conn)
 {
+  switch(conn->method()) {
+  case WHHttpConnection::Get:
+    getRequestReceived(conn);
+    return;
+
+  case WHHttpConnection::Post:
+    postRequestReceived(conn);
+    return;
+
+  case WHHttpConnection::Head:
+    headRequestReceived(conn);
+    return;
+
+  case WHHttpConnection::Put:
+    putRequestReceived(conn);
+    return;
+
+  case WHHttpConnection::Delete:
+    deleteRequestReceived(conn);
+    return;
+
+  case WHHttpConnection::None:
+    break;
+  }
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
+}
+
+
+void WHHttpServer::getRequestReceived(WHHttpConnection *conn)
+{
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
+}
+
+
+void WHHttpServer::postRequestReceived(WHHttpConnection *conn)
+{
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
+}
+
+
+void WHHttpServer::headRequestReceived(WHHttpConnection *conn)
+{
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
+}
+
+
+void WHHttpServer::putRequestReceived(WHHttpConnection *conn)
+{
+  fprintf(stderr,"URI \"%s\" not found\n",
+	  (const char *)conn->uri().toUtf8());
+  conn->sendError(404,"404 Not found");
+}
+
+
+void WHHttpServer::deleteRequestReceived(WHHttpConnection *conn)
+{
   fprintf(stderr,"URI \"%s\" not found\n",
 	  (const char *)conn->uri().toUtf8());
   conn->sendError(404,"404 Not found");
@@ -750,17 +814,19 @@ void WHHttpServer::SendStaticSource(WHHttpConnection *conn,int n)
     data=file.readAll(); 
     conn->sendResponse(200,data,http_static_mimetypes[n]);
     file.close();
-    break;
+    return;
 
   case WHHttpConnection::Head:
     conn->sendResponseHeader(200,http_static_mimetypes[n]);
     conn->sendHeader();
-    break;
+    return;
 
+  case WHHttpConnection::Put:
+  case WHHttpConnection::Delete:
   case WHHttpConnection::None:
-    conn->sendResponse(500,"500 Internal Server Error");
     break;
   }
+  conn->sendResponse(405,"Method not allowed");
 }
 
 
