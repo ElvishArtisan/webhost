@@ -123,7 +123,7 @@ AC_CONFIG_FILES([ \
     webhost.spec \
     Makefile ])
 AC_OUTPUT()
-chmod 755 rc.webhostd
+chmod 755 rc.webhost
 
 AC_MSG_NOTICE()
 AC_MSG_NOTICE(Now enter 'make' to build the software.)
