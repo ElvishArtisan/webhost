@@ -1,3 +1,10 @@
 The NEWS file for the webhost package.
 
 -------------------------------------------------------------------------------
+v1.2.0 -- 9/16/2016
+
+Changes:
+   New methods in WHHttpServer for supporting method processing within the
+   Qt event loop.
+
+-------------------------------------------------------------------------------

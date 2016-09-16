@@ -1,5 +1,6 @@
 This is the README file for the webhost package.
 
-Webhost is a system administration system for embedded processes.  It
-enables local processes to do things like change IP host assignments,
-upgrade packages and reboot the system by means of a simple UDP interface.
+Webhost is a library for embedding HTML interfaces into programs. It
+includes two basic parts: a framework for generating and processing
+configuration web pages, and an integrated websockets-capable web server.
+It uses the Qt4 toolkit.

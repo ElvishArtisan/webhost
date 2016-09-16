@@ -318,3 +318,9 @@
 	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
 	* Added a 'WHHttpServer::deleteRequestReceived()' method in
 	'src/wh/whhttpserver.cpp' and 'src/wh/whhttpserver.h'.
+2016-09-16 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'README'
+	* Updated 'INSTALL'
+	* Updated 'NEWS'
+	* Incremented the library version to 6:0:3.
+	* Incremented the package version to 1.2.0.
