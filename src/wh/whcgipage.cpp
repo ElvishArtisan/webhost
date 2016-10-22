@@ -19,6 +19,7 @@
 //
 
 #include <syslog.h>
+#include <time.h>
 
 #include <QObject>
 
@@ -114,6 +115,8 @@ void WHCgiPage::setStyleSheet(const QString &str)
 
 void WHCgiPage::renderHead()
 {
+  time_t t=time(NULL);
+
   printf("Content-type: %s\n",(const char *)page_mime_type.toUtf8());
   printf("\n");
   printf("<!doctype html>\n");
@@ -122,8 +125,8 @@ void WHCgiPage::renderHead()
   printf("<title>%s</title>\n",(const char *)page_title_text.toUtf8());
   printf("<meta content=\"text/html; charset=utf-8\" http-equiv=Content-Type>\n");
   for(int i=0;i<page_scripts.size();i++) {
-    printf("<script type=\"text/javascript\" src=\"%s\"></script>\n",
-	   (const char *)page_scripts[i].toUtf8());
+    printf("<script type=\"text/javascript\" src=\"%s?%lu\"></script>\n",
+	   (const char *)page_scripts[i].toUtf8(),t);
   }
   printf("<style>\n");
 

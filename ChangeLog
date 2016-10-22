@@ -324,3 +324,6 @@
 	* Updated 'NEWS'
 	* Incremented the library version to 6:0:3.
 	* Incremented the package version to 1.2.0.
+2016-10-22 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to append a pseudo-random integer to rendered script URLs
+	in 'diff src/wh/whcgipage.cpp'.
