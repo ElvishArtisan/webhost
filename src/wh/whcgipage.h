@@ -44,6 +44,7 @@ class WHCgiPage : public WHCgiObject
   QString styleSheet() const;
   void setStyleSheet(const QString &str);
   virtual void renderHead();
+  virtual void renderScripts();
   virtual void renderBodyStart();
   virtual void render()=0;
   virtual void renderBodyEnd();
