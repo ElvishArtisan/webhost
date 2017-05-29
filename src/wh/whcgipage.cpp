@@ -154,6 +154,12 @@ void WHCgiPage::renderHead()
     "padding: 0px;"+
     "border-spacing: 0px;"+
     "}";
+  style+=QString("a.static-link:link,")+
+    "a.static-link:visited,"+
+    "a.static-link:hover,"+
+    "a.static-link:active {"+
+    "color: #0000ff;"+
+    "}";
 
   //
   // Custom Styles

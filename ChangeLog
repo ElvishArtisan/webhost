@@ -335,3 +335,5 @@
 2017-03-26 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 7:0:4.
 	* Incremented the package version to 1.3.0.
+2017-05-29 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'static-link' CSS class in 'src/wh/whcgipage.cpp'.
