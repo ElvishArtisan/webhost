@@ -30,8 +30,7 @@ moc_%.cpp:	%.h
 
 sbin_PROGRAMS = webhostd
 
-dist_webhostd_SOURCES = config.cpp config.h\
-                        ip.cpp\
+dist_webhostd_SOURCES = ip.cpp\
                         ntp.cpp\
                         reboot.cpp\
                         restart.cpp\

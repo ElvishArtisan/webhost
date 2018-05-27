@@ -340,3 +340,6 @@
 2017-05-29 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 7:1:4.
 	* Incremented the package version to 1.4.0.
+2018-05-27 Fred Gleason <fredg@paravelsystems.com>
+	* Consolidated the 'Config' class into 'WHConfig'.
+	* Added a 'UseNetworkManager=0|1' parameter to webhost.conf(5).

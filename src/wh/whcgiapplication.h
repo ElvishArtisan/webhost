@@ -1,4 +1,4 @@
-// whcgipost.h
+// whcgiapplication.h
 //
 // Base class for CGI Applications
 //

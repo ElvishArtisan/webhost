@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QUdpSocket>
 
-#include "config.h"
+#include "../wh/whconfig.h"
 
 #define WEBHOSTD_USAGE "\n"
 
@@ -60,11 +60,12 @@ class MainObject : public QObject
   void DeleteUser2(const QStringList &cmds);
   void Upgrade(const QStringList &cmds);
   void ProcessCommand(const QString &cmd);
+  void RunCommand(const QString &cmd,const QStringList &args);
   QUdpSocket *main_command_socket;
   QProcess *main_service_process;
   QTimer *main_garbage_timer;
   QTimer *main_kill_timer;
-  Config *main_config;
+  WHConfig *main_config;
   bool main_debug;
 };
 

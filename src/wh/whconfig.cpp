@@ -2,7 +2,7 @@
 //
 // Class for reading webhost configuration.
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2018 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -34,6 +34,12 @@ uint16_t WHConfig::controlPort() const
 }
 
 
+bool WHConfig::useNetworkManager() const
+{
+  return config_use_network_manager;
+}
+
+
 unsigned WHConfig::interfaceQuantity() const
 {
   return config_interface_names.size();
@@ -42,6 +48,9 @@ unsigned WHConfig::interfaceQuantity() const
 
 QString WHConfig::interfaceName(unsigned n) const
 {
+  if(n>=config_interface_names.size()) {
+    return QString();
+  }
   return config_interface_names[n];
 }
 
@@ -88,6 +97,7 @@ bool WHConfig::load()
   }
   config_control_port=
     p->intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
+  config_use_network_manager=p->intValue("Webhost","UseNetworkManager",false);
   config_ntp_configuration_file=
     p->stringValue("Webhost","NtpConfigurationFile","/etc/ntp.conf");
   config_ntp_service_name=p->stringValue("Webhost","NtpServiceName","ntpd");

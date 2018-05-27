@@ -47,7 +47,7 @@ MainObject::MainObject(QObject *parent)
   //
   // Configuration
   //
-  main_config=new Config();
+  main_config=new WHConfig();
   main_config->load();
 
   //
@@ -74,7 +74,6 @@ MainObject::MainObject(QObject *parent)
 
   main_garbage_timer->start(0);
 }
-
 
 
 void MainObject::readyReadData()
@@ -239,6 +238,15 @@ void MainObject::ProcessCommand(const QString &cmd)
   if(verb=="upgrade") {
     Upgrade(cmds);
   }
+}
+
+
+void MainObject::RunCommand(const QString &cmd,const QStringList &args)
+{
+  QProcess *proc=new QProcess(this);
+  proc->start(cmd,args);
+  proc->waitForFinished();
+  delete proc;
 }
 
 

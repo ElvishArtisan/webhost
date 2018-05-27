@@ -1,4 +1,4 @@
-// whcgipost.cpp
+// whcgiapplication.cpp
 //
 // Base class for CGI Applications
 //

@@ -28,12 +28,18 @@
 #include <QString>
 
 #define WEBHOST_CONF_FILE "/etc/webhost.conf"
+#define WEBHOSTD_DEFAULT_NTP_CONF_FILE "/etc/ntp.conf"
+#define WEBHOSTD_DEFAULT_NETWORK_INTERFACE "eth0"
+#define WEBHOSTD_DEFAULT_NTP_SERVICE_NAME "ntpd"
+#define WEBHOSTD_DEFAULT_SERVICE_RESPAWN_DELAY 100
+#define WEBHOSTD_PROCESS_KILL_INTERVAL 5000
 
 class WHConfig
 {
  public:
   WHConfig();
   uint16_t controlPort() const;
+  bool useNetworkManager() const;
   unsigned interfaceQuantity() const;
   QString interfaceName(unsigned n) const;
   QString ntpConfigurationFile() const;
@@ -44,6 +50,7 @@ class WHConfig
 
  private:
   uint16_t config_control_port;
+  bool config_use_network_manager;
   std::vector<QString> config_interface_names;
   QString config_ntp_configuration_file;
   QString config_ntp_service_name;

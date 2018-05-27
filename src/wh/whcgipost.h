@@ -31,7 +31,8 @@
 #include <QStringList>
 #include <QUdpSocket>
 #include <QUrl>
-#include <wh/whprofile.h>
+
+#include <wh/whconfig.h>
 #include <wh/whsettings.h>
 
 class WHCgiPost
@@ -43,8 +44,8 @@ class WHCgiPost
 	      ErrorCannotSaveFile=7};
   enum Type {Cgi=0,Internal=1};
   WHCgiPost(bool auto_delete=true);
-  WHCgiPost(const QByteArray &post,const QString &mimetype,
-	    bool auto_delete=true);
+  //  WHCgiPost(const QByteArray &post,const QString &mimetype,
+  //	    bool auto_delete=true);
   ~WHCgiPost();
   Type type() const;
   Error error() const;
@@ -95,6 +96,7 @@ class WHCgiPost
   void LoadUrlEncoding();
   void LoadMultipartEncoding();
   QString UrlDecode(const QString &str) const;
+  QString CommandOutput(const QString &cmd,const QStringList &args) const;
   Encoding post_encoding;
   Error post_error;
   std::map<QString,QVariant> post_values;
@@ -109,7 +111,7 @@ class WHCgiPost
   QHostAddress post_gateway_address;
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
   QString post_ntp_hostnames[WEBHOST_MAX_NTP_SERVERS];
-  WHProfile *post_profile;
+  WHConfig *post_config;
   Type post_type;
 };
 

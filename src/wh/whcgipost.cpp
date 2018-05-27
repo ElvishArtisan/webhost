@@ -81,13 +81,13 @@ WHCgiPost::WHCgiPost(bool auto_delete)
   }
 }
 
-
+/*
 WHCgiPost::WHCgiPost(const QByteArray &post,const QString &mimetype,
 		     bool auto_delete)
 {
   post_type=WHCgiPost::Internal;
 }
-
+*/
 
 WHCgiPost::~WHCgiPost()
 {
@@ -104,7 +104,7 @@ WHCgiPost::~WHCgiPost()
   }
   delete post_socket;
   delete post_settings;
-  delete post_profile;
+  delete post_config;
 }
 
 
@@ -533,8 +533,8 @@ bool WHCgiPost::Initialize()
   post_error=WHCgiPost::ErrorNotInitialized;
   post_settings=new WHSettings();
 
-  post_profile=new WHProfile();
-  post_profile->setSource(WEBHOST_CONF_FILE );
+  post_config=new WHConfig();
+  post_config->load();
 
   ReadIpConfig();
 
@@ -569,36 +569,101 @@ void WHCgiPost::ReadIpConfig()
   QStringList params;
   QStringList f0;
   bool ok=false;
-  QString netdev=
-    post_profile->stringValue("Webhost",QString().sprintf("NetworkInterface%lu",post_ip_addresses.size()+1),"",&ok);
-  while(ok) {
+  for(unsigned i=0;i<post_config->interfaceQuantity();i++) {
+    QString netdev=post_config->interfaceName(i);
     post_ip_addresses.push_back(QHostAddress());
     post_netmask_addresses.push_back(QHostAddress());
-    if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+netdev).toUtf8(),"r"))
-       !=NULL) {
-      while(fgets(line,1024,f)!=NULL) {
-	f0=QString(line).trimmed().split("=");
-	if(f0.size()==2) {
-	  f0[1]=f0[1].replace("\"","");
-	  if(f0[0]=="IPADDR") {
-	    post_ip_addresses.back().setAddress(f0[1]);
+    if(post_config->useNetworkManager()) {
+      QStringList args;
+      QString data;
+
+      //
+      // IP Address/Netmask
+      //
+      args.push_back("-g");
+      args.push_back("ip4.address");
+      args.push_back("connection");
+      args.push_back("show");
+      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+      data=CommandOutput("/bin/nmcli",args);
+      f0=data.split("/");
+      if(f0.size()==2) {
+	if(post_ip_addresses.back().setAddress(f0.at(0))) {
+	  unsigned masksize=f0.at(1).toUInt(&ok);
+	  unsigned mask=0;
+	  if(ok) {
+	    for(unsigned i=0;i<masksize;i++) {
+	      mask=(mask<<1)+1;
+	    }
+	    for(unsigned i=masksize;i<32;i++) {
+	      mask=mask<<1;
+	    }
+	    post_netmask_addresses.back().setAddress(mask);
 	  }
-	  if(f0[0]=="GATEWAY") {
-	    post_gateway_address.setAddress(f0[1]);
-	  }
-	  if(f0[0]=="NETMASK") {
-	    post_netmask_addresses.back().setAddress(f0[1]);
-	  }
-	  if(f0[0]=="DNS1") {
-	    post_dns_addresses[0].setAddress(f0[1]);
-	  }
-	  if(f0[0]=="DNS2") {
-	    post_dns_addresses[1].setAddress(f0[1]);
+	}
+      }
+
+      //
+      // Gateway
+      //
+      args.clear();
+      args.push_back("-g");
+      args.push_back("ip4.gateway");
+      args.push_back("connection");
+      args.push_back("show");
+      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+      data=CommandOutput("/bin/nmcli",args);
+      QHostAddress addr;
+      addr.setAddress(data);
+      if(!addr.isNull()) {
+	post_gateway_address=addr;
+      }
+
+      //
+      // DNS
+      //
+      post_dns_addresses[0]=QHostAddress();
+      post_dns_addresses[1]=QHostAddress();
+      args.clear();
+      args.push_back("-g");
+      args.push_back("ip4.dns");
+      args.push_back("connection");
+      args.push_back("show");
+      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+      data=CommandOutput("/bin/nmcli",args);
+      f0=data.split("|");
+      for(int i=0;i<f0.size();i++) {
+	if(i<2) {
+	  post_dns_addresses[i].setAddress(f0.at(i).trimmed());
+	}
+      }
+    }
+    else {
+      if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+netdev).toUtf8(),"r"))
+	 !=NULL) {
+	while(fgets(line,1024,f)!=NULL) {
+	  f0=QString(line).trimmed().split("=");
+	  if(f0.size()==2) {
+	    f0[1]=f0[1].replace("\"","");
+	    if(f0[0]=="IPADDR") {
+	      post_ip_addresses.back().setAddress(f0[1]);
+	    }
+	    if(f0[0]=="GATEWAY") {
+	      post_gateway_address.setAddress(f0[1]);
+	    }
+	    if(f0[0]=="NETMASK") {
+	      post_netmask_addresses.back().setAddress(f0[1]);
+	    }
+	    if(f0[0]=="DNS1") {
+	      post_dns_addresses[0].setAddress(f0[1]);
+	    }
+	    if(f0[0]=="DNS2") {
+	      post_dns_addresses[1].setAddress(f0[1]);
+	    }
 	  }
 	}
       }
     }
-    post_profile->stringValue("Webhost",QString().sprintf("NetworkInterface%lu",post_ip_addresses.size()+1),"",&ok);
   }
 
   int count=0;
@@ -620,6 +685,7 @@ void WHCgiPost::SendCommand(const QString &cmd) const
 			     QHostAddress("127.0.0.1"),
 			     WEBHOST_DEFAULT_CONTROL_PORT);
 }
+
 
 
 void WHCgiPost::LoadUrlEncoding()
@@ -793,6 +859,21 @@ QString WHCgiPost::UrlDecode(const QString &str) const
       break;
     }
   }
+
+  return ret;
+}
+
+
+QString WHCgiPost::CommandOutput(const QString &cmd,
+				 const QStringList &args) const
+{
+  QString ret;
+
+  QProcess *proc=new QProcess();
+  proc->start(cmd,args);
+  proc->waitForFinished();
+  ret=proc->readAllStandardOutput();
+  delete proc;
 
   return ret;
 }
