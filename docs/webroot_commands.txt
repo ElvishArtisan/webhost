@@ -10,7 +10,7 @@ DELETEUSER <passwd-file> <user>
 ADDUSER2 <passwd-file> <realm> <user> <password>
 DELETEUSER2 <passwd-file> <realm> <user>
 
-IP <iface-num> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr>!
+IP <iface-num> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr> [<dhcp-status>]!
 
 NTP <timezone> <ntp1-host> <ntp2-host>!
 

@@ -44,8 +44,6 @@ class WHCgiPost
 	      ErrorCannotSaveFile=7};
   enum Type {Cgi=0,Internal=1};
   WHCgiPost(bool auto_delete=true);
-  //  WHCgiPost(const QByteArray &post,const QString &mimetype,
-  //	    bool auto_delete=true);
   ~WHCgiPost();
   Type type() const;
   Error error() const;
@@ -60,6 +58,7 @@ class WHCgiPost
   bool isFile(const QString &name);
   QString tempDir() const;
   WHSettings *settings();
+  bool dhcpActive(unsigned iface) const;
   QHostAddress ipAddress(unsigned iface) const;
   QHostAddress ipNetmask(unsigned iface) const;
   QHostAddress ipGateway() const;
@@ -80,7 +79,7 @@ class WHCgiPost
   void sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 		     const QHostAddress &mask,
 		     const QHostAddress &gw,const QHostAddress &dns1,
-		     const QHostAddress &dns2) const;
+		     const QHostAddress &dns2,bool enable_dhcp=false) const;
   void sendNtpCommand(const QString &timezone,QString ntp1,QString ntp2) const;
   void sendRebootCommand() const;
   void sendRestartCommand(const QString &sysname) const;
@@ -106,6 +105,7 @@ class WHCgiPost
   unsigned post_content_length;
   WHSettings *post_settings;
   QUdpSocket *post_socket;
+  std::vector<bool> post_dhcp_actives;
   std::vector<QHostAddress> post_ip_addresses;
   std::vector<QHostAddress> post_netmask_addresses;
   QHostAddress post_gateway_address;

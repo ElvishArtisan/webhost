@@ -231,6 +231,12 @@ WHSettings *WHCgiPost::settings()
 }
 
 
+bool WHCgiPost::dhcpActive(unsigned iface) const
+{
+  return post_dhcp_actives[iface];
+}
+
+
 QHostAddress WHCgiPost::ipAddress(unsigned iface) const
 {
   return post_ip_addresses[iface];
@@ -364,11 +370,12 @@ void WHCgiPost::sendDeleteUser2Command(const QString &htpasswd_file,
 void WHCgiPost::sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 			      const QHostAddress &mask,
 			      const QHostAddress &gw,const QHostAddress &dns1,
-			      const QHostAddress &dns2) const
+			      const QHostAddress &dns2,bool enable_dhcp) const
 {
   SendCommand("IP "+QString().sprintf("%u ",iface_num)+addr.toString()+" "+
 	      mask.toString()+" "+gw.toString()+" "+
-	      dns1.toString()+" "+dns2.toString()+"!");
+	      dns1.toString()+" "+dns2.toString()+
+	      QString().sprintf(" %d!",enable_dhcp));
 }
 
 
@@ -571,6 +578,7 @@ void WHCgiPost::ReadIpConfig()
   bool ok=false;
   for(unsigned i=0;i<post_config->interfaceQuantity();i++) {
     QString netdev=post_config->interfaceName(i);
+    post_dhcp_actives.push_back(false);
     post_ip_addresses.push_back(QHostAddress());
     post_netmask_addresses.push_back(QHostAddress());
     if(post_config->useNetworkManager()) {
@@ -578,8 +586,21 @@ void WHCgiPost::ReadIpConfig()
       QString data;
 
       //
+      // DHCP Status
+      //
+      args.clear();
+      args.push_back("-g");
+      args.push_back("ipv4.method");
+      args.push_back("connection");
+      args.push_back("show");
+      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+      data=CommandOutput("/bin/nmcli",args);
+      post_dhcp_actives.back()=data.trimmed().toLower()=="auto";
+
+      //
       // IP Address/Netmask
       //
+      args.clear();
       args.push_back("-g");
       args.push_back("ip4.address");
       args.push_back("connection");

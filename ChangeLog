@@ -343,3 +343,7 @@
 2018-05-27 Fred Gleason <fredg@paravelsystems.com>
 	* Consolidated the 'Config' class into 'WHConfig'.
 	* Added a 'UseNetworkManager=0|1' parameter to webhost.conf(5).
+2018-05-28 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHCgiPost::dhcpActive()' method.
+	* Added an 'enable_dhcp' parameter to the 'WHCgiPost::sendIpCommand()'
+	method.

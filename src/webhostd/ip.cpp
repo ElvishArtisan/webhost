@@ -31,15 +31,19 @@ void MainObject::Ip(const QStringList &cmds)
 {
   QProcess *proc=NULL;
   QStringList args;
+  QStringList cmds2=cmds;
 
   if(main_config->useNetworkManager()) {
-    if(cmds.size()==7) {
+    if(cmds2.size()==7) {
+      cmds2.push_back("0");
+    }
+    if(cmds2.size()==8) {
       QStringList args;
 
       //
       // IP Address / Netmask
       //
-      QHostAddress netmask(cmds[3]);
+      QHostAddress netmask(cmds2[3]);
       unsigned masksize=0;
       for(unsigned i=0;i<32;i++) {
 	if((netmask.toIPv4Address()&(1<<i))!=0) {
@@ -50,7 +54,7 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("mod");
       args.push_back(main_config->interfaceName(0));
       args.push_back("ipv4.addresses");
-      args.push_back(cmds[2]+QString().sprintf("/%u",masksize));
+      args.push_back(cmds2[2]+QString().sprintf("/%u",masksize));
       RunCommand("/bin/nmcli",args);
 
       //
@@ -61,7 +65,7 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("mod");
       args.push_back(main_config->interfaceName(0));
       args.push_back("ipv4.gateway");
-      args.push_back(cmds[4]);
+      args.push_back(cmds2[4]);
       RunCommand("/bin/nmcli",args);
 
       //
@@ -69,7 +73,7 @@ void MainObject::Ip(const QStringList &cmds)
       //
       bool used=false;
       for(int i=0;i<2;i++) {
-	if(!cmds[i+5].isEmpty()) {
+	if(!cmds2[i+5].isEmpty()) {
 	  args.clear();
 	  args.push_back("con");
 	  args.push_back("mod");
@@ -80,11 +84,27 @@ void MainObject::Ip(const QStringList &cmds)
 	  else {
 	    args.push_back("ipv4.dns");
 	  }
-	  args.push_back(cmds[i+5]);
+	  args.push_back(cmds2[i+5]);
 	  RunCommand("/bin/nmcli",args);
 	  used=true;
 	}
       }
+
+      //
+      // DHCP Status
+      //
+      args.clear();
+      args.push_back("con");
+      args.push_back("mod");
+      args.push_back(main_config->interfaceName(0));
+      args.push_back("ipv4.method");
+      if(cmds2[7]!="0") {
+	args.push_back("auto");
+      }
+      else {
+	args.push_back("manual");
+      }
+      RunCommand("/bin/nmcli",args);
 
       //
       // Activate
@@ -94,30 +114,6 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("up");
       args.push_back(main_config->interfaceName(0));
       RunCommand("/bin/nmcli",args);
-      
-      /*
-      for(int i=0;i<params.size();i++) {
-	if(params[i]=="IPADDR") {
-	  values[i]=cmds[2];
-	}
-	if(params[i]=="NETMASK") {
-	  values[i]=cmds[3];
-	}
-	if(params[i]=="GATEWAY") {
-	  values[i]=cmds[4];
-	}
-	if(params[i]=="DNS1") {
-	  if(!QHostAddress(cmds[5]).isNull()) {
-	    values[i]=cmds[5];
-	  }
-	}
-	if(params[i]=="DNS2") {
-	  if(!QHostAddress(cmds[6]).isNull()) {
-	    values[i]=cmds[6];
-	  }
-	}
-      }
-      */
     }
   }
   else {
@@ -126,12 +122,12 @@ void MainObject::Ip(const QStringList &cmds)
     FILE *f=NULL;
     char line[1024];
     QString ifcfg_file="/etc/sysconfig/network-scripts/ifcfg-"+
-      main_config->interfaceName(cmds[1].toUInt()-1);
+      main_config->interfaceName(cmds2[1].toUInt()-1);
 
     //
     // Read Current Config
     //
-    if(cmds.size()==7) {
+    if(cmds2.size()==7) {
       if((f=fopen(ifcfg_file.toUtf8(),"r"))
 	 !=NULL) {
 	while(fgets(line,1024,f)!=NULL) {
@@ -150,22 +146,22 @@ void MainObject::Ip(const QStringList &cmds)
 
 	for(int i=0;i<params.size();i++) {
 	  if(params[i]=="IPADDR") {
-	    values[i]=cmds[2];
+	    values[i]=cmds2[2];
 	  }
 	  if(params[i]=="NETMASK") {
-	    values[i]=cmds[3];
+	    values[i]=cmds2[3];
 	  }
 	  if(params[i]=="GATEWAY") {
-	    values[i]=cmds[4];
+	    values[i]=cmds2[4];
 	  }
 	  if(params[i]=="DNS1") {
-	    if(!QHostAddress(cmds[5]).isNull()) {
-	      values[i]=cmds[5];
+	    if(!QHostAddress(cmds2[5]).isNull()) {
+	      values[i]=cmds2[5];
 	    }
 	  }
 	  if(params[i]=="DNS2") {
-	    if(!QHostAddress(cmds[6]).isNull()) {
-	      values[i]=cmds[6];
+	    if(!QHostAddress(cmds2[6]).isNull()) {
+	      values[i]=cmds2[6];
 	    }
 	  }
 	}
