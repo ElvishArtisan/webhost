@@ -347,3 +347,6 @@
 	* Added a 'WHCgiPost::dhcpActive()' method.
 	* Added an 'enable_dhcp' parameter to the 'WHCgiPost::sendIpCommand()'
 	method.
+2018-05-28 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the default value of 'UserNetworkManager=' in the '[Webhost]'
+	section of webhost.conf(5) from 'false' to 'true'.
