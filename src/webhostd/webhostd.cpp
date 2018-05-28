@@ -62,6 +62,44 @@ MainObject::MainObject(QObject *parent)
   connect(main_command_socket,SIGNAL(readyRead()),this,SLOT(readyReadData()));
 
   //
+  // Network Manager
+  //
+  QStringList args;
+  args.push_back("--property=ActiveState");
+  args.push_back("show");
+  args.push_back("NetworkManager");
+  QStringList f0=RunCommand("/bin/systemctl",args).split("\n");
+  for(int i=0;i<f0.size();i++) {
+    QStringList f1=f0.at(i).split("=");
+    if(f1.size()==2) {
+      if(f1.at(0)=="ActiveState") {
+	if(main_config->useNetworkManager()&&(f1.at(1)=="inactive")) {
+	  args.clear();
+	  args.push_back("start");
+	  args.push_back("NetworkManager");
+	  RunCommand("/bin/systemctl",args);
+
+	  args.clear();
+	  args.push_back("enable");
+	  args.push_back("NetworkManager");
+	  RunCommand("/bin/systemctl",args);
+	}
+	if(!main_config->useNetworkManager()&&(f1.at(1)!="active")) {
+	  args.clear();
+	  args.push_back("stop");
+	  args.push_back("NetworkManager");
+	  RunCommand("/bin/systemctl",args);
+
+	  args.clear();
+	  args.push_back("disnable");
+	  args.push_back("NetworkManager");
+	  RunCommand("/bin/systemctl",args);
+	}
+      }
+    }
+  }
+
+  //
   // Timers
   //
   main_garbage_timer=new QTimer(this);
@@ -241,12 +279,17 @@ void MainObject::ProcessCommand(const QString &cmd)
 }
 
 
-void MainObject::RunCommand(const QString &cmd,const QStringList &args)
+QString MainObject::RunCommand(const QString &cmd,const QStringList &args)
 {
+  QString ret;
+
   QProcess *proc=new QProcess(this);
   proc->start(cmd,args);
   proc->waitForFinished();
+  ret=proc->readAllStandardOutput();
   delete proc;
+
+  return ret;
 }
 
 

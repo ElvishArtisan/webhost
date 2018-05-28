@@ -60,7 +60,7 @@ class MainObject : public QObject
   void DeleteUser2(const QStringList &cmds);
   void Upgrade(const QStringList &cmds);
   void ProcessCommand(const QString &cmd);
-  void RunCommand(const QString &cmd,const QStringList &args);
+  QString RunCommand(const QString &cmd,const QStringList &args);
   QUdpSocket *main_command_socket;
   QProcess *main_service_process;
   QTimer *main_garbage_timer;
