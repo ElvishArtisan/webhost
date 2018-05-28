@@ -354,3 +354,6 @@
 	* Added code to webhostd(8) to activate/deactivate NetworkManager
 	according to the setting of the 'UseNetworkManager=' parameter
 	in the '[Webhost]' section of webhost.conf(5).
+2018-05-28 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 8:0:5.
+	* Incremented the package version to 1.5.0.
