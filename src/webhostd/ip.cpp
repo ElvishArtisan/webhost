@@ -127,7 +127,7 @@ void MainObject::Ip(const QStringList &cmds)
     //
     // Read Current Config
     //
-    if(cmds2.size()==7) {
+    if(cmds2.size()==8) {
       if((f=fopen(ifcfg_file.toUtf8(),"r"))
 	 !=NULL) {
 	while(fgets(line,1024,f)!=NULL) {
