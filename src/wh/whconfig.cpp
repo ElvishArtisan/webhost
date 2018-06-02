@@ -97,7 +97,7 @@ bool WHConfig::load()
   }
   config_control_port=
     p->intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
-  config_use_network_manager=p->intValue("Webhost","UseNetworkManager",true);
+  config_use_network_manager=p->intValue("Webhost","UseNetworkManager",false);
   config_ntp_configuration_file=
     p->stringValue("Webhost","NtpConfigurationFile","/etc/ntp.conf");
   config_ntp_service_name=p->stringValue("Webhost","NtpServiceName","ntpd");
