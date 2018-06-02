@@ -127,7 +127,7 @@ void MainObject::Ip(const QStringList &cmds)
     //
     // Read Current Config
     //
-    if(cmds2.size()==8) {
+    if(cmds2.size()>=7) {
       if((f=fopen(ifcfg_file.toUtf8(),"r"))
 	 !=NULL) {
 	while(fgets(line,1024,f)!=NULL) {
@@ -162,6 +162,16 @@ void MainObject::Ip(const QStringList &cmds)
 	  if(params[i]=="DNS2") {
 	    if(!QHostAddress(cmds2[6]).isNull()) {
 	      values[i]=cmds2[6];
+	    }
+	  }
+	  if(cmds2.size()>=8) {
+	    if(params[i]=="BOOTPROTO") {
+	      if(cmds2[7]!="0") {
+		values[i]="dhcp";
+	      }
+	      else {
+		values[i]="none";
+	      }
 	    }
 	  }
 	}

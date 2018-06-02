@@ -681,6 +681,9 @@ void WHCgiPost::ReadIpConfig()
 	    if(f0[0]=="DNS2") {
 	      post_dns_addresses[1].setAddress(f0[1]);
 	    }
+	    if(f0[0]=="BOOTPROTO") {
+	      post_dhcp_actives.back()=f0[1]=="dhcp";
+	    }
 	  }
 	}
       }
