@@ -602,7 +602,7 @@ void WHCgiPost::ReadIpConfig()
       //
       args.clear();
       args.push_back("-g");
-      args.push_back("ip4.addresses");
+      args.push_back("ipv4.addresses");
       args.push_back("connection");
       args.push_back("show");
       args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));

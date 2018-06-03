@@ -370,3 +370,5 @@
 	mode.
 2018-06-02 Fred Gleason <fredg@paravelsystems.com>
 	* Enabled support for DHCP when in non-NetworkManager mode.
+2018-06-02 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that broke IPv4 address detection under NetworkManager.
