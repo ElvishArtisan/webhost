@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <QHostAddress>
+#include <QList>
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -34,6 +35,7 @@
 
 #include <wh/whconfig.h>
 #include <wh/whsettings.h>
+#include <wh/whwificonnection.h>
 
 class WHCgiPost
 {
@@ -63,6 +65,8 @@ class WHCgiPost
   QHostAddress ipNetmask(unsigned iface) const;
   QHostAddress ipGateway() const;
   QHostAddress dnsAddress(unsigned n) const;
+  bool wifiActive() const;
+  QList<WHWifiConnection *> wifiConnections() const;
   QString ntpHostname(unsigned n) const;
   QStringList timezoneList() const;
   QString currentTimezone() const;
@@ -110,6 +114,8 @@ class WHCgiPost
   std::vector<QHostAddress> post_netmask_addresses;
   QHostAddress post_gateway_address;
   QHostAddress post_dns_addresses[WEBHOST_MAX_DNS_SERVERS];
+  bool post_wifi_active;
+  QList<WHWifiConnection *> post_wifi_connections;
   QString post_ntp_hostnames[WEBHOST_MAX_NTP_SERVERS];
   WHConfig *post_config;
   Type post_type;

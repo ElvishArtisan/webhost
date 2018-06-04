@@ -43,7 +43,8 @@ dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                              whnetwork.cpp whnetwork.h\
                              whprofile.cpp whprofile.h\
                              whsettings.cpp whsettings.h\
-                             whsocketmessage.cpp whsocketmessage.h
+                             whsocketmessage.cpp whsocketmessage.h\
+                             whwificonnection.cpp whwificonnection.h
 
 nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp\
                                moc_whhttpconnection.cpp\
@@ -63,7 +64,8 @@ include_HEADERS = whcgiapplication.h\
                   whhttpuser.h\
                   whnetwork.h\
                   whprofile.h\
-                  whsettings.h
+                  whsettings.h\
+                  whwificonnection.h
 
 libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
 

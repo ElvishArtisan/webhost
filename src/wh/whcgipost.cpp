@@ -18,6 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -258,6 +260,18 @@ QHostAddress WHCgiPost::ipGateway() const
 QHostAddress WHCgiPost::dnsAddress(unsigned n) const
 {
   return post_dns_addresses[n];
+}
+
+
+bool WHCgiPost::wifiActive() const
+{
+  return post_wifi_active;
+}
+
+
+QList<WHWifiConnection *> WHCgiPost::wifiConnections() const
+{
+  return post_wifi_connections;
 }
 
 
@@ -575,7 +589,10 @@ void WHCgiPost::ReadIpConfig()
   char line[1024];
   QStringList params;
   QStringList f0;
+  QStringList f1;
   bool ok=false;
+
+  post_wifi_active=false;
   for(unsigned i=0;i<post_config->interfaceQuantity();i++) {
     QString netdev=post_config->interfaceName(i);
     post_dhcp_actives.push_back(false);
@@ -656,6 +673,47 @@ void WHCgiPost::ReadIpConfig()
       for(int i=0;i<f0.size();i++) {
 	if(i<2) {
 	  post_dns_addresses[i].setAddress(f0.at(i).trimmed());
+	}
+      }
+
+      //
+      // Wifi Active
+      //
+      args.clear();
+      args.push_back("-t");
+      args.push_back("device");
+      args.push_back("status");
+      data=CommandOutput("/bin/nmcli",args);
+      f0=data.split("\n");
+      for(int i=0;i<f0.size();i++) {
+	f1=f0.at(i).split(":");
+	if(f1.size()==4) {
+	  post_wifi_active=post_wifi_active||(f1.at(1)=="wifi");
+	}
+      }
+
+      //
+      // Wifi Connections
+      //
+      args.clear();
+      args.push_back("-t");
+      args.push_back("device");
+      args.push_back("wifi");
+      args.push_back("list");
+      data=CommandOutput("/bin/nmcli",args);
+      f0=data.split("\n");
+      for(int i=0;i<f0.size();i++) {
+	f1=f0.at(i).split(":");
+	if((f1.size()==8)&&(!f1.at(1).trimmed().isEmpty())) {
+	  post_wifi_connections.push_back(new WHWifiConnection());
+	  post_wifi_connections.back()->setInUse(!f1.at(0).trimmed().isEmpty());
+	  post_wifi_connections.back()->setSsid(f1.at(1).trimmed());
+	  post_wifi_connections.back()->setMode(f1.at(2).trimmed());
+	  post_wifi_connections.back()->setChannel(f1.at(3).toInt());
+	  post_wifi_connections.back()->setRate(f1.at(4).trimmed());
+	  post_wifi_connections.back()->setSignal(f1.at(5).toInt());
+	  post_wifi_connections.back()->setBars(f1.at(6));
+	  post_wifi_connections.back()->setSecurity(f1.at(7));
 	}
       }
     }
