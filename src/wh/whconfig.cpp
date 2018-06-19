@@ -55,6 +55,12 @@ QString WHConfig::interfaceName(unsigned n) const
 }
 
 
+QString WHConfig::wifiInterfaceName() const
+{
+  return config_wifi_interface_name;
+}
+
+
 QString WHConfig::ntpConfigurationFile() const
 {
   return config_ntp_configuration_file;
@@ -95,6 +101,7 @@ bool WHConfig::load()
     iface=p->stringValue("Webhost",
 			 QString().sprintf("NetworkInterface%d",inum+1),"",&ok);
   }
+  config_wifi_interface_name=p->stringValue("Webhost","WifiInterfaceName");
   config_control_port=
     p->intValue("Webhost","ControlPort",WEBHOST_DEFAULT_CONTROL_PORT);
   config_use_network_manager=p->intValue("Webhost","UseNetworkManager",false);

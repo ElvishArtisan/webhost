@@ -276,6 +276,10 @@ void MainObject::ProcessCommand(const QString &cmd)
   if(verb=="upgrade") {
     Upgrade(cmds);
   }
+
+  if(verb=="wifi") {
+    Wifi(cmds);
+  }
 }
 
 
@@ -285,8 +289,13 @@ QString MainObject::RunCommand(const QString &cmd,const QStringList &args)
 
   QProcess *proc=new QProcess(this);
   proc->start(cmd,args);
-  proc->waitForFinished();
-  ret=proc->readAllStandardOutput();
+  if(proc->waitForFinished()) {
+    ret=proc->readAllStandardOutput();
+  }
+  else {
+    syslog(LOG_WARNING,"command \"%s %s\" timed out",
+	   (const char *)cmd.toUtf8(),(const char *)args.join(" ").toUtf8());
+  }
   delete proc;
 
   return ret;

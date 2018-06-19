@@ -2,7 +2,7 @@
 //
 // POST data processor class for CGI applications
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2018 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -17,8 +17,6 @@
 //   License along with this program; if not, write to the Free Software
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-
-#include <syslog.h>
 
 #include <errno.h>
 #include <stdlib.h>
@@ -83,13 +81,6 @@ WHCgiPost::WHCgiPost(bool auto_delete)
   }
 }
 
-/*
-WHCgiPost::WHCgiPost(const QByteArray &post,const QString &mimetype,
-		     bool auto_delete)
-{
-  post_type=WHCgiPost::Internal;
-}
-*/
 
 WHCgiPost::~WHCgiPost()
 {
@@ -452,6 +443,19 @@ void WHCgiPost::sendUpgradeCommand(const QString &filename) const
 }
 
 
+void WHCgiPost::sendConnectWifiCommand(const QString &ssid,
+				       const QString &passwd) const
+{
+  SendCommand("WIFI "+ssid+" "+passwd+"!");
+}
+
+
+void WHCgiPost::sendDisconnectWifiCommand() const
+{
+  SendCommand("WIFI!");
+}
+
+
 QString WHCgiPost::dump()
 {
   QString ret;
@@ -706,7 +710,8 @@ void WHCgiPost::ReadIpConfig()
 	f1=f0.at(i).split(":");
 	if((f1.size()==8)&&(!f1.at(1).trimmed().isEmpty())) {
 	  post_wifi_connections.push_back(new WHWifiConnection());
-	  post_wifi_connections.back()->setInUse(!f1.at(0).trimmed().isEmpty());
+	  post_wifi_connections.back()->
+	    setInUse(!f1.at(0).trimmed().isEmpty());
 	  post_wifi_connections.back()->setSsid(f1.at(1).trimmed());
 	  post_wifi_connections.back()->setMode(f1.at(2).trimmed());
 	  post_wifi_connections.back()->setChannel(f1.at(3).toInt());

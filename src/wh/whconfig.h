@@ -42,6 +42,7 @@ class WHConfig
   bool useNetworkManager() const;
   unsigned interfaceQuantity() const;
   QString interfaceName(unsigned n) const;
+  QString wifiInterfaceName() const;
   QString ntpConfigurationFile() const;
   QString ntpServiceName() const;
   QString serviceCommand() const;
@@ -52,6 +53,7 @@ class WHConfig
   uint16_t config_control_port;
   bool config_use_network_manager;
   std::vector<QString> config_interface_names;
+  QString config_wifi_interface_name;
   QString config_ntp_configuration_file;
   QString config_ntp_service_name;
   QString config_service_command;

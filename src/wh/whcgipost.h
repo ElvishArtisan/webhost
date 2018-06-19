@@ -88,6 +88,8 @@ class WHCgiPost
   void sendRebootCommand() const;
   void sendRestartCommand(const QString &sysname) const;
   void sendUpgradeCommand(const QString &filename) const;
+  void sendConnectWifiCommand(const QString &ssid,const QString &passwd) const;
+  void sendDisconnectWifiCommand() const;
   QString dump();
   static QString errorString(Error err);
   static QString dumpEnvironment();

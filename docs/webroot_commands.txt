@@ -12,6 +12,9 @@ DELETEUSER2 <passwd-file> <realm> <user>
 
 IP <iface-num> <ip-addr> <netmask> <gateway> <dns1-addr> <dns2-addr> [<dhcp-status>]!
 
+WIFI [<ssid> <password>]!
+(No arguments indicates disconnect).
+
 NTP <timezone> <ntp1-host> <ntp2-host>!
 
 REBOOT!

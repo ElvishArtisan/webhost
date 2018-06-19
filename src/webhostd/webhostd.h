@@ -45,12 +45,16 @@ class MainObject : public QObject
   void garbageTimerData();
   void killTimerData();
 
+ private slots:
+  void wifiProcessFinishedData(int exit_code,QProcess::ExitStatus status);
+
  private:
   void Ip(const QStringList &cmds);
   void IpSeedEntry(const QString &param,QStringList &params,
 		   QStringList &values) const;
   void IpPruneEntry(const QString &param,QStringList &params,
 		   QStringList &values) const;
+  void Wifi(const QStringList &cmds);
   void Ntp(const QStringList &cmds);
   void Reboot(const QStringList &cmds);
   void Restart(const QStringList &cmds);
@@ -63,6 +67,7 @@ class MainObject : public QObject
   QString RunCommand(const QString &cmd,const QStringList &args);
   QUdpSocket *main_command_socket;
   QProcess *main_service_process;
+  QList<QProcess *> main_wifi_processes;
   QTimer *main_garbage_timer;
   QTimer *main_kill_timer;
   WHConfig *main_config;
