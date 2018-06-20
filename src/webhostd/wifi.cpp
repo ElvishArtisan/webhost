@@ -51,14 +51,28 @@ void MainObject::Wifi(const QStringList &cmds)
   if(main_config->useNetworkManager()) {
     if(cmds.size()==1) {
       args.clear();
-      args.push_back("device");
-      args.push_back("disconnect");
-      args.push_back(main_config->wifiInterfaceName());
-      main_wifi_processes.push_back(new QProcess(this));
-      connect(main_wifi_processes.back(),
-	      SIGNAL(finished(int,QProcess::ExitStatus)),
-	      this,SLOT(wifiProcessFinishedData(int,QProcess::ExitStatus)));
-      main_wifi_processes.back()->start("/bin/nmcli",args);
+      args.push_back("-t");
+      args.push_back("conn");
+      args.push_back("show");
+      QString resp=RunCommand("/bin/nmcli",args);
+      QStringList f0=resp.split("\n");
+      for(int i=0;i<f0.size();i++) {
+	QStringList f1=f0.at(i).split(":");
+	if(f1.size()>=3) {
+	  if(f1.at(2)=="802-11-wireless") {
+	    args.clear();
+	    args.push_back("conn");
+	    args.push_back("delete");
+	    args.push_back(f1.at(0));
+	    main_wifi_processes.push_back(new QProcess(this));
+	    connect(main_wifi_processes.back(),
+		    SIGNAL(finished(int,QProcess::ExitStatus)),
+		    this,
+		    SLOT(wifiProcessFinishedData(int,QProcess::ExitStatus)));
+	    main_wifi_processes.back()->start("/bin/nmcli",args);
+	  }
+	}
+      }
       return;
     }
     if(cmds.size()>1) {
