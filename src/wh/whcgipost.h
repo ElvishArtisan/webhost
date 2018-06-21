@@ -66,6 +66,10 @@ class WHCgiPost
   QHostAddress ipGateway() const;
   QHostAddress dnsAddress(unsigned n) const;
   bool wifiActive() const;
+  QString cpuinfoModelName() const;
+  QString cpuinfoHardware() const;
+  QString cpuinfoRevision() const;
+  QString cpuinfoSerial() const;
   QList<WHWifiConnection *> wifiConnections() const;
   QString ntpHostname(unsigned n) const;
   QStringList timezoneList() const;
@@ -121,6 +125,10 @@ class WHCgiPost
   QString post_ntp_hostnames[WEBHOST_MAX_NTP_SERVERS];
   WHConfig *post_config;
   Type post_type;
+  QString post_cpuinfo_model_name;
+  QString post_cpuinfo_hardware;
+  QString post_cpuinfo_revision;
+  QString post_cpuinfo_serial;
 };
 
 

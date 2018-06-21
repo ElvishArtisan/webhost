@@ -18,6 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <syslog.h>
+
+
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -257,6 +260,30 @@ QHostAddress WHCgiPost::dnsAddress(unsigned n) const
 bool WHCgiPost::wifiActive() const
 {
   return post_wifi_active;
+}
+
+
+QString WHCgiPost::cpuinfoModelName() const
+{
+  return post_cpuinfo_model_name;
+}
+
+
+QString WHCgiPost::cpuinfoHardware() const
+{
+  return post_cpuinfo_hardware;
+}
+
+
+QString WHCgiPost::cpuinfoRevision() const
+{
+  return post_cpuinfo_revision;
+}
+
+
+QString WHCgiPost::cpuinfoSerial() const
+{
+  return post_cpuinfo_serial;
 }
 
 
@@ -760,6 +787,27 @@ void WHCgiPost::ReadIpConfig()
       if((f0[0]=="server")&&(f0.size()>=2)) {
 	post_ntp_hostnames[count]=f0[1];
 	count++;
+      }
+    }
+    fclose(f);
+  }
+
+  if((f=fopen("/proc/cpuinfo","r"))!=NULL) {
+    while(fgets(line,1024,f)!=NULL) {
+      QStringList f0=QString(line).trimmed().split(":");
+      if(f0.size()==2) {
+	if(f0.at(0).trimmed().toLower()=="model name") {
+	  post_cpuinfo_model_name=f0.at(1).trimmed();
+	}
+	if(f0.at(0).trimmed().toLower()=="hardware") {
+	  post_cpuinfo_hardware=f0.at(1).trimmed();
+	}
+	if(f0.at(0).trimmed().toLower()=="revision") {
+	  post_cpuinfo_revision=f0.at(1).trimmed();
+	}
+	if(f0.at(0).trimmed().toLower()=="serial") {
+	  post_cpuinfo_serial=f0.at(1).trimmed();
+	}
       }
     }
     fclose(f);

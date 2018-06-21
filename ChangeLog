@@ -392,3 +392,8 @@
 2018-06-20 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 9:1:6.
 	* Incremented the package version to 1.6.1.
+2018-06-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHCgiPost::cpuinfoModelName()' method.
+	* Added a 'WHCgiPost::cpuinfoHardware()' method.
+	* Added a 'WHCgiPost::cpuinfoRevision()' method.
+	* Added a 'WHCgiPost::cpuinfoSerial()' method.
