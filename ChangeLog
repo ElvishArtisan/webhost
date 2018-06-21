@@ -397,3 +397,6 @@
 	* Added a 'WHCgiPost::cpuinfoHardware()' method.
 	* Added a 'WHCgiPost::cpuinfoRevision()' method.
 	* Added a 'WHCgiPost::cpuinfoSerial()' method.
+2018-06-21 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 10:0:7.
+	* Incremented the package version to 1.7.0.
