@@ -18,9 +18,6 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <syslog.h>
-
-
 #include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -227,9 +224,9 @@ WHSettings *WHCgiPost::settings()
 }
 
 
-bool WHCgiPost::dhcpActive(unsigned iface) const
+WHCgiPost::InterfaceMode WHCgiPost::interfaceMode(unsigned iface) const
 {
-  return post_dhcp_actives[iface];
+  return post_interface_modes[iface];
 }
 
 
@@ -408,6 +405,12 @@ void WHCgiPost::sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 	      mask.toString()+" "+gw.toString()+" "+
 	      dns1.toString()+" "+dns2.toString()+
 	      QString().sprintf(" %d!",enable_dhcp));
+}
+
+
+void WHCgiPost::sendDisableIpCommand(unsigned iface_num) const
+{
+  SendCommand("IP "+QString().sprintf("%u!",iface_num));
 }
 
 
@@ -622,11 +625,12 @@ void WHCgiPost::ReadIpConfig()
   QStringList f0;
   QStringList f1;
   bool ok=false;
+  bool eth_active=false;
 
   post_wifi_active=false;
   for(unsigned i=0;i<post_config->interfaceQuantity();i++) {
     QString netdev=post_config->interfaceName(i);
-    post_dhcp_actives.push_back(false);
+    post_interface_modes.push_back(WHCgiPost::Static);
     post_ip_addresses.push_back(QHostAddress());
     post_netmask_addresses.push_back(QHostAddress());
     if(post_config->useNetworkManager()) {
@@ -634,77 +638,106 @@ void WHCgiPost::ReadIpConfig()
       QString data;
 
       //
-      // DHCP Status
+      // Connection State
       //
       args.clear();
-      args.push_back("-g");
-      args.push_back("ipv4.method");
-      args.push_back("connection");
+      args.push_back("-t");
+      args.push_back("con");
       args.push_back("show");
-      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+      args.push_back("--active");
       data=CommandOutput("/bin/nmcli",args);
-      post_dhcp_actives.back()=data.trimmed().toLower()=="auto";
-
-      //
-      // IP Address/Netmask
-      //
-      args.clear();
-      args.push_back("-g");
-      args.push_back("ipv4.addresses");
-      args.push_back("connection");
-      args.push_back("show");
-      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
-      data=CommandOutput("/bin/nmcli",args);
-      f0=data.split("/");
-      if(f0.size()==2) {
-	if(post_ip_addresses.back().setAddress(f0.at(0))) {
-	  unsigned masksize=f0.at(1).toUInt(&ok);
-	  unsigned mask=0;
-	  if(ok) {
-	    for(unsigned i=0;i<masksize;i++) {
-	      mask=(mask<<1)+1;
-	    }
-	    for(unsigned i=masksize;i<32;i++) {
-	      mask=mask<<1;
-	    }
-	    post_netmask_addresses.back().setAddress(mask);
+      f0=data.split("\n");
+      for(int i=0;i<f0.size();i++) {
+	f1=f0.at(i).trimmed().split(":");
+	if(f1.size()==4) {
+	  if(f1.at(3).trimmed()==post_config->interfaceName(post_ip_addresses.size()-1)) {
+	    eth_active=true;
 	  }
 	}
       }
 
-      //
-      // Gateway
-      //
-      args.clear();
-      args.push_back("-g");
-      args.push_back("ip4.gateway");
-      args.push_back("connection");
-      args.push_back("show");
-      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
-      data=CommandOutput("/bin/nmcli",args);
-      QHostAddress addr;
-      addr.setAddress(data);
-      if(!addr.isNull()) {
-	post_gateway_address=addr;
-      }
-
-      //
-      // DNS
-      //
-      post_dns_addresses[0]=QHostAddress();
-      post_dns_addresses[1]=QHostAddress();
-      args.clear();
-      args.push_back("-g");
-      args.push_back("ip4.dns");
-      args.push_back("connection");
-      args.push_back("show");
-      args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
-      data=CommandOutput("/bin/nmcli",args);
-      f0=data.split("|");
-      for(int i=0;i<f0.size();i++) {
-	if(i<2) {
-	  post_dns_addresses[i].setAddress(f0.at(i).trimmed());
+      if(eth_active) {
+	//
+	// DHCP Status
+	//
+	args.clear();
+	args.push_back("-g");
+	args.push_back("ipv4.method");
+	args.push_back("connection");
+	args.push_back("show");
+	args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+	data=CommandOutput("/bin/nmcli",args);
+	if(data.trimmed().toLower()=="auto") {
+	  post_interface_modes.back()=WHCgiPost::Dhcp;
 	}
+	else {
+	  post_interface_modes.back()=WHCgiPost::Static;
+	}
+
+	//
+	// IP Address/Netmask
+	//
+	args.clear();
+	args.push_back("-g");
+	args.push_back("ipv4.addresses");
+	args.push_back("connection");
+	args.push_back("show");
+	args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+	data=CommandOutput("/bin/nmcli",args);
+	f0=data.split("/");
+	if(f0.size()==2) {
+	  if(post_ip_addresses.back().setAddress(f0.at(0))) {
+	    unsigned masksize=f0.at(1).toUInt(&ok);
+	    unsigned mask=0;
+	    if(ok) {
+	      for(unsigned i=0;i<masksize;i++) {
+		mask=(mask<<1)+1;
+	      }
+	      for(unsigned i=masksize;i<32;i++) {
+		mask=mask<<1;
+	      }
+	      post_netmask_addresses.back().setAddress(mask);
+	    }
+	  }
+	}
+
+	//
+	// Gateway
+	//
+	args.clear();
+	args.push_back("-g");
+	args.push_back("ip4.gateway");
+	args.push_back("connection");
+	args.push_back("show");
+	args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+	data=CommandOutput("/bin/nmcli",args);
+	QHostAddress addr;
+	addr.setAddress(data);
+	if(!addr.isNull()) {
+	  post_gateway_address=addr;
+	}
+
+	//
+	// DNS
+	//
+	post_dns_addresses[0]=QHostAddress();
+	post_dns_addresses[1]=QHostAddress();
+	args.clear();
+	args.push_back("-g");
+	args.push_back("ip4.dns");
+	args.push_back("connection");
+	args.push_back("show");
+	args.push_back(post_config->interfaceName(post_ip_addresses.size()-1));
+	data=CommandOutput("/bin/nmcli",args);
+	f0=data.split("|");
+	for(int i=0;i<f0.size();i++) {
+	  if(i<2) {
+	    post_dns_addresses[i].setAddress(f0.at(i).trimmed());
+	  }
+	}
+      }
+      else {
+	post_interface_modes.back()=WHCgiPost::Disabled;
       }
 
       //
@@ -717,7 +750,7 @@ void WHCgiPost::ReadIpConfig()
       data=CommandOutput("/bin/nmcli",args);
       f0=data.split("\n");
       for(int i=0;i<f0.size();i++) {
-	f1=f0.at(i).split(":");
+	f1=f0.at(i).trimmed().split(":");
 	if(f1.size()==4) {
 	  post_wifi_active=post_wifi_active||(f1.at(1)=="wifi");
 	}
@@ -772,7 +805,12 @@ void WHCgiPost::ReadIpConfig()
 	      post_dns_addresses[1].setAddress(f0[1]);
 	    }
 	    if(f0[0]=="BOOTPROTO") {
-	      post_dhcp_actives.back()=f0[1]=="dhcp";
+	      if(f0[1]=="dhcp") {
+		post_interface_modes.back()=WHCgiPost::Dhcp;
+	      }
+	      else {
+		post_interface_modes.back()=WHCgiPost::Static;
+	      }
 	    }
 	  }
 	}

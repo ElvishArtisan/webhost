@@ -65,6 +65,8 @@ void MainObject::Wifi(const QStringList &cmds)
 	    args.push_back("delete");
 	    args.push_back(f1.at(0));
 	    main_wifi_processes.push_back(new QProcess(this));
+	    //	    printf("ASYNC RAN: /bin/nmcli %s\n",
+	    //	   (const char *)args.join(" ").toUtf8());
 	    connect(main_wifi_processes.back(),
 		    SIGNAL(finished(int,QProcess::ExitStatus)),
 		    this,
@@ -95,6 +97,8 @@ void MainObject::Wifi(const QStringList &cmds)
       connect(main_wifi_processes.back(),
 	      SIGNAL(finished(int,QProcess::ExitStatus)),
 	      this,SLOT(wifiProcessFinishedData(int,QProcess::ExitStatus)));
+      //      printf("ASYNC RAN: /bin/nmcli %s\n",
+      //	     (const char *)args.join(" ").toUtf8());
       main_wifi_processes.back()->start("/bin/nmcli",args);
     }
   }

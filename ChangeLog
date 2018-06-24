@@ -400,3 +400,7 @@
 2018-06-21 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 10:0:7.
 	* Incremented the package version to 1.7.0.
+2018-06-23 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHCgiPost::sendDisableIpCommand()' method.
+	* Removed the 'WHCgiPost::dhcpActive()' method.
+	* Added a 'WHCgiPost::interfaceMode()' method.

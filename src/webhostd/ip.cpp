@@ -34,6 +34,14 @@ void MainObject::Ip(const QStringList &cmds)
   QStringList cmds2=cmds;
 
   if(main_config->useNetworkManager()) {
+    if(cmds2.size()==2) {  // Deactivate Interface
+      args.clear();
+      args.push_back("con");
+      args.push_back("down");
+      args.push_back(main_config->interfaceName(0));
+      RunCommand("/bin/nmcli",args);
+    }
+
     if(cmds2.size()==7) {
       cmds2.push_back("0");
     }

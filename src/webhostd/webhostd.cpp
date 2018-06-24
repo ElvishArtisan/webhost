@@ -298,6 +298,9 @@ QString MainObject::RunCommand(const QString &cmd,const QStringList &args)
   }
   delete proc;
 
+  //  printf("RAN: %s %s\n",(const char *)cmd.toUtf8(),
+  //	 (const char *)args.join(" ").toUtf8());
+
   return ret;
 }
 
