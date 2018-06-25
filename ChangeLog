@@ -404,3 +404,5 @@
 	* Added a 'WHCgiPost::sendDisableIpCommand()' method.
 	* Removed the 'WHCgiPost::dhcpActive()' method.
 	* Added a 'WHCgiPost::interfaceMode()' method.
+2018-06-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'WHInterfaceIPv4Broadcast()' function.

@@ -28,9 +28,10 @@
 #include <QStringList>
 
 void WHInterfaceInfo(uint64_t *mac,QHostAddress *addr,QHostAddress *mask,
-		     const QString &iface);
+		     QHostAddress *bcst,const QString &iface);
 QHostAddress WHInterfaceIPv4Address(const QString &iface);
 QHostAddress WHInterfaceIPv4Netmask(const QString &iface);
+QHostAddress WHInterfaceIPv4Broadcast(const QString &iface);
 uint64_t WHInterfaceMacAddress(const QString &iface);
 QString WHMacAddressText(uint64_t mac);
 
