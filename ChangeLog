@@ -406,3 +406,6 @@
 	* Added a 'WHCgiPost::interfaceMode()' method.
 2018-06-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'WHInterfaceIPv4Broadcast()' function.
+2018-06-25 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the library version to 11:0:0.
+	* Incremented the package version to 1.8.0.
