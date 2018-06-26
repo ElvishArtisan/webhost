@@ -40,6 +40,17 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("down");
       args.push_back(main_config->interfaceName(0));
       RunCommand("/bin/nmcli",args);
+
+      //
+      // Make Persistent
+      //
+      args.clear();
+      args.push_back("con");
+      args.push_back("mod");
+      args.push_back(main_config->interfaceName(0));
+      args.push_back("autoconnect");
+      args.push_back("no");
+      RunCommand("/bin/nmcli",args);
     }
 
     if(cmds2.size()==7) {
@@ -121,6 +132,17 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("con");
       args.push_back("up");
       args.push_back(main_config->interfaceName(0));
+      RunCommand("/bin/nmcli",args);
+
+      //
+      // Make Persistent
+      //
+      args.clear();
+      args.push_back("con");
+      args.push_back("mod");
+      args.push_back(main_config->interfaceName(0));
+      args.push_back("autoconnect");
+      args.push_back("yes");
       RunCommand("/bin/nmcli",args);
     }
   }
