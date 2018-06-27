@@ -415,3 +415,7 @@
 2018-06-26 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 11:1:0.
 	* Incremented the package version to 1.8.1.
+2018-06-27 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'WHCgiPost::sendIpCommand()' that caused DHCP
+	connections to have incorrect gateway and DNS setting when used
+	without network managed enabled.

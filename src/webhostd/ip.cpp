@@ -174,24 +174,58 @@ void MainObject::Ip(const QStringList &cmds)
 	IpSeedEntry("DNS1",params,values);
 	IpSeedEntry("DNS2",params,values);
 
+	bool use_dhcp=false;
+	for(int i=0;i<params.size();i++) {
+	  if(cmds2.size()>=8) {
+	    if(params[i]=="BOOTPROTO") {
+	      use_dhcp=use_dhcp||cmds2[7]!="0";
+	    }
+	  }
+	}
+
 	for(int i=0;i<params.size();i++) {
 	  if(params[i]=="IPADDR") {
-	    values[i]=cmds2[2];
+	    if(use_dhcp) {
+	      values[i]="";
+	    }
+	    else {
+	      values[i]=cmds2[2];
+	    }
 	  }
 	  if(params[i]=="NETMASK") {
-	    values[i]=cmds2[3];
+	    if(use_dhcp) {
+	      values[i]="";
+	    }
+	    else {
+	      values[i]=cmds2[3];
+	    }
 	  }
 	  if(params[i]=="GATEWAY") {
-	    values[i]=cmds2[4];
+	    if(use_dhcp) {
+	      values[i]="";
+	    }
+	    else {
+	      values[i]=cmds2[4];
+	    }
 	  }
 	  if(params[i]=="DNS1") {
-	    if(!QHostAddress(cmds2[5]).isNull()) {
-	      values[i]=cmds2[5];
+	    if(use_dhcp) {
+	      values[i]="";
+	    }
+	    else {
+	      if(!QHostAddress(cmds2[5]).isNull()) {
+		values[i]=cmds2[5];
+	      }
 	    }
 	  }
 	  if(params[i]=="DNS2") {
-	    if(!QHostAddress(cmds2[6]).isNull()) {
-	      values[i]=cmds2[6];
+	    if(use_dhcp) {
+	      values[i]="";
+	    }
+	    else {
+	      if(!QHostAddress(cmds2[6]).isNull()) {
+		values[i]=cmds2[6];
+	      }
 	    }
 	  }
 	  if(cmds2.size()>=8) {
