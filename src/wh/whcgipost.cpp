@@ -2,7 +2,7 @@
 //
 // POST data processor class for CGI applications
 //
-//   (C) Copyright 2015-2018 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -899,9 +899,7 @@ void WHCgiPost::LoadMultipartEncoding()
   int index;
 
   if((n=getline(&data,(size_t *)&n,stdin))<=0) {
-    printf("Content-type: text/html\n\n");
-    printf("LoadMultipartEncoding() [%s]\n",strerror(errno));
-    post_error=WHCgiPost::ErrorMalformedData;
+    post_error=WHCgiPost::ErrorOk;
     return;
   }
   total_bytes+=n;
@@ -972,7 +970,7 @@ void WHCgiPost::LoadMultipartEncoding()
     else {  // Read data
       if(filename.isEmpty()) {
 	QString str=post_values[name].toString();
-	str+=QString(data);
+	str+=QString::fromUtf8(data);
 	post_filenames[name]=false;
 	post_values[name]=str.simplified();
       }
