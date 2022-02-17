@@ -2,7 +2,7 @@
 ##
 ##    Embeded hosting system.
 ##
-##    Copyright (C) 2016  Fred Gleason <fredg@paravelsystems.com>
+##    Copyright (C) 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##    This program is free software; you can redistribute it and/or modify
 ##    it under the terms of version 2 of the GNU General Public License as
@@ -20,18 +20,21 @@
 ##
 
 Summary:       Embedded hosting system
-Name:          webhost
+Name:          webhost5
 Version:       @VERSION@
 Release:       @RPM_RELEASE@%{?dist}
 License:       GPLv2
 Packager:      Fred Gleason <fredg@paravelsystems.com>
 Group:         Productivity/Multimedia/Other
 Source:        %{name}-@VERSION@.tar.gz
+Requires:      httpd
 BuildRequires: qt-devel
 BuildRoot:     /var/tmp/%{name}-@VERSION@
+Conflicts:     webhost
 
 %package devel
 Summary:       Embedded hosting system
+Requires:      webhost5 = @VERSION@
 
 
 %description
@@ -41,6 +44,7 @@ Embedded hosting system.
 %description devel
 Development files for the webhost system.
 
+
 %prep
 
 
@@ -49,7 +53,7 @@ Development files for the webhost system.
 
 %build
 %configure
-make
+make -j @CPUS_AVAIL@
 
 
 %install
@@ -75,18 +79,18 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 /usr/lib/systemd/system/webhost.service
-%{_libdir}/libwebhost.so
-%{_libdir}/libwebhost.so.@INTERFACE_MAJOR@
-%{_libdir}/libwebhost.so.@INTERFACE_MAJOR@.@INTERFACE_MINOR@.@INTERFACE_POINT@
+%{_libdir}/libwebhost5.so
+%{_libdir}/libwebhost5.so.@INTERFACE_MAJOR@
+%{_libdir}/libwebhost5.so.@INTERFACE_MAJOR@.@INTERFACE_MINOR@.@INTERFACE_POINT@
 %{_sbindir}/webhostd
 %doc docs/DEBUGGING.txt
 
 
 %files devel
-%{_includedir}/wh/*
-%{_libdir}/libwebhost.a
-%{_libdir}/libwebhost.la
-%{_libdir}/pkgconfig/webhost.pc
+%{_includedir}/wh5/*
+%{_libdir}/libwebhost5.a
+%{_libdir}/libwebhost5.la
+%{_libdir}/pkgconfig/webhost5.pc
 
 
 %changelog

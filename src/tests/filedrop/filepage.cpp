@@ -2,7 +2,7 @@
 //
 // Default page for filedrop
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -26,7 +26,7 @@
 
 #include <QStringList>
 
-#include <wh/whcgiapplication.h>
+#include <wh5/whcgiapplication.h>
 
 #include "filepage.h"
 

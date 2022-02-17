@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2015-2018 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -20,7 +20,7 @@ dnl   License along with this program; if not, write to the Free Software
 dnl   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
 
-AC_INIT(webhost,m4_esyscmd(cat PACKAGE_VERSION))
+AC_INIT(webhost5,m4_esyscmd(cat PACKAGE_VERSION))
 AM_INIT_AUTOMAKE
 AC_SUBST(RPM_RELEASE,1)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
@@ -66,11 +66,11 @@ AC_SUBST(INTERFACE_MINOR,$AGE)
 AC_SUBST(INTERFACE_POINT,$REVISION)
 
 #
-# Check for Qt4 (Mandatory)
+# Check for Qt (Mandatory)
 #
-PKG_CHECK_MODULES(QT4,QtCore QtNetwork,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
-AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
-AC_SUBST(MOC,$MOC_NAME)
+PKG_CHECK_MODULES(QT5,Qt5Core Qt5Network,[],[AC_MSG_ERROR([*** Qt5 not found ***])])
+AC_CHECK_PROG(MOC_NAME,moc-qt5,[moc-qt5],[moc])
+AC_SUBST(QT5_MOC,$MOC_NAME)
 
 #
 # Check for OpenSSL
@@ -83,6 +83,20 @@ PKG_CHECK_MODULES(OPENSSL,libcrypto,[],[AC_MSG_ERROR([*** OpenSSL not found ***]
 AR_GCC_TARGET()
 AC_SUBST(VENDOR,$ar_gcc_distro)
 AC_SUBST(ARCH,$ar_gcc_arch)
+
+#
+# Determine number of available CPU cores for building packages
+#
+AX_COUNT_CPUS([],[])
+if test $CPU_COUNT -lt 2 ; then
+   AC_SUBST(CPUS_AVAIL,1)
+else
+   if test $CPU_COUNT -gt 16 ; then
+      AC_SUBST(CPUS_AVAIL,16)
+   else
+      AC_SUBST(CPUS_AVAIL,$(($CPU_COUNT-1)))
+   fi
+fi
 
 #
 # Determine Distro
@@ -110,7 +124,7 @@ fi
 AC_CONFIG_FILES([ \
     conf/Makefile \
     docs/Makefile \
-    src/wh/Makefile \
+    src/wh5/Makefile \
     src/tests/Makefile \
     src/tests/cgitest/Makefile \
     src/tests/filedrop/Makefile \
@@ -118,7 +132,7 @@ AC_CONFIG_FILES([ \
     src/webhostd/Makefile \
     src/Makefile \
     rc.webhost \
-    webhost.pc\
+    webhost5.pc\
     webhost.service\
     webhost.spec \
     Makefile ])

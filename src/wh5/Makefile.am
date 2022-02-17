@@ -2,7 +2,7 @@
 ##
 ## Makefile webhost library
 ##
-## (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as
@@ -20,8 +20,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src @QT4_CFLAGS@ @OPENSSL_CFLAGS@
-MOC = @MOC@
+AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@
+MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
@@ -30,27 +30,27 @@ moc_%.cpp:	%.h
 clean-local:	
 	rm -rf debug release
 
-lib_LTLIBRARIES = libwebhost.la
-dist_libwebhost_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
-                             whcgiobject.cpp whcgiobject.h\
-                             whcgipage.cpp whcgipage.h\
-                             whcgipost.cpp whcgipost.h\
-                             whcmdswitch.cpp whcmdswitch.h\
-                             whconfig.cpp whconfig.h\
-                             whhttpconnection.cpp whhttpconnection.h\
-                             whhttpserver.cpp whhttpserver.h\
-                             whhttpuser.cpp whhttpuser.h\
-                             whnetwork.cpp whnetwork.h\
-                             whprofile.cpp whprofile.h\
-                             whsettings.cpp whsettings.h\
-                             whsocketmessage.cpp whsocketmessage.h\
-                             whwificonnection.cpp whwificonnection.h
+lib_LTLIBRARIES = libwebhost5.la
+dist_libwebhost5_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
+                              whcgiobject.cpp whcgiobject.h\
+                              whcgipage.cpp whcgipage.h\
+                              whcgipost.cpp whcgipost.h\
+                              whcmdswitch.cpp whcmdswitch.h\
+                              whconfig.cpp whconfig.h\
+                              whhttpconnection.cpp whhttpconnection.h\
+                              whhttpserver.cpp whhttpserver.h\
+                              whhttpuser.cpp whhttpuser.h\
+                              whnetwork.cpp whnetwork.h\
+                              whprofile.cpp whprofile.h\
+                              whsettings.cpp whsettings.h\
+                              whsocketmessage.cpp whsocketmessage.h\
+                              whwificonnection.cpp whwificonnection.h
 
-nodist_libwebhost_la_SOURCES = moc_whcgiapplication.cpp\
-                               moc_whhttpconnection.cpp\
-                               moc_whhttpserver.cpp
+nodist_libwebhost5_la_SOURCES = moc_whcgiapplication.cpp\
+                                moc_whhttpconnection.cpp\
+                                moc_whhttpserver.cpp
 
-includedir = $(prefix)/include/wh
+includedir = $(prefix)/include/wh5
 
 include_HEADERS = whcgiapplication.h\
                   whcgiobject.h\
@@ -67,7 +67,7 @@ include_HEADERS = whcgiapplication.h\
                   whsettings.h\
                   whwificonnection.h
 
-libwebhost_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
+libwebhost5_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
 
 CLEANFILES = *~\
              *.idb\

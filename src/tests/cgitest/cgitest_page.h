@@ -2,7 +2,7 @@
 //
 // CGI page component for CGI test
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,7 +21,7 @@
 #ifndef CGITEST_PAGE_H
 #define CGITEST_PAGE_H
 
-#include <wh/whcgipage.h>
+#include <wh5/whcgipage.h>
 
 class CgiPage : public WHCgiPage
 {

@@ -2,7 +2,7 @@
 //
 // Test server for the webhost WebSocket classes
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include <wh/whhttpserver.h>
+#include <wh5/whhttpserver.h>
 
 class MainObject : public QObject
 {

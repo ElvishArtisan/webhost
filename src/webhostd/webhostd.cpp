@@ -2,7 +2,7 @@
 //
 // webhostd(8) routing daemon
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -25,7 +25,7 @@
 #include <QCoreApplication>
 #include <QHostAddress>
 
-#include <wh/whcmdswitch.h>
+#include <wh5/whcmdswitch.h>
 
 #include "webhostd.h"
 
@@ -34,8 +34,7 @@ MainObject::MainObject(QObject *parent)
 {
   main_service_process=NULL;
 
-  WHCmdSwitch *cmd=
-    new WHCmdSwitch(qApp->argc(),qApp->argv(),VERSION,"webhost",WEBHOSTD_USAGE);
+  WHCmdSwitch *cmd=new WHCmdSwitch(VERSION,"webhost",WEBHOSTD_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
       syslog(LOG_ERR,"webhostd: unknown option \"%s\"\n",

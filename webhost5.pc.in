@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=${prefix}/include
 
-Name: webhost
+Name: webhost5
 Description: Embedded web hosting framework
 Version: @VERSION@
-Requires: QtCore QtNetwork
-Libs: -L${libdir} -lwebhost @OPENSSL_LIBS@
+Requires: Qt5Core Qt5Network
+Libs: -L${libdir} -lwebhost5 @OPENSSL_LIBS@
 Cflags: -I${includedir} -I/usr/include @OPENSSL_CFLAGS@

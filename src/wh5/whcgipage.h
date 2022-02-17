@@ -1,8 +1,8 @@
-// whcgiobject.h
+// whcgipage.h
 //
-// Base class for CGI web objects
+// Base class for CGI web pages
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,42 +18,47 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef WHCGIOBJECT_H
-#define WHCGIOBJECT_H
+#ifndef WHCGIPAGE_H
+#define WHCGIPAGE_H
 
 #include <QStringList>
 
-#include <wh/whcgipost.h>
+#include <wh5/whcgiobject.h>
+#include <wh5/whcgipost.h>
 
-class WHCgiObject
+class WHCgiPage : public WHCgiObject
 {
  public:
-  WHCgiObject(WHCgiPost *post);
-  ~WHCgiObject();
-  int id() const;
-  void setId(int id);
-  virtual QString menuText() const;
-  virtual QString titleText() const;
+  WHCgiPage(WHCgiPost *post);
+  QString menuText() const;
+  void setMenuText(const QString &str);
+  QString titleText() const;
+  void setTitleText(const QString &str);
   QString mimeType() const;
   void setMimeType(const QString &str);
-  virtual QString menuRef() const;
+  QString menuRef() const;
+  void setMenuRef(const QString &str);
+  void addScript(const QString &scriptname);
+  QString onLoadEvent() const;
+  void setOnLoadEvent(const QString &str);
+  QString styleSheet() const;
+  void setStyleSheet(const QString &str);
   virtual void renderHead();
+  virtual void renderScripts();
   virtual void renderBodyStart();
   virtual void render()=0;
   virtual void renderBodyEnd();
 
- protected:
-  WHSettings *settings();
-  WHCgiPost *post();
-
  private:
-  int page_id;
+  QString page_menu_text;
+  QString page_title_text;
   QString page_mime_type;
   QString page_language;
-  WHCgiPost *page_post;
-  WHSettings *page_settings;
+  QStringList page_scripts;
   QString page_menu_ref;
+  QString page_on_load_event;
+  QString page_style_sheet;
 };
 
 
-#endif  // WHCGIOBJECT_H
+#endif  // WHCGIPAGE_H

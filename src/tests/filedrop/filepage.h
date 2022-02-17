@@ -2,7 +2,7 @@
 //
 // Default page for filedrop
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,7 +21,7 @@
 #ifndef FILEPAGE_H
 #define FILEPAGE_H
 
-#include <wh/whcgipage.h>
+#include <wh5/whcgipage.h>
 
 class FilePage : public WHCgiPage
 {

@@ -2,7 +2,7 @@
 //
 // CGI page component for CGI test
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,9 +20,9 @@
 
 #include <unistd.h>
 
-#include <wh/whcgiapplication.h>
-#include <wh/whnetwork.h>
-#include <wh/whprofile.h>
+#include <wh5/whcgiapplication.h>
+#include <wh5/whnetwork.h>
+#include <wh5/whprofile.h>
 
 #include "cgitest_page.h"
 

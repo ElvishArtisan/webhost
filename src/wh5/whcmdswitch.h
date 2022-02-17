@@ -2,7 +2,7 @@
 //
 // Process Command-Line Switches
 //
-//   (C) Copyright 2012-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2012-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -27,8 +27,9 @@
 class WHCmdSwitch
 {
  public:
-  WHCmdSwitch(int argc,char *argv[],const char *modename,const char *version,
-	      const char *usage);
+  //  WHCmdSwitch(int argc,char *argv[],const char *modename,const char *version,
+  //	      const char *usage);
+  WHCmdSwitch(const char *modename,const char *version,const char *usage);
   unsigned keys() const;
   QString key(unsigned n) const;
   QString value(unsigned n) const;

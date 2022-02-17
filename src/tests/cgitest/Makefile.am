@@ -2,7 +2,7 @@
 ##
 ## Automake.am for webhost tests
 ##
-##   (C) Copyright 2015-2016 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -19,24 +19,24 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" @QT4_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
-LIBS = -L$(top_srcdir)/src/wh @OPENSSL_LIBS@
-MOC = @MOC@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
+LIBS = -L$(top_srcdir)/src/wh5 @OPENSSL_LIBS@
+MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
-	@MOC@ $< -o $@
+	@QT5_MOC@ $< -o $@
 
 noinst_PROGRAMS = cgitest_script\
                   cgitest_server
 
 dist_cgitest_script_SOURCES = cgitest_page.cpp cgitest_page.h\
                               cgitest_script.cpp cgitest_script.h
-cgitest_script_LDADD = @QT4_LIBS@ -lwebhost
+cgitest_script_LDADD = @QT5_LIBS@ -lwebhost5
 
 dist_cgitest_server_SOURCES = cgitest_server.cpp cgitest_server.h
 nodist_cgitest_server_SOURCES = moc_cgitest_server.cpp
-cgitest_server_LDADD = @QT4_LIBS@ -lwebhost
+cgitest_server_LDADD = @QT5_LIBS@ -lwebhost5
 
 localstate_DATA = cgitest.html
 

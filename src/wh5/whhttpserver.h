@@ -2,7 +2,7 @@
 //
 // HTTP Server
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -34,9 +34,9 @@
 #include <QTcpSocket>
 #include <QTimer>
 
-#include <wh/whhttpconnection.h>
-#include <wh/whhttpuser.h>
-#include <wh/whsocketmessage.h>
+#include <wh5/whhttpconnection.h>
+#include <wh5/whhttpuser.h>
+#include <wh5/whsocketmessage.h>
 
 #define WEBSOCKET_VERSION 13
 #define WEBSOCKET_MAGIC_STRING "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"

@@ -2,7 +2,7 @@
 //
 // HTTP connection state for WHHttpServer
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -206,7 +206,7 @@ bool WHHttpConnection::setAuthorization(const QString &str)
 
   QStringList f0=str.trimmed().split(" ");
   if((f0[0].toLower()=="basic")&&(f0.size()==2)) {
-    QStringList f1=QString(QByteArray::fromBase64(f0[1].toAscii())).
+    QStringList f1=QString(QByteArray::fromBase64(f0[1].toUtf8())).
       split(":",QString::KeepEmptyParts);
     if(f1.size()>=2) {
       conn_auth_name=f1[0];

@@ -4,7 +4,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -28,25 +28,22 @@ install-exec-local:
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
 	cp webhost.service $(DESTDIR)/usr/lib/systemd/system/webhost.service
 	mkdir -p $(DESTDIR)@libdir@/pkgconfig
-	cp webhost.pc $(DESTDIR)/@libdir@/pkgconfig
-#	mkdir -p $(DESTDIR)/etc/init.d
-#	cp rc.webhost $(DESTDIR)/etc/init.d/webhost
+	cp webhost5.pc $(DESTDIR)/@libdir@/pkgconfig
 
 uninstall-local:	
 	rm -f $(DESTDIR)/usr/lib/systemd/system/webhost.service
-	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost.pc
-#	rm -f $(DESTDIR)/etc/init.d/webhost
+	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost5.pc
 
 rpm:	dist
-	cp webhost-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
+	cp webhost5-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
 	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux webhost.spec
-	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/webhost-*.rpm $(top_srcdir)/
-	mv $(HOME)/rpmbuild/SRPMS/webhost-*.src.rpm $(top_srcdir)/
-	rm $(HOME)/rpmbuild/SOURCES/webhost-$(VERSION).tar.gz
-	rm -rf $(HOME)/rpmbuild/BUILD/webhost-$(VERSION)
+	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/webhost5-*.rpm $(top_srcdir)/
+	mv $(HOME)/rpmbuild/SRPMS/webhost5-*.src.rpm $(top_srcdir)/
+	rm $(HOME)/rpmbuild/SOURCES/webhost5-$(VERSION).tar.gz
+	rm -rf $(HOME)/rpmbuild/BUILD/webhost5-$(VERSION)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = webhost.pc
+pkgconfig_DATA = webhost5.pc
 
 EXTRA_DIST = webhost.spec.in\
              autogen.sh\
@@ -54,7 +51,7 @@ EXTRA_DIST = webhost.spec.in\
              get_target.sh\
              PACKAGE_VERSION\
              rc.webhost.in\
-             webhost.pc.in\
+             webhost5.pc.in\
              webhost.service.in
 
 CLEANFILES = *~\
@@ -69,7 +66,7 @@ DISTCLEANFILES = webhost.spec\
                  config.guess\
                  config.sub\
                  ltmain.sh\
-                 webhost.pc\
+                 webhost5.pc\
                  webhost.service
 
 MAINTAINERCLEANFILES = *~\

@@ -2,7 +2,7 @@
 //
 // CGI script component for CGI test
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,7 +21,7 @@
 #ifndef CGITEST_SCRIPT_H
 #define CGITEST_SCRIPT_H
 
-#include <wh/whcgiapplication.h>
+#include <wh5/whcgiapplication.h>
 
 class MainObject : public WHCgiApplication
 {

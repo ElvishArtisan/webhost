@@ -21,8 +21,49 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <QCoreApplication>
+
 #include "whcmdswitch.h"
 
+WHCmdSwitch::WHCmdSwitch(const char *modname,const char *version,
+			 const char *usage)
+{
+  unsigned l=0;
+  bool handled=false;
+  QStringList args=QCoreApplication::arguments();
+
+
+  for(int i=1;i<args.size();i++) {
+#ifndef WIN32
+    if(args.at(i)=="--version") {
+      printf("%s v%s\n",modname,version);
+      exit(0);
+    }
+#endif  // WIN32
+    if(args.at(i)=="--help") {
+      printf("\n%s %s\n",modname,usage);
+      exit(0);
+    }
+    l=args.at(i).length();
+    handled=false;
+    for(unsigned j=0;j<l;j++) {
+      if(args.at(i).at(j)==QChar('=')) {
+	switch_keys.push_back(QString(args.at(i)).left(j));
+	switch_values.push_back(QString(args.at(i)).right(l-(j+1)));
+	switch_processed.push_back(false);
+	j=l;
+	handled=true;
+      }
+    }
+    if(!handled) {
+      switch_keys.push_back(QString(args.at(i)));
+      switch_values.push_back(QString(""));
+      switch_processed.push_back(false);
+    }
+  }
+}
+
+/*
 WHCmdSwitch::WHCmdSwitch(int argc,char *argv[],const char *modname,
 			 const char *version,const char *usage)
 {
@@ -58,6 +99,7 @@ WHCmdSwitch::WHCmdSwitch(int argc,char *argv[],const char *modname,
     }
   }
 }
+*/
 
 
 unsigned WHCmdSwitch::keys() const

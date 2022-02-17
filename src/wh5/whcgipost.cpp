@@ -2,7 +2,7 @@
 //
 // POST data processor class for CGI applications
 //
-//   (C) Copyright 2015-2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -88,11 +88,11 @@ WHCgiPost::~WHCgiPost()
     for(std::map<QString,bool>::const_iterator ci=post_filenames.begin();
 	ci!=post_filenames.end();ci++) {
       if(ci->second) {
-	unlink(post_values[ci->first].toString().toAscii());
+	unlink(post_values[ci->first].toString().toUtf8());
       }
     }
     if(!post_tempdir.isNull()) {
-      rmdir(post_tempdir.toAscii());
+      rmdir(post_tempdir.toUtf8());
     }
   }
   delete post_socket;
@@ -508,9 +508,9 @@ QString WHCgiPost::dump()
       ci!=post_values.end();ci++) {
     ret+=QString().sprintf("<tr>\n");
     ret+=QString().sprintf("<td align=\"left\">|%s|</td>\n",
-			   (const char *)ci->first.toAscii());
+			   (const char *)ci->first.toUtf8());
     ret+=QString().sprintf("<td align=\"left\">|%s|</td>\n",
-	   (const char *)ci->second.toString().toAscii());
+	   (const char *)ci->second.toString().toUtf8());
     if(post_filenames[ci->first]) {
       ret+=QString().sprintf("<td align=\"center\">Yes</td>\n");
     }
@@ -945,7 +945,7 @@ void WHCgiPost::LoadMultipartEncoding()
 		    right(pairs[1].simplified().length()-index-1);
 		  filename.replace("\"","");
 		  if((fd=open(filename.
-			      toAscii(),O_WRONLY|O_CREAT,S_IRUSR|S_IWUSR))<0) {
+			      toUtf8(),O_WRONLY|O_CREAT,S_IRUSR|S_IWUSR))<0) {
 		    post_error=WHCgiPost::ErrorCannotSaveFile;
 		    return;
 		  }
