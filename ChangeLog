@@ -430,3 +430,5 @@
 	* Incremented the package version to 1.8.3.
 2022-02-17 Fred Gleason <fredg@paravelsystems.com>
 	* Created a 'webhost5' branch using Qt5.
+2022-02-19 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the Qt dependency info in 'INSTALL'.
