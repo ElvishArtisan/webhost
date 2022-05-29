@@ -428,3 +428,8 @@
 2021-12-31 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the library version to 11:3:0.
 	* Incremented the package version to 1.8.3.
+2022-05-30 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in webhostd(8) that caused the previously-set static
+	IPv4 address to fail to be unbound from the network interface when
+	enabling DHCP addressing using the 'IP' command with
+	NetworkManager enabled.

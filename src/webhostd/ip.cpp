@@ -53,81 +53,114 @@ void MainObject::Ip(const QStringList &cmds)
       RunCommand("/bin/nmcli",args);
     }
 
-    if(cmds2.size()==7) {
+    if(cmds2.size()==7) {  // Normalize Command
       cmds2.push_back("0");
     }
+
     if(cmds2.size()==8) {
-      QStringList args;
+      if(cmds2.at(7)=="0") {  // Manual Settings
+	QStringList args;
 
-      //
-      // IP Address / Netmask
-      //
-      QHostAddress netmask(cmds2[3]);
-      unsigned masksize=0;
-      for(unsigned i=0;i<32;i++) {
-	if((netmask.toIPv4Address()&(1<<i))!=0) {
-	  masksize++;
-	}
-      }
-      args.push_back("con");
-      args.push_back("mod");
-      args.push_back(main_config->interfaceName(0));
-      args.push_back("ipv4.addresses");
-      args.push_back(cmds2[2]+QString().sprintf("/%u",masksize));
-      RunCommand("/bin/nmcli",args);
-
-      //
-      // Gateway
-      //
-      args.clear();
-      args.push_back("con");
-      args.push_back("mod");
-      args.push_back(main_config->interfaceName(0));
-      args.push_back("ipv4.gateway");
-      args.push_back(cmds2[4]);
-      RunCommand("/bin/nmcli",args);
-
-      //
-      // DNS
-      //
-      bool used=false;
-      for(int i=0;i<2;i++) {
-	if(!cmds2[i+5].isEmpty()) {
-	  args.clear();
-	  args.push_back("con");
-	  args.push_back("mod");
-	  args.push_back(main_config->interfaceName(0));
-	  if(used) {
-	    args.push_back("+ipv4.dns");
+	//
+	// IP Address / Netmask
+	//
+	QHostAddress netmask(cmds2[3]);
+	unsigned masksize=0;
+	for(unsigned i=0;i<32;i++) {
+	  if((netmask.toIPv4Address()&(1<<i))!=0) {
+	    masksize++;
 	  }
-	  else {
-	    args.push_back("ipv4.dns");
-	  }
-	  args.push_back(cmds2[i+5]);
-	  RunCommand("/bin/nmcli",args);
-	  used=true;
 	}
-      }
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(main_config->interfaceName(0));
+	args.push_back("ipv4.addresses");
+	args.push_back(cmds2[2]+QString().sprintf("/%u",masksize));
+	RunCommand("/bin/nmcli",args);
 
-      //
-      // DHCP Status
-      //
-      args.clear();
-      args.push_back("con");
-      args.push_back("mod");
-      args.push_back(main_config->interfaceName(0));
-      args.push_back("ipv4.method");
-      if(cmds2[7]!="0") {
-	args.push_back("auto");
-      }
-      else {
+	//
+	// Gateway
+	//
+	args.clear();
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(main_config->interfaceName(0));
+	args.push_back("ipv4.gateway");
+	args.push_back(cmds2[4]);
+	RunCommand("/bin/nmcli",args);
+
+	//
+	// DNS
+	//
+	bool used=false;
+	for(int i=0;i<2;i++) {
+	  if(!cmds2[i+5].isEmpty()) {
+	    args.clear();
+	    args.push_back("con");
+	    args.push_back("mod");
+	    args.push_back(main_config->interfaceName(0));
+	    if(used) {
+	      args.push_back("+ipv4.dns");
+	    }
+	    else {
+	      args.push_back("ipv4.dns");
+	    }
+	    args.push_back(cmds2[i+5]);
+	    RunCommand("/bin/nmcli",args);
+	    used=true;
+	  }
+	}
+
+	//
+	// Disable DHCP
+	//
+	args.clear();
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(main_config->interfaceName(0));
+	args.push_back("ipv4.method");
 	args.push_back("manual");
+	RunCommand("/bin/nmcli",args);
       }
-      RunCommand("/bin/nmcli",args);
+      else {  // DHCP Settings
+	//
+	// Enable DHCP
+	//
+	args.clear();
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(main_config->interfaceName(0));
+	args.push_back("ipv4.method");
+	args.push_back("auto");
+	RunCommand("/bin/nmcli",args);
+
+	//
+	// Clear any existing static addresses
+	// (Don't do this until *after* DHCP has been enabled, otherwise
+	// nmcli(1) will throw an error!)
+	//
+	args.clear();
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(main_config->interfaceName(0));
+	args.push_back("ipv4.addresses");
+	args.push_back("");
+	args.push_back("ipv4.gateway");
+	args.push_back("");
+	args.push_back("ipv4.dns");
+	args.push_back("");
+	RunCommand("/bin/nmcli",args);
+      }
 
       //
-      // Activate
+      // Bump the interface
       //
+      args.clear();
+      args.push_back("con");
+      args.push_back("down");
+      args.push_back(main_config->interfaceName(0));
+      RunCommand("/bin/nmcli",args);
+
       args.clear();
       args.push_back("con");
       args.push_back("up");
@@ -146,7 +179,7 @@ void MainObject::Ip(const QStringList &cmds)
       RunCommand("/bin/nmcli",args);
     }
   }
-  else {
+  else {  // Old pre-NetworkManager method, deprecated!
     QStringList params;
     QStringList values;
     FILE *f=NULL;
