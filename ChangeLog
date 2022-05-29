@@ -433,3 +433,5 @@
 	IPv4 address to fail to be unbound from the network interface when
 	enabling DHCP addressing using the 'IP' command with
 	NetworkManager enabled.
+2022-05-30 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.8.4.
