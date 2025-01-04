@@ -123,6 +123,8 @@ fi
 
 AC_CONFIG_FILES([ \
     conf/Makefile \
+    debian/source/Makefile \
+    debian/Makefile \
     docs/Makefile \
     src/wh5/Makefile \
     src/tests/Makefile \
@@ -131,12 +133,14 @@ AC_CONFIG_FILES([ \
     src/tests/sockettest/Makefile \
     src/webhostd/Makefile \
     src/Makefile \
+    build_debs.sh\
     rc.webhost \
     webhost5.pc\
     webhost.service\
     webhost.spec \
     Makefile ])
 AC_OUTPUT()
+chmod 755 build_debs.sh
 chmod 755 rc.webhost
 
 AC_MSG_NOTICE()

@@ -436,4 +436,5 @@
 	* Fixed a bug that broke the build under Ubuntu 22.04.
 2025-01-04 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed compile warnings on Ubuntu 22.04.
-
+2025-01-04 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'make deb' target.

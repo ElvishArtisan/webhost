@@ -1,10 +1,10 @@
-## automake.am
+## Makefile.am
 ##
 ## Top level automake.am
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -21,6 +21,7 @@
 ##
 
 SUBDIRS = conf\
+          debian\
           docs\
           src
 
@@ -33,6 +34,9 @@ install-exec-local:
 uninstall-local:	
 	rm -f $(DESTDIR)/usr/lib/systemd/system/webhost.service
 	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost5.pc
+
+deb:	dist
+	./build_debs.sh
 
 rpm:	dist
 	cp webhost5-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -55,19 +59,25 @@ EXTRA_DIST = webhost.spec.in\
              webhost.service.in
 
 CLEANFILES = *~\
+             *.buildinfo\
+             *.changes\
+             *.ddeb\
              *.deb\
+             *.dsc\
              *.mo\
              *.rpm\
              *.tar.gz\
+             *.tar.xz\
              *.tgz\
              *.zip
 
-DISTCLEANFILES = webhost.spec\
+DISTCLEANFILES = build_debs.sh\
                  config.guess\
                  config.sub\
                  ltmain.sh\
                  webhost5.pc\
-                 webhost.service
+                 webhost.service\
+                 webhost.spec
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\
