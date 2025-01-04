@@ -432,3 +432,5 @@
 	* Created a 'webhost5' branch using Qt5.
 2022-02-19 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the Qt dependency info in 'INSTALL'.
+2025-01-04 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that broke the build under Ubuntu 22.04.

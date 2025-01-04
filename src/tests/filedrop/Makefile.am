@@ -20,7 +20,7 @@
 ## Use automake to process this into a Makefile.in
 
 AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
-LIBS = -L$(top_srcdir)/src/wh5 @OPENSSL_LIBS@
+LIBS = -L$(top_srcdir)/src/wh5 @OPENSSL_LIBS@ @QT5_LIBS@
 MOC = @QT5_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
