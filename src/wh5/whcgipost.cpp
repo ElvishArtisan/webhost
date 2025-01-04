@@ -2,7 +2,7 @@
 //
 // POST data processor class for CGI applications
 //
-//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -309,7 +309,7 @@ QStringList WHCgiPost::timezoneList() const
   proc->start("timedatectl",args);
   proc->waitForFinished();
   ret=QString(proc->readAllStandardOutput()).
-    split("\n",QString::SkipEmptyParts);
+    split("\n",Qt::SkipEmptyParts);
   delete proc;
 
   return ret;
@@ -336,7 +336,7 @@ QString WHCgiPost::currentTimezone() const
     if(f0.size()>=2) {
       if((f0[0].toLower().trimmed()=="time zone")||
 	 (f0[0].toLower().trimmed()=="timezone")){
-	QStringList f1=f0[1].split(" ",QString::SkipEmptyParts);
+	QStringList f1=f0[1].split(" ",Qt::SkipEmptyParts);
 	return f1[0].trimmed();
       }
     }
@@ -401,16 +401,16 @@ void WHCgiPost::sendIpCommand(unsigned iface_num,const QHostAddress &addr,
 			      const QHostAddress &gw,const QHostAddress &dns1,
 			      const QHostAddress &dns2,bool enable_dhcp) const
 {
-  SendCommand("IP "+QString().sprintf("%u ",iface_num)+addr.toString()+" "+
+  SendCommand("IP "+QString::asprintf("%u ",iface_num)+addr.toString()+" "+
 	      mask.toString()+" "+gw.toString()+" "+
 	      dns1.toString()+" "+dns2.toString()+
-	      QString().sprintf(" %d!",enable_dhcp));
+	      QString::asprintf(" %d!",enable_dhcp));
 }
 
 
 void WHCgiPost::sendDisableIpCommand(unsigned iface_num) const
 {
-  SendCommand("IP "+QString().sprintf("%u!",iface_num));
+  SendCommand("IP "+QString::asprintf("%u!",iface_num));
 }
 
 
@@ -490,37 +490,36 @@ QString WHCgiPost::dump()
 {
   QString ret;
 
-  ret+=QString().sprintf("Content-type: text/html\n\n");
-  ret+=QString().
-    sprintf("<table>\n");
-  ret+=QString().sprintf("<tr>\n");
-  ret+=QString().
-    sprintf("<td colspan=\"3\" align=\"center\"><strong>WHCgiPost Data Dump</strong></td>\n");
-  ret+=QString().sprintf("</tr>\n");
+  ret+=QString::asprintf("Content-type: text/html\n\n");
+  ret+=QString::asprintf("<table>\n");
+  ret+=QString::asprintf("<tr>\n");
+  ret+=QString::
+    asprintf("<td colspan=\"3\" align=\"center\"><strong>WHCgiPost Data Dump</strong></td>\n");
+  ret+=QString::asprintf("</tr>\n");
 
-  ret+=QString().sprintf("<tr>\n");
-  ret+=QString().sprintf("<th align=\"center\">NAME</th>\n");
-  ret+=QString().sprintf("<th align=\"center\">VALUE</th>\n");
-  ret+=QString().sprintf("<th align=\"center\">FILE</th>\n");
-  ret+=QString().sprintf("</tr>\n");
+  ret+=QString::asprintf("<tr>\n");
+  ret+=QString::asprintf("<th align=\"center\">NAME</th>\n");
+  ret+=QString::asprintf("<th align=\"center\">VALUE</th>\n");
+  ret+=QString::asprintf("<th align=\"center\">FILE</th>\n");
+  ret+=QString::asprintf("</tr>\n");
   
   for(std::map<QString,QVariant>::const_iterator ci=post_values.begin();
       ci!=post_values.end();ci++) {
-    ret+=QString().sprintf("<tr>\n");
-    ret+=QString().sprintf("<td align=\"left\">|%s|</td>\n",
+    ret+=QString::asprintf("<tr>\n");
+    ret+=QString::asprintf("<td align=\"left\">|%s|</td>\n",
 			   (const char *)ci->first.toUtf8());
-    ret+=QString().sprintf("<td align=\"left\">|%s|</td>\n",
+    ret+=QString::asprintf("<td align=\"left\">|%s|</td>\n",
 	   (const char *)ci->second.toString().toUtf8());
     if(post_filenames[ci->first]) {
-      ret+=QString().sprintf("<td align=\"center\">Yes</td>\n");
+      ret+=QString::asprintf("<td align=\"center\">Yes</td>\n");
     }
     else {
-      ret+=QString().sprintf("<td align=\"center\">No</td>\n");
+      ret+=QString::asprintf("<td align=\"center\">No</td>\n");
     }
-    ret+=QString().sprintf("</tr>\n");
+    ret+=QString::asprintf("</tr>\n");
   }
 
-  ret+=QString().sprintf("</table>\n");
+  ret+=QString::asprintf("</table>\n");
   return ret;
 }
 
@@ -913,7 +912,7 @@ void WHCgiPost::LoadMultipartEncoding()
     total_bytes+=n;
     if(QString(data).simplified().contains(sep)>0) {  // End of part
       if(fd>=0) {
-	ftruncate(fd,lseek(fd,0,SEEK_CUR)-2);  // Remove extraneous final CR/LF
+	LogError(ftruncate(fd,lseek(fd,0,SEEK_CUR)-2));  // Remove extraneous final CR/LF
 	::close(fd);
 	fd=-1;
       }
@@ -977,7 +976,7 @@ void WHCgiPost::LoadMultipartEncoding()
       else {
 	post_filenames[name]=true;
 	post_values[name]=filename;
-	write(fd,data,n);
+	LogError(write(fd,data,n));
       }
     }
   }
@@ -1046,5 +1045,14 @@ QString WHCgiPost::CommandOutput(const QString &cmd,
   ret=proc->readAllStandardOutput();
   delete proc;
 
+  return ret;
+}
+
+
+int WHCgiPost::LogError(int ret) const
+{
+  //
+  // Stupid hack to suppress 'ignoring return value' warnings
+  //
   return ret;
 }

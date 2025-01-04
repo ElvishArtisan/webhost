@@ -2,7 +2,7 @@
 //
 // Base class for CGI Applications
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -86,7 +86,7 @@ void WHCgiApplication::renderPage(int id)
 
   if((page=GetPage(id))==NULL) {
     if((page=GetPage(0))==NULL) {
-      exit(500,QString().sprintf("Unknown page ID %d requested",id));
+      exit(500,QString::asprintf("Unknown page ID %d requested",id));
     }
   }
   page->renderHead();
@@ -118,7 +118,7 @@ void WHCgiApplication::renderData()
   post()->getValue("COMMAND",&id);
   if((page=GetPage(id))==NULL) {
     if((page=GetPage(0))==NULL) {
-      exit(500,QString().sprintf("Unknown page ID %d received",id));
+      exit(500,QString::asprintf("Unknown page ID %d received",id));
     }
   }
   page->renderHead();

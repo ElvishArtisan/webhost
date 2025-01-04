@@ -2,7 +2,7 @@
 //
 // CGI page component for CGI test
 //
-//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -64,6 +64,9 @@ void CgiPage::render()
     cgiapp->exit(400,"Missing FILE");
   }
   if(post()->isFile("FILE")) {
-    link(file.toUtf8(),"/tmp/cgitest_fileoutput.dat");
+    if(link(file.toUtf8(),"/tmp/cgitest_fileoutput.dat")!=0) {
+      fprintf(stderr,"link() call returned error %s\n",strerror(errno));
+      exit(1);
+    }
   }
 }

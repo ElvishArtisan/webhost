@@ -2,7 +2,7 @@
 //
 // Class for reading webhost configuration.
 //
-//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -94,12 +94,12 @@ bool WHConfig::load()
 
   p->setSource(WEBHOST_CONF_FILE);
   iface=p->stringValue("Webhost",
-		       QString().sprintf("NetworkInterface%d",inum+1),"",&ok);
+		       QString::asprintf("NetworkInterface%d",inum+1),"",&ok);
   while(ok) {
     config_interface_names.push_back(iface);
     inum++;
     iface=p->stringValue("Webhost",
-			 QString().sprintf("NetworkInterface%d",inum+1),"",&ok);
+			 QString::asprintf("NetworkInterface%d",inum+1),"",&ok);
   }
   config_wifi_interface_name=p->stringValue("Webhost","WifiInterfaceName");
   config_control_port=

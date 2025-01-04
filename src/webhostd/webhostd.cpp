@@ -2,7 +2,7 @@
 //
 // webhostd(8) routing daemon
 //
-//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -148,7 +148,7 @@ void MainObject::readyReadData()
 
 void MainObject::serviceErrorData(QProcess::ProcessError err)
 {
-  QString msg=tr("unknown error")+QString().sprintf(" [%u]",err);
+  QString msg=tr("unknown error")+QString::asprintf(" [%u]",err);
 
   switch(err) {
   case QProcess::FailedToStart:

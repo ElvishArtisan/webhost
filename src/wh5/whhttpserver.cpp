@@ -2,7 +2,7 @@
 //
 // HTTP Server
 //
-// (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -222,7 +222,7 @@ bool WHHttpServer::loadUsers(const QString &filename)
   QString name;
   QString passwd;
   bool ok=false;
-  QString section=QString().sprintf("WebHostUser%d",count+1);
+  QString section=QString::asprintf("WebHostUser%d",count+1);
 
   realm=p->stringValue(section,"Realm","",&ok);
   while(ok) {
@@ -230,7 +230,7 @@ bool WHHttpServer::loadUsers(const QString &filename)
     passwd=p->stringValue(section,"Password");
     addUser(realm,name,passwd);
     count++;
-    section=QString().sprintf("WebHostUser%d",count+1);
+    section=QString::asprintf("WebHostUser%d",count+1);
     realm=p->stringValue(section,"Realm","",&ok);
   }
 
@@ -539,7 +539,7 @@ void WHHttpServer::ReadHeaders(WHHttpConnection *conn)
       fprintf(stderr,"HEADER: %s\n",(const char *)line.toUtf8());
     }
     bool processed=false;
-    QStringList f0=line.split(": ",QString::KeepEmptyParts);
+    QStringList f0=line.split(": ",Qt::KeepEmptyParts);
     if(f0.size()>=2) {
       QString hdr=f0[0].trimmed().toLower();
       f0.erase(f0.begin());

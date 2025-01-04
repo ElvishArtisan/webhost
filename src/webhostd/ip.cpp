@@ -2,7 +2,7 @@
 //
 //   IP command implementation for webhostd(8)
 //
-//   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -73,7 +73,7 @@ void MainObject::Ip(const QStringList &cmds)
       args.push_back("mod");
       args.push_back(main_config->interfaceName(0));
       args.push_back("ipv4.addresses");
-      args.push_back(cmds2[2]+QString().sprintf("/%u",masksize));
+      args.push_back(cmds2[2]+QString::asprintf("/%u",masksize));
       RunCommand("/bin/nmcli",args);
 
       //

@@ -2,7 +2,7 @@
 //
 //   User methods for http-basic users.
 //
-//   (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -91,7 +91,7 @@ void MainObject::AddUser2(const QStringList &cmds)
       p->setSource(filename);
       bool ok=false;
       int count=0;
-      QString section=QString().sprintf("WebHostUser%d",count+1);
+      QString section=QString::asprintf("WebHostUser%d",count+1);
       QString realm=p->stringValue(section,"Realm","",&ok);
       bool used=false;
       while(ok) {
@@ -106,7 +106,7 @@ void MainObject::AddUser2(const QStringList &cmds)
 	fprintf(f,"Name=%s\n",(const char *)name.toUtf8());
 	fprintf(f,"Password=%s\n",(const char *)passwd.toUtf8());
 	count++;
-	section=QString().sprintf("WebHostUser%d",count+1);
+	section=QString::asprintf("WebHostUser%d",count+1);
 	realm=p->stringValue(section,"Realm","",&ok);
       }
       if(!used) {
@@ -120,7 +120,7 @@ void MainObject::AddUser2(const QStringList &cmds)
       rename((filename+".back").toUtf8(),filename.toUtf8());
       if(main_service_process!=NULL) {
 	if(main_service_process->state()==QProcess::Running) {
-	  kill(main_service_process->pid(),SIGHUP);
+	  kill(main_service_process->processId(),SIGHUP);
 	}
       }
     }
@@ -142,7 +142,7 @@ void MainObject::DeleteUser2(const QStringList &cmds)
       bool ok=false;
       int read_count=0;
       int write_count=0;
-      QString section=QString().sprintf("WebHostUser%d",read_count+1);
+      QString section=QString::asprintf("WebHostUser%d",read_count+1);
       QString realm=p->stringValue(section,"Realm","",&ok);
       while(ok) {
 	QString name=p->stringValue(section,"Name");
@@ -155,7 +155,7 @@ void MainObject::DeleteUser2(const QStringList &cmds)
 	  write_count++;
 	}
 	read_count++;
-	section=QString().sprintf("WebHostUser%d",read_count+1);
+	section=QString::asprintf("WebHostUser%d",read_count+1);
 	realm=p->stringValue(section,"Realm","",&ok);
       }
       delete p;
@@ -163,7 +163,7 @@ void MainObject::DeleteUser2(const QStringList &cmds)
       rename((filename+".back").toUtf8(),filename.toUtf8());
       if(main_service_process!=NULL) {
 	if(main_service_process->state()==QProcess::Running) {
-	  kill(main_service_process->pid(),SIGHUP);
+	  kill(main_service_process->processId(),SIGHUP);
 	}
       }
     }

@@ -2,7 +2,7 @@
 //
 // Network information routines.
 //
-//   (C) Copyright 2016-2018 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -127,7 +127,7 @@ uint64_t WHInterfaceMacAddress(const QString &iface)
 
 QString WHMacAddressText(uint64_t mac)
 {
-  return QString().sprintf("%02X:%02X:%02X:%02X:%02X:%02X",
+  return QString::asprintf("%02X:%02X:%02X:%02X:%02X:%02X",
 			   0xFF&(unsigned)(mac>>40),
 			   0xFF&(unsigned)(mac>>32),
 			   0xFF&(unsigned)(mac>>24),

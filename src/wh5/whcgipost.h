@@ -2,7 +2,7 @@
 //
 // POST data processor class for CGI applications
 //
-//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -108,6 +108,7 @@ class WHCgiPost
   void LoadMultipartEncoding();
   QString UrlDecode(const QString &str) const;
   QString CommandOutput(const QString &cmd,const QStringList &args) const;
+  int LogError(int ret) const;
   Encoding post_encoding;
   Error post_error;
   std::map<QString,QVariant> post_values;

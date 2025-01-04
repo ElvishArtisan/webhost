@@ -2,7 +2,7 @@
 //
 // HTTP connection state for WHHttpServer
 //
-// (C) Copyright 2016-2022 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -84,9 +84,9 @@ unsigned WHHttpConnection::minorProtocolVersion() const
 bool WHHttpConnection::protocolAtLeast(int major,int minor) const
 {
   return
-    QString().sprintf("%u.%u",
+    QString::asprintf("%u.%u",
 		      conn_major_protocol_version,conn_minor_protocol_version).
-    toFloat()<=QString().sprintf("%u.%u",major,minor).toFloat();
+    toFloat()<=QString::asprintf("%u.%u",major,minor).toFloat();
 }
 
 
@@ -207,7 +207,7 @@ bool WHHttpConnection::setAuthorization(const QString &str)
   QStringList f0=str.trimmed().split(" ");
   if((f0[0].toLower()=="basic")&&(f0.size()==2)) {
     QStringList f1=QString(QByteArray::fromBase64(f0[1].toUtf8())).
-      split(":",QString::KeepEmptyParts);
+      split(":",Qt::KeepEmptyParts);
     if(f1.size()>=2) {
       conn_auth_name=f1[0];
       f1.erase(f1.begin());
@@ -376,10 +376,10 @@ QString WHHttpConnection::dump() const
     ret+="Method: Unknown\n";
     break;
   }
-  ret+=QString().sprintf("HTTP Protocol: %u.%u\n",majorProtocolVersion(),
+  ret+=QString::asprintf("HTTP Protocol: %u.%u\n",majorProtocolVersion(),
 			 minorProtocolVersion());
   ret+="URI: "+uri()+"\n";
-  ret+="Host: "+hostName()+":"+QString().sprintf("%u",hostPort())+"\n";
+  ret+="Host: "+hostName()+":"+QString::asprintf("%u",hostPort())+"\n";
   ret+="User-Agent: "+userAgent()+"\n";
 
   ret+="HEADERS\n";
@@ -403,7 +403,7 @@ void WHHttpConnection::startCgiScript(const QString &filename)
   QProcessEnvironment env;
   if(contentLength()>=0) {
     env.insert("CONTENT_LENGTH",
-	       QString().sprintf("%ld",contentLength()));
+	       QString::asprintf("%ld",contentLength()));
     env.insert("CONTENT_TYPE",contentType());
   }
   env.insert("GATEWAY_INTERFACE","1.1");
@@ -416,7 +416,7 @@ void WHHttpConnection::startCgiScript(const QString &filename)
   }
   env.insert("REMOTE_ADDR",socket()->peerAddress().toString());
   env.insert("REMOTE_HOST",socket()->peerAddress().toString());
-  env.insert("REMOTE_PORT",QString().sprintf("%u",0xFFFF&socket()->peerPort()));
+  env.insert("REMOTE_PORT",QString::asprintf("%u",0xFFFF&socket()->peerPort()));
   if(method()==WHHttpConnection::Post) {
     env.insert("REQUEST_METHOD","POST");
   }
@@ -429,16 +429,16 @@ void WHHttpConnection::startCgiScript(const QString &filename)
   env.insert("SERVER_ADMIN","noone@nowhere.com");
   env.insert("SERVER_NAME",socket()->localAddress().toString());
   env.insert("SERVER_PORT",
-	     QString().sprintf("%u",0xFFFF&socket()->localPort()));
+	     QString::asprintf("%u",0xFFFF&socket()->localPort()));
   env.insert("SERVER_SOFTWARE",QString("Webhost-")+VERSION);
   conn_cgi_process->setProcessEnvironment(env);
-  conn_cgi_process->start(filename);
+  conn_cgi_process->start(filename,QStringList());
 }
 
 
 void WHHttpConnection::sendResponseHeader(int stat_code,const QString &mimetype)
 {
-  QString statline=QString().sprintf("HTTP/1.1 %d ",stat_code)+
+  QString statline=QString::asprintf("HTTP/1.1 %d ",stat_code)+
     WHHttpConnection::statusText(stat_code)+"\r\n";
   if(conn_dump_transactions) {
     fprintf(stderr,"STATUS-LINE: %s",(const char *)statline.toUtf8());
@@ -462,7 +462,7 @@ void WHHttpConnection::sendResponse(int stat_code,
 {
   sendResponseHeader(stat_code,mimetype);
   if(body.length()>0) {
-    sendHeader("Content-Length",QString().sprintf("%d",body.length()));
+    sendHeader("Content-Length",QString::asprintf("%d",body.length()));
   }
   for(int i=0;i<hdr_names.size();i++) {
     sendHeader(hdr_names[i],hdr_values[i]);
@@ -487,7 +487,7 @@ void WHHttpConnection::sendError(int stat_code,const QString &msg,
   QString err_text=msg;
   if(err_text.isEmpty()) {
     err_text=
-      QString().sprintf("%d ",stat_code)+WHHttpConnection::statusText(stat_code);
+      QString::asprintf("%d ",stat_code)+WHHttpConnection::statusText(stat_code);
   }
   sendResponse(stat_code,hdr_names,hdr_values,err_text.toUtf8());
 }
@@ -557,8 +557,8 @@ void WHHttpConnection::cgiFinishedData(int exit_code,
   }
   else {
     if(exit_code!=0) {
-      sendError(500,QString().
-	  sprintf("CGI process returned non-zero exit code [%d]",exit_code));
+      sendError(500,QString::
+	  asprintf("CGI process returned non-zero exit code [%d]",exit_code));
     }
     else {
       cgiReadyReadData();
@@ -571,7 +571,7 @@ void WHHttpConnection::cgiFinishedData(int exit_code,
 
 void WHHttpConnection::cgiErrorData(QProcess::ProcessError err)
 {
-  QString err_text=QString().sprintf("unknown process error %d",err);
+  QString err_text=QString::asprintf("unknown process error %d",err);
   switch(err) {
   case QProcess::FailedToStart:
     err_text="failed to start";
