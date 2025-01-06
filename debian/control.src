@@ -14,7 +14,7 @@ Description: Embedded hosting system
 
 Package: webhost5-dev
 Architecture: any
-Depends: ${misc:Depends}, switchyard5 (= @VERSION@-1)
+Depends: ${misc:Depends}, switchyard5 (>= 0.24.0-1)
 Description: Development components for the webhost5 embedded hosting system
  These are the library components and headers required to develop application
  for the webhost5 embedded hosting system.
