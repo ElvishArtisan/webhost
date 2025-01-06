@@ -79,7 +79,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 /usr/lib/systemd/system/webhost.service
-%{_libdir}/libwebhost5.so
 %{_libdir}/libwebhost5.so.@INTERFACE_MAJOR@
 %{_libdir}/libwebhost5.so.@INTERFACE_MAJOR@.@INTERFACE_MINOR@.@INTERFACE_POINT@
 %{_sbindir}/webhostd
@@ -88,11 +87,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %{_includedir}/wh5/*
+%{_libdir}/libwebhost5.so
 %{_libdir}/libwebhost5.a
 %{_libdir}/libwebhost5.la
 %{_libdir}/pkgconfig/webhost5.pc
 
 
 %changelog
+* Mon Jan  6 2025 Fred Gleason <fredg@paravelsystems.com>
+-- Moved 'libwebhost5.so' to the 'devel' package.
 * Tue Jan 26 2016 Fred Gleason <fredg@paravelsystems.com>
 -- Initial RPM creation.

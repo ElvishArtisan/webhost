@@ -17,6 +17,10 @@ binary:
 #
 	mkdir -p debian/webhost5/usr/lib
 	mv debian/tmp/usr/lib/libwebhost5.so.* debian/webhost5/usr/lib/
+	mkdir -p debian/webhost5/usr/lib/systemd/system/
+	mv debian/tmp/usr/lib/systemd/system/webhost.service debian/webhost5/usr/lib/systemd/system/
+	mkdir -p debian/webhost5/usr/sbin
+	mv debian/tmp/usr/sbin/webhostd debian/webhost5/usr/sbin/
 	mkdir -p debian/webhost5/usr/share/doc/webhost5
 	cp AUTHORS debian/webhost5/usr/share/doc/webhost5/
 	cp ChangeLog debian/webhost5/usr/share/doc/webhost5/
@@ -30,6 +34,8 @@ binary:
 	mv debian/tmp/usr/include/wh5 debian/webhost5-dev/usr/include/
 	mkdir -p debian/webhost5-dev/usr/lib
 	mv debian/tmp/usr/lib/*.a debian/webhost5-dev/usr/lib/
+	mv debian/tmp/usr/lib/*.la debian/webhost5-dev/usr/lib/
+	mv debian/tmp/usr/lib/libwebhost5.so debian/webhost5-dev/usr/lib/
 	mkdir -p debian/webhost5-dev/usr/share
 	mv debian/tmp/usr/lib/pkgconfig debian/webhost5-dev/usr/share/
 
