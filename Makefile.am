@@ -29,25 +29,25 @@ install-exec-local:
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
 	cp webhost.service $(DESTDIR)/usr/lib/systemd/system/webhost.service
 	mkdir -p $(DESTDIR)@libdir@/pkgconfig
-	cp webhost5.pc $(DESTDIR)/@libdir@/pkgconfig
+	cp webhost6.pc $(DESTDIR)/@libdir@/pkgconfig
 
 uninstall-local:	
 	rm -f $(DESTDIR)/usr/lib/systemd/system/webhost.service
-	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost5.pc
+	rm -f $(DESTDIR)@libdir@/pkgconfig/webhost6.pc
 
 deb:	dist
 	./build_debs.sh
 
 rpm:	dist
-	cp webhost5-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
+	cp webhost6-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
 	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux webhost.spec
-	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/webhost5-*.rpm $(top_srcdir)/
-	mv $(HOME)/rpmbuild/SRPMS/webhost5-*.src.rpm $(top_srcdir)/
-	rm $(HOME)/rpmbuild/SOURCES/webhost5-$(VERSION).tar.gz
-	rm -rf $(HOME)/rpmbuild/BUILD/webhost5-$(VERSION)
+	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/webhost6-*.rpm $(top_srcdir)/
+	mv $(HOME)/rpmbuild/SRPMS/webhost6-*.src.rpm $(top_srcdir)/
+	rm $(HOME)/rpmbuild/SOURCES/webhost6-$(VERSION).tar.gz
+	rm -rf $(HOME)/rpmbuild/BUILD/webhost6-$(VERSION)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = webhost5.pc
+pkgconfig_DATA = webhost6.pc
 
 EXTRA_DIST = webhost.spec.in\
              autogen.sh\
@@ -55,7 +55,7 @@ EXTRA_DIST = webhost.spec.in\
              get_target.sh\
              PACKAGE_VERSION\
              rc.webhost.in\
-             webhost5.pc.in\
+             webhost6.pc.in\
              webhost.service.in
 
 CLEANFILES = *~\
@@ -75,13 +75,14 @@ DISTCLEANFILES = build_debs.sh\
                  config.guess\
                  config.sub\
                  ltmain.sh\
-                 webhost5.pc\
+                 webhost6.pc\
                  webhost.service\
                  webhost.spec
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\
                        aclocal.m4\
+                       compile\
                        config.guess\
                        config.status\
                        config.sub\

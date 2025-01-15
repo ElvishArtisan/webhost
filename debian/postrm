@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for webhost5
+# postrm script for webhost6
 #
 # see: dh_installdeb(1)
 

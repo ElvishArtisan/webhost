@@ -22,11 +22,11 @@
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
-tar -zvxf webhost5-@VERSION@.tar.gz
-mv webhost5-@VERSION@.tar.gz webhost5_@VERSION@.orig.tar.gz
+tar -zvxf webhost6-@VERSION@.tar.gz
+mv webhost6-@VERSION@.tar.gz webhost6_@VERSION@.orig.tar.gz
 
-cd webhost5-@VERSION@
+cd webhost6-@VERSION@
 dpkg-buildpackage -us -uc
 cd ..
 
-rm -rf webhost5-@VERSION@
+rm -rf webhost6-@VERSION@

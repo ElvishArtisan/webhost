@@ -1,8 +1,8 @@
-## automake.am
+## Makefile.am
 ##
-## Makefile for the webhostd(8) daemon
+## Makefile.am for the webhostd(8) daemon
 ##
-## (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -19,13 +19,13 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -I$(top_srcdir)/src -Wno-strict-aliasing -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@
-LIBS = -L$(top_srcdir)/src/wh5
-MOC = @QT5_MOC@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -I$(top_srcdir)/src -Wno-strict-aliasing -std=c++17 -fPIC @QT6_CFLAGS@ @OPENSSL_CFLAGS@
+LIBS = -L$(top_srcdir)/src/wh6
+MOC = @QT6_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
-	@QT5_MOC@ $< -o $@
+	@QT6_MOC@ $< -o $@
 
 
 sbin_PROGRAMS = webhostd
@@ -41,7 +41,7 @@ dist_webhostd_SOURCES = ip.cpp\
 
 nodist_webhostd_SOURCES = moc_webhostd.cpp
 
-webhostd_LDADD = @QT5_LIBS@ -lwebhost5 @OPENSSL_LIBS@
+webhostd_LDADD = @QT6_LIBS@ -lwebhost6 @OPENSSL_LIBS@
 webhostd_LDFLAGS = 
 
 CLEANFILES = *~\

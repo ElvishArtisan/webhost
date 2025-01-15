@@ -1,6 +1,6 @@
 ## Makefile.am
 ##
-## Makefile.am for webhost5 debian/source
+## Makefile.am for webhost6 debian/source
 ##
 ##   (C) Copyright 2021-2022 Fred Gleason <fredg@paravelsystems.com>
 ##

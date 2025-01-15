@@ -462,7 +462,7 @@ void WHHttpConnection::sendResponse(int stat_code,
 {
   sendResponseHeader(stat_code,mimetype);
   if(body.length()>0) {
-    sendHeader("Content-Length",QString::asprintf("%d",body.length()));
+    sendHeader("Content-Length",QString::asprintf("%lld",body.length()));
   }
   for(int i=0;i<hdr_names.size();i++) {
     sendHeader(hdr_names[i],hdr_values[i]);

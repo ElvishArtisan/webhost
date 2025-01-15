@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QUdpSocket>
 
-#include "../wh5/whconfig.h"
+#include "../wh6/whconfig.h"
 
 #define WEBHOSTD_USAGE "\n"
 

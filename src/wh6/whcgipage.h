@@ -2,7 +2,7 @@
 //
 // Base class for CGI web pages
 //
-//   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,8 +23,8 @@
 
 #include <QStringList>
 
-#include <wh5/whcgiobject.h>
-#include <wh5/whcgipost.h>
+#include <wh6/whcgiobject.h>
+#include <wh6/whcgipost.h>
 
 class WHCgiPage : public WHCgiObject
 {

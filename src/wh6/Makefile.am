@@ -1,8 +1,8 @@
-## automake.am
+## Makefile.am
 ##
-## Makefile webhost library
+## Makefile.am webhost library
 ##
-## (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as
@@ -20,8 +20,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@
-MOC = @QT5_MOC@
+AM_CPPFLAGS = -Wall -Wno-strict-aliasing -I$(top_srcdir)/src -std=c++17 -fPIC @QT6_CFLAGS@ @OPENSSL_CFLAGS@
+MOC = @QT6_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
@@ -30,8 +30,8 @@ moc_%.cpp:	%.h
 clean-local:	
 	rm -rf debug release
 
-lib_LTLIBRARIES = libwebhost5.la
-dist_libwebhost5_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
+lib_LTLIBRARIES = libwebhost6.la
+dist_libwebhost6_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                               whcgiobject.cpp whcgiobject.h\
                               whcgipage.cpp whcgipage.h\
                               whcgipost.cpp whcgipost.h\
@@ -46,11 +46,11 @@ dist_libwebhost5_la_SOURCES = whcgiapplication.cpp whcgiapplication.h\
                               whsocketmessage.cpp whsocketmessage.h\
                               whwificonnection.cpp whwificonnection.h
 
-nodist_libwebhost5_la_SOURCES = moc_whcgiapplication.cpp\
+nodist_libwebhost6_la_SOURCES = moc_whcgiapplication.cpp\
                                 moc_whhttpconnection.cpp\
                                 moc_whhttpserver.cpp
 
-includedir = $(prefix)/include/wh5
+includedir = $(prefix)/include/wh6
 
 include_HEADERS = whcgiapplication.h\
                   whcgiobject.h\
@@ -67,7 +67,7 @@ include_HEADERS = whcgiapplication.h\
                   whsettings.h\
                   whwificonnection.h
 
-libwebhost5_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
+libwebhost6_la_LDFLAGS = -version-info $(INTERFACE_CURRENT):$(INTERFACE_REVISION):$(INTERFACE_AGE)
 
 CLEANFILES = *~\
              *.idb\

@@ -23,7 +23,7 @@
 
 #include <QObject>
 
-#include <wh5/whhttpserver.h>
+#include <wh6/whhttpserver.h>
 
 class MainObject : public QObject
 {

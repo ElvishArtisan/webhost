@@ -21,7 +21,7 @@
 #ifndef FILEDROP_H
 #define FILEDROP_H
 
-#include <wh5/whcgiapplication.h>
+#include <wh6/whcgiapplication.h>
 
 class MainObject : public WHCgiApplication
 {

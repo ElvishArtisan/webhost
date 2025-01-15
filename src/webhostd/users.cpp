@@ -26,7 +26,7 @@
 #include <QProcess>
 #include <QStringList>
 
-#include <wh5/whprofile.h>
+#include <wh6/whprofile.h>
 
 #include "webhostd.h"
 

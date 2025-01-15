@@ -25,7 +25,7 @@
 #include <QCoreApplication>
 #include <QHostAddress>
 
-#include <wh5/whcmdswitch.h>
+#include <wh6/whcmdswitch.h>
 
 #include "webhostd.h"
 

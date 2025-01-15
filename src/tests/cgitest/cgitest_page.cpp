@@ -20,9 +20,9 @@
 
 #include <unistd.h>
 
-#include <wh5/whcgiapplication.h>
-#include <wh5/whnetwork.h>
-#include <wh5/whprofile.h>
+#include <wh6/whcgiapplication.h>
+#include <wh6/whnetwork.h>
+#include <wh6/whprofile.h>
 
 #include "cgitest_page.h"
 

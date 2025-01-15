@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -20,7 +20,7 @@ dnl   License along with this program; if not, write to the Free Software
 dnl   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 dnl
 
-AC_INIT(webhost5,m4_esyscmd(cat PACKAGE_VERSION))
+AC_INIT(webhost6,m4_esyscmd(cat PACKAGE_VERSION))
 AM_INIT_AUTOMAKE
 AC_SUBST(RPM_RELEASE,1)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
@@ -68,9 +68,10 @@ AC_SUBST(INTERFACE_POINT,$REVISION)
 #
 # Check for Qt (Mandatory)
 #
-PKG_CHECK_MODULES(QT5,Qt5Core Qt5Network,[],[AC_MSG_ERROR([*** Qt5 not found ***])])
-AC_CHECK_PROG(MOC_NAME,moc-qt5,[moc-qt5],[moc])
-AC_SUBST(QT5_MOC,$MOC_NAME)
+AQ_FIND_QT6(QT6,Core Network,[],[AC_MSG_ERROR([*** Qt6 not found ***])])
+#PKG_CHECK_MODULES(QT6,Qt6Core Qt6Network,[],[AC_MSG_ERROR([*** Qt6 not found ***])])
+#AC_CHECK_PROG(MOC_NAME,moc-qt6,[moc-qt6],[moc])
+#AC_SUBST(QT6_MOC,$MOC_NAME)
 
 #
 # Check for OpenSSL
@@ -126,7 +127,7 @@ AC_CONFIG_FILES([ \
     debian/source/Makefile \
     debian/Makefile \
     docs/Makefile \
-    src/wh5/Makefile \
+    src/wh6/Makefile \
     src/tests/Makefile \
     src/tests/cgitest/Makefile \
     src/tests/filedrop/Makefile \
@@ -135,7 +136,7 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     build_debs.sh\
     rc.webhost \
-    webhost5.pc\
+    webhost6.pc\
     webhost.service\
     webhost.spec \
     Makefile ])

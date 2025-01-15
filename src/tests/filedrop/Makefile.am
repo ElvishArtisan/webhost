@@ -1,8 +1,8 @@
-## automake.am
+## Makefile.am
 ##
-## Automake.am for webhost tests/filedrop
+## Makefile.am for webhost tests/filedrop
 ##
-##   (C) Copyright 2015-2022 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -19,9 +19,9 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -std=c++11 -fPIC @QT5_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
-LIBS = -L$(top_srcdir)/src/wh5 @OPENSSL_LIBS@ @QT5_LIBS@
-MOC = @QT5_MOC@
+AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -std=c++17 -fPIC @QT6_CFLAGS@ @OPENSSL_CFLAGS@ -I$(top_srcdir)/src
+LIBS = -L$(top_srcdir)/src/wh6 @OPENSSL_LIBS@ @QT6_LIBS@
+MOC = @QT6_MOC@
 
 # The dependency for qt's Meta Object Compiler (moc)
 moc_%.cpp:	%.h
@@ -32,7 +32,7 @@ noinst_PROGRAMS = filedrop.cgi
 dist_filedrop_cgi_SOURCES = filedrop.cpp filedrop.h\
                             filepage.cpp filepage.h
 
-filedrop_cgi_LDADD = @QT5_LIBS@ -lwebhost5
+filedrop_cgi_LDADD = @QT6_LIBS@ -lwebhost6
 
 EXTRA_DIST = filedrop.html
 

@@ -1,20 +1,20 @@
-Source: webhost5
+Source: webhost6
 Section: audio
 Priority: optional
 Maintainer: Fred Gleason <fredg@paravelsystems.com>
 Build-Depends: debhelper-compat (= 12), autotools-dev
 Standards-Version: 4.4.1
 
-Package: webhost5
+Package: webhost6
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Embedded hosting system
  Embedded hosting system.
 
 
-Package: webhost5-dev
+Package: webhost6-dev
 Architecture: any
-Depends: ${misc:Depends}, switchyard5 (>= 0.24.0-1)
-Description: Development components for the webhost5 embedded hosting system
+Depends: ${misc:Depends}, switchyard6 (>= 0.24.0-1)
+Description: Development components for the webhost6 embedded hosting system
  These are the library components and headers required to develop application
- for the webhost5 embedded hosting system.
+ for the webhost6 embedded hosting system.

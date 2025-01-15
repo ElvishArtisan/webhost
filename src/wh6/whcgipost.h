@@ -33,9 +33,9 @@
 #include <QUdpSocket>
 #include <QUrl>
 
-#include <wh5/whconfig.h>
-#include <wh5/whsettings.h>
-#include <wh5/whwificonnection.h>
+#include <wh6/whconfig.h>
+#include <wh6/whsettings.h>
+#include <wh6/whwificonnection.h>
 
 class WHCgiPost
 {

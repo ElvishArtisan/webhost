@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <wh5/whprofile.h>
-#include <wh5/whsettings.h>
+#include <wh6/whprofile.h>
+#include <wh6/whsettings.h>
 
 #include "whconfig.h"
 
