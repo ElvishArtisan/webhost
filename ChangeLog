@@ -447,3 +447,5 @@
 	* Ported to Qt6.
 2025-01-25 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a compile warning in 'src/wh6/whcgipost.cpp'.
+2025-01-25 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a 'no such signal' error in 'src/webhostd/webhostd.cpp'.

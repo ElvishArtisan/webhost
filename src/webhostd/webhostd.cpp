@@ -218,7 +218,7 @@ void MainObject::garbageTimerData()
       args.push_back(f0[i]);
     }
     main_service_process=new QProcess(this);
-    connect(main_service_process,SIGNAL(error(QProcess::ProcessError)),
+    connect(main_service_process,SIGNAL(errorOccurred(QProcess::ProcessError)),
 	    this,SLOT(serviceErrorData(QProcess::ProcessError)));
     connect(main_service_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	    this,SLOT(serviceFinishedData(int,QProcess::ExitStatus)));
