@@ -862,7 +862,7 @@ void WHCgiPost::SendCommand(const QString &cmd) const
 
 void WHCgiPost::LoadUrlEncoding()
 {
-  char *data=new char[post_content_length+1];
+  char data[post_content_length+1];
   int n;
   QStringList lines;
   QStringList line;
@@ -879,7 +879,6 @@ void WHCgiPost::LoadUrlEncoding()
     }
   }
   post_error=WHCgiPost::ErrorOk;
-  delete data;
 }
 
 
