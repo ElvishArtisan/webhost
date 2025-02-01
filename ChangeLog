@@ -452,3 +452,5 @@
 2025-02-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in the 'webhost' service definition that caused
 	service activation to fail.
+2025-02-01 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'DISTRO-SPECIFIC NOTES' section to 'INSTALL'.
